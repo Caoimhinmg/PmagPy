@@ -18,7 +18,7 @@ class command_line_dataframe():
 
     def __init__(self, changes=None):
         self.default_dict = {'arg_name': ['f', 'F', 'A', 'WD', 'ID'], 'reqd': [True, False, False, False, False], 'default': ['', '', '', '.', '.']}
-        self.df = pd.DataFrame(self.default_dict, index=['f', 'F', 'A', 'WD'])
+        self.df = pd.DataFrame(self.default_dict, index=['f', 'F', 'A', 'WD', 'ID'])
         arg_names = self.df['arg_name']
         if changes:
             for change in changes:
@@ -27,9 +27,9 @@ class command_line_dataframe():
                     self.df.loc[change[0], 'reqd'] = change[1]
                     self.df.loc[change[0], 'default'] = change[2]
                 else:
-                    #print 'putting in:', change
+                    print 'putting in:', change
                     d = pd.DataFrame({'arg_name': [change[0]], 'reqd': [change[1]], 'default': [change[2]]}, index=[change[0]])
-        self.df = pd.concat([self.df, d])
+                    self.df = pd.concat([self.df, d])
             
 def extract_args(argv):
     """
@@ -51,9 +51,10 @@ def check_args(arguments, data_frame):
     default values are used where needed
     """
     stripped_args = [a[0] for a in arguments]
+    df = data_frame.df
     # first make sure all args are valid
     for a in arguments:
-        if a[0] not in data_frame.index:
+        if a[0] not in df.index:
             print "-I- ignoring invalid argument: {}".format(a[0])
             print "-"
     # next make sure required arguments are present
@@ -90,8 +91,8 @@ def get_vars(arg_names, args_list):
     
 
 # example usage:                                                                                                 
-#df = command_line_dataframe([['f', False, 'hello.txt'], ['F', True, ''], ['r', False, 'thingee']]).df
+#df = command_line_dataframe([['f', False, 'hello.txt'], ['F', True, ''], ['r', False, 'thingee'], ['A', False, False]]).df
 #print df
-#checked_args = extract_and_check_args(["eqarea.py", "-A", "-t", "18", "20", "-F", "output.txt"], df)
+#checked_args = extract_and_check_args(["eqarea.py", "-t", "18", "20", "-F", "output.txt"], df)
 #infile, outfile, append, temp = get_vars(['f', 'F', 'A', 't'], checked_args)
 #print infile, outfile, append, temp
