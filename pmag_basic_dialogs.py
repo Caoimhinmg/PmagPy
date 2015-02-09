@@ -428,7 +428,7 @@ class convert_generic_files_to_MagIC(wx.Frame):
         # to run as module:
         import generic_magic
         pw.on_helpButton(text=generic_magic.do_help())
-        
+
         # to run as command line:
         #pw.on_helpButton("generic_magic.py -h")
 
@@ -1266,7 +1266,7 @@ class convert_HUJI_files_to_MagIC(wx.Frame):
             # to run as command line:
             #COMMAND = "HUJI_magic_new.py -f {} -F {} {} -LP {} {} -ncn {} {} {} {}".format(HUJI_file, outfile, user, experiment_type, loc_name, ncn, lab_field, spc, peak_AF)
             #pw.run_command_and_close_window(self, COMMAND, outfile)
-            
+
             # to run as module:
             import HUJI_magic_new
             if HUJI_magic_new.main(False, **options):
@@ -1280,14 +1280,13 @@ class convert_HUJI_files_to_MagIC(wx.Frame):
 
     def on_helpButton(self, event):
         old_format= self.bSizer0a.return_value()
-        
-        #to run as module:
+        # to run as module:
         if old_format:
             import HUJI_magic as HUJI
         else:
             import HUJI_magic_new as HUJI
         pw.on_helpButton(text=HUJI.do_help())
-
+        
         # to run as command_line:
         #if old_format:
         #    pw.on_helpButton("HUJI_magic.py -h")
@@ -1768,9 +1767,10 @@ class convert_IODP_csv_files_to_MagIC(wx.Frame):
         else:
             pw.simple_warning()
 
+        del wait
         # to run as command line:
         #pw.run_command_and_close_window(self, COMMAND, outfile)
-        del wait
+
 
     def on_cancelButton(self,event):
         self.Destroy()

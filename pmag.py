@@ -529,6 +529,7 @@ def dia_vgp(*args): # new function interface by J.Holmes, SIO, 6/1/2011
     converts declination, inclination, alpha95 to VGP, dp, dm
     takes input as (Decs, Incs, a95, Site latitudes, Site Longitudes).  
     These can be lists or individual values.
+    Returns longitude, latitude, dp, dm
     """
     # test whether arguments are one 2-D list or 5 floats 
     if len(args) == 1: # args comes in as a tuple of multi-dim lists.
@@ -999,7 +1000,9 @@ def first_rec(ofile,Rec,file_type):
 
 def magic_write(ofile,Recs,file_type):
     """
+    called by magic_write(outputfile,records_list,magic_file_type)
     writes out a magic format list of dictionaries to ofile
+
     """
     
     if len(Recs)<1:

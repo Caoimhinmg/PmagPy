@@ -19,6 +19,7 @@ class command_line_dataframe():
     def __init__(self, changes=None):
         self.default_dict = {'arg_name': ['f', 'F', 'A', 'WD', 'ID'], 'reqd': [True, False, False, False, False], 'default': ['', '', '', '.', '.']}
         self.df = pd.DataFrame(self.default_dict, index=['f', 'F', 'A', 'WD', 'ID'])
+        change_df = None
         arg_names = self.df['arg_name']
         if changes:
             for change in changes:
@@ -27,14 +28,17 @@ class command_line_dataframe():
                     self.df.loc[change[0], 'reqd'] = change[1]
                     self.df.loc[change[0], 'default'] = change[2]
                 else:
-                    print 'putting in:', change
-                    d = pd.DataFrame({'arg_name': [change[0]], 'reqd': [change[1]], 'default': [change[2]]}, index=[change[0]])
-                    self.df = pd.concat([self.df, d])
+                    #print 'putting in:', change
+                    change_df = pd.DataFrame({'arg_name': [change[0]], 'reqd': [change[1]], 'default': [change[2]]}, index=[change[0]])
+        if change_df:
+            self.df = pd.concat([self.df, d])
+
             
 def extract_args(argv):
     """
     take sys.argv that is used to call a command-line script and return a correctly split list of arguments
-    for example: ["eqarea.py", "-f", "infile", "-F", "outfile", "-A"] will return: [['f', 'infile'], ['F', 'outfile'], ['A']]
+    for example, this input: ["eqarea.py", "-f", "infile", "-F", "outfile", "-A"] 
+    will return this output: [['f', 'infile'], ['F', 'outfile'], ['A']]
     """
     string = " ".join(argv)
     string = string.split('-')
@@ -90,9 +94,16 @@ def get_vars(arg_names, args_list):
     return vals
     
 
-# example usage:                                                                                                 
-#df = command_line_dataframe([['f', False, 'hello.txt'], ['F', True, ''], ['r', False, 'thingee'], ['A', False, False]]).df
-#print df
-#checked_args = extract_and_check_args(["eqarea.py", "-t", "18", "20", "-F", "output.txt"], df)
-#infile, outfile, append, temp = get_vars(['f', 'F', 'A', 't'], checked_args)
-#print infile, outfile, append, temp
+##example usage
+#import command_line_extractor as extractor
+## make a dataframe with 3 columns: the command-line flag (minus the ‘-‘), a boolean for whether it is required, and a default value
+## the command_line_dataframe object has some defaults (which I will be adding to soon), so you only need to specify these things if they are different from or in addition to the defaults
+#dataframe = extractor.command_line_dataframe(['sav', False, 0], ['fmt', False, 'svg'], ['s', False, 20]].df
+## get the args from the command line
+#args = sys.argv
+## check through the args to make sure the required ones are present, the defaults are applied where needed
+#checked_args = extractor.extract_and_check_args(args, dataframe)
+## assign variables based on their command line flag
+#fmt, size, plot = extractor.get_vars(['fmt', 's', 'sav'], args)
+#print 'fmt', fmt, 'size', size', 'plot', plot
+
