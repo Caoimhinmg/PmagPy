@@ -33,7 +33,7 @@ def main():
     """
     fmt,plot='svg',0
     if '-h' in sys.argv: # check if help is needed
-        print main.__doc__
+        print(main.__doc__)
         sys.exit() # graceful quit
     if '-sav' in sys.argv: plot=1
     if '-fmt' in sys.argv: 
@@ -55,7 +55,7 @@ def main():
     if plot==0:
         pmagplotlib.drawFIGS(QQ)
     files={}
-    for key in QQ.keys():
+    for key in list(QQ.keys()):
         files[key]=key+'.'+fmt 
     if pmagplotlib.isServer:
         black     = '#000000'
@@ -65,7 +65,7 @@ def main():
         QQ = pmagplotlib.addBorders(EQ,titles,black,purple)
         pmagplotlib.saveP(QQ,files)
     elif plot==0:
-        ans=raw_input(" S[a]ve to save plot, [q]uit without saving:  ")
+        ans=input(" S[a]ve to save plot, [q]uit without saving:  ")
         if ans=="a": 
             pmagplotlib.saveP(QQ,files) 
     else:

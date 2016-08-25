@@ -8,4 +8,4 @@ for line  in StationNFO:
     Lons.append(float(nfo[1]))# puts float of 2nd column into Lons
     StaIDs.append(int(nfo[2])) # puts integer of 3rd column into StaIDs
     StaName.append(nfo[3])# puts the ID string into StaName
-    print Lats[-1],Lons[-1],StaIDs[-1] # prints out last thing appended
+    print(Lats[-1],Lons[-1],StaIDs[-1]) # prints out last thing appended

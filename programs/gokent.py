@@ -28,7 +28,7 @@ def main():
     """
     if len(sys.argv) > 0:
         if '-h' in sys.argv: # check if help is needed
-            print main.__doc__
+            print(main.__doc__)
             sys.exit() # graceful quit
         if '-f' in sys.argv:
             ind=sys.argv.index('-f')
@@ -36,7 +36,7 @@ def main():
             f=open(file,'rU')
             data=f.readlines()
         elif '-i' in sys.argv: # ask for filename
-            file=raw_input("Enter file name with dec, inc data: ")
+            file=input("Enter file name with dec, inc data: ")
             f=open(file,'rU')
             data=f.readlines()
         else:
@@ -58,7 +58,7 @@ def main():
     kpars=pmag.dokent(DIs,len(DIs))
     output = '%7.1f %7.1f %7.1f %7.1f %7.1f %7.1f %7.1f %7.1f %i' % (kpars["dec"],kpars["inc"],kpars["Eta"],kpars["Edec"],kpars["Einc"],kpars["Zeta"],kpars["Zdec"],kpars["Zinc"],kpars["n"])
     if ofile == "":
-        print output
+        print(output)
     else:
         out.write(output+'\n')
 #    print '%7.1f %7.1f %7.1f %7.1f %7.1f %7.1f %7.1f %7.1f %i' % (kpars["dec"],kpars["inc"],kpars["Eta"],kpars["Edec"],kpars["Einc"],kpars["Zeta"],kpars["Zdec"],kpars["Zinc"],kpars["n"])

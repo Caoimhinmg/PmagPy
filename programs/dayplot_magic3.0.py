@@ -33,7 +33,7 @@ def main():
     """
     args = sys.argv
     if "-h" in args:
-        print main.__doc__
+        print(main.__doc__)
         sys.exit()
     verbose = pmagplotlib.verbose
     dir_path = pmag.get_named_arg_from_sys('-WD', '.')
@@ -83,8 +83,8 @@ def main():
                     Bcr2.append(Bcr[-1])
                 except ValueError:
                     if verbose:
-                        print 'hysteresis data for ', row['specimen'],
-                        print ' not found'
+                        print('hysteresis data for ', row['specimen'], end=' ')
+                        print(' not found')
 
     #
     # now plot the day and S-Bc, S-Bcr plots
@@ -102,11 +102,11 @@ def main():
     files = {}
     if len(locations) > 0:
         locations = locations[:-1]
-    for key in DSC.keys():
+    for key in list(DSC.keys()):
         files[key] = 'LO:_' + locations + '_' + 'SI:__SA:__SP:__TY:_' + key + '_.' + fmt
     if verbose:
         pmagplotlib.drawFIGS(DSC)
-        ans = raw_input(" S[a]ve to save plots, return to quit:  ")
+        ans = input(" S[a]ve to save plots, return to quit:  ")
         if ans == "a":
             pmagplotlib.saveP(DSC, files)
         else:

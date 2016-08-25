@@ -8,4 +8,4 @@ for line  in StationNFO:
     lon=float(nfo[1])
     StaName= nfo[3]
     Zone,Easting, Northing=UTM.LLtoUTM(Ellipsoid,lon,lat)
-    print StaName, ': ', Easting, Northing, Zone
+    print(StaName, ': ', Easting, Northing, Zone)

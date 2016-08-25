@@ -12,7 +12,7 @@ def main():
         -Fsa FILE, output er_samples.txt file for updating, default is to overwrite er_samples.txt
     """
     if "-h" in sys.argv:
-        print main.__doc__
+        print(main.__doc__)
         sys.exit()
         
     dataframe = extractor.command_line_dataframe([['WD', False, '.'], ['ID', False, '.'], ['f', True, ''], ['Fsa', False, None]])

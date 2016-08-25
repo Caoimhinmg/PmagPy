@@ -32,7 +32,7 @@ def main():
     D,D1,D2=[],[],[]
     Flip=0
     if '-h' in sys.argv: # check if help is needed
-        print main.__doc__
+        print(main.__doc__)
         sys.exit() # graceful quit
     if '-ant' in  sys.argv: Flip=1
     if '-f' in sys.argv:
@@ -77,7 +77,7 @@ def main():
     R2=pars_2['r']
     F=(N-2)*((R1+R2-R)/(N-R1-R2))
     Fcrit=pmag.fcalc(2,2*(N-2))
-    print '%7.2f %7.2f'%(F,Fcrit)
+    print('%7.2f %7.2f'%(F,Fcrit))
 
 if __name__ == "__main__":
     main()

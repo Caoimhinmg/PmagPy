@@ -26,7 +26,7 @@ def main():
     """
     do_help = pmag.get_flag_arg_from_sys('-h')
     if do_help:
-        print main.__doc__
+        print(main.__doc__)
         return False
     res_file = pmag.get_named_arg_from_sys('-f', 'pmag_results.txt')
     crit_file = pmag.get_named_arg_from_sys('-fcr', '')

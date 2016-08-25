@@ -91,7 +91,7 @@ class PintPars(object):
                     new_stat = map_magic.spd[ind]
                     self.calculate.append(new_stat)
                 except ValueError:
-                    print 'doesn\'t start with \'specimen\'', stat
+                    print('doesn\'t start with \'specimen\'', stat)
                     #self.calculate.append(stat)
         ####
         self.specimen_Data = Data[self.s]
@@ -185,7 +185,7 @@ class PintPars(object):
         
     def York_Regression(self):
         if self.n < 3:
-            print "-W- Cannot run statistics with only {} points".format(self.n)
+            print("-W- Cannot run statistics with only {} points".format(self.n))
             return None
         x_segment, y_segment = self.x_Arai_segment, self.y_Arai_segment
         x_mean, y_mean = self.x_Arai_mean, self.y_Arai_mean
@@ -329,7 +329,7 @@ class PintPars(object):
         return Zstar
                              
     def get_IZZI_MD(self):
-        import lib.lib_IZZI_MD as lib_izzi
+        import SPD.lib.lib_IZZI_MD as lib_izzi
         if ('IZ' in self.steps_Arai):
             IZZI_MD = lib_izzi.get_IZZI_MD(self.x_Arai, self.y_Arai, self.steps_Arai, self.start, self.end)
             self.pars['IZZI_MD'] = IZZI_MD
@@ -568,7 +568,7 @@ class PintPars(object):
     def calculate_all_statistics(self):
         #print "calling calculate_all_statistics in spd.py"
         if self.n < 3:
-            print "-W- Cannot run statistics with only {} points".format(self.n)
+            print("-W- Cannot run statistics with only {} points".format(self.n))
             self.pars = {}
             return None
         self.York_Regression()
@@ -729,7 +729,7 @@ class PintPars(object):
     def reqd_stats(self):
         #print 'do REQD STATS'
         if self.n < 3:
-            print "-W- Cannot run statistics with only {} points".format(self.n)
+            print("-W- Cannot run statistics with only {} points".format(self.n))
             self.pars = {}
             return None
         stats_run = []
@@ -773,9 +773,9 @@ def make_thing():
     cwd = os.getcwd()
     main_dir = cwd + '/SPD'
     try:
-        import new_lj_thellier_gui_spd as tgs
+        from . import new_lj_thellier_gui_spd as tgs
         gui = tgs.Arai_GUI('/magic_measurements.txt', main_dir)
-        specimens = gui.Data.keys()
+        specimens = list(gui.Data.keys())
         thing = PintPars(gui.Data, '0238x6011044', 473., 623.)
         thing.calculate_all_statistics()
         #new_thing = PintPars(gui.Data, '0238x5721062', 100. + 273., 525. + 273.)
@@ -784,8 +784,8 @@ def make_thing():
         thing2 = PintPars(gui2.Data, '0335x1031411', 273., 743.)
         return thing, thing2
     except Exception as ex:
-        print 'could not make standard specimen objects'
-        print ex
+        print('could not make standard specimen objects')
+        print(ex)
     
 
 #thing2 = PintPars(gui.Data, specimens[0], 473., 623.)

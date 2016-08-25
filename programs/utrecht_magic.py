@@ -64,7 +64,7 @@ def main(command_line=True, **kwargs):
             input_dir_path = dir_path
         output_dir_path = dir_path
         if "-h" in args:
-            print main.__doc__
+            print(main.__doc__)
             return False
         if '-F' in args:
             ind = args.index("-F")
@@ -127,7 +127,7 @@ def main(command_line=True, **kwargs):
     # parse data
 
     # Open up the Utrecht file and read the header information
-    print 'mag_file in utrecht_file', mag_file
+    print('mag_file in utrecht_file', mag_file)
     data = open(mag_file, 'rU')
     line = data.readline()
     line_items = line.split(',')
@@ -136,28 +136,28 @@ def main(command_line=True, **kwargs):
     machine=line_items[1]
     machine=machine.replace("\"","")
     machine=machine.rstrip('\n')
-    print "operator=", operator
-    print "machine=", machine
+    print("operator=", operator)
+    print("machine=", machine)
     line = data.readline()
     while line != '"END"' :
         line_items = line.split(',')
         sample_name=line_items[0]
         sample_name=sample_name.replace("\"","")
-        print "sample_name=", sample_name
+        print("sample_name=", sample_name)
         free_string=line_items[1]
         free_string=free_string.replace("\"","")
-        print "free_string=", free_string
+        print("free_string=", free_string)
         dec=line_items[2]
-        print "dec=", dec
+        print("dec=", dec)
         inc=line_items[3]
-        print "inc=", inc
+        print("inc=", inc)
         volume=float(line_items[4])
         volume=volume * 1e-6 # enter volume in cm^3, convert to m^3
-        print "volume=", volume
+        print("volume=", volume)
         bed_plane=line_items[5]
-        print "bed_plane=", bed_plane
+        print("bed_plane=", bed_plane)
         bed_tilt=line_items[6]
-        print "bed_tilt=", bed_tilt
+        print("bed_tilt=", bed_tilt)
 
         # Configure et er_samples table
         ErSampRec['er_sample_name'] = sample_name
@@ -178,7 +178,7 @@ def main(command_line=True, **kwargs):
         items = line.split(",")
     #    exit()
         while line != '9999' :
-            print line
+            print(line)
             step=items[0]
             step=step.split('.')
             step_value=step[0]
@@ -198,19 +198,19 @@ def main(command_line=True, **kwargs):
             measurement_inc = direction[1]
             measurement_magn_moment = direction[2] * 1.0e-12 # the data are in pico-Am^2 - this converts to Am^2
             measurement_magn_volume = direction[2] * 1.0e-12 / volume # data volume normalized - converted to A/m
-            print "measurement_magn_moment=", measurement_magn_moment
-            print "measurement_magn_volume=", measurement_magn_volume
+            print("measurement_magn_moment=", measurement_magn_moment)
+            print("measurement_magn_volume=", measurement_magn_volume)
             error = items[4]
             date=items[5]
             date=date.strip('"')
             date=date.split("-")
-            print date
+            print(date)
             time=items[6]
             time=time.strip('"')
             time=time.split(":")
-            print time
+            print(time)
             date_time = date[0] + ":" + date[1] + ":" + date[2] + ":" + time[0] + ":" + time[1] + ":" + "0.0"   
-            print date_time
+            print(date_time)
 
             MagRec = {}
             
@@ -234,7 +234,7 @@ def main(command_line=True, **kwargs):
             meas_type = "LP-DIR-T"
             if step_value == '0':
                 meas_type = "LT-NO"
-            print "step_type=", step_type
+            print("step_type=", step_type)
             if step_type == '0':
                 if meas_type == "" : 
                     meas_type = "LT-T-Z" 
@@ -255,7 +255,7 @@ def main(command_line=True, **kwargs):
                     meas_type = "LT-PTRM-Z" 
                 else:
                     meas_type = meas_type + ":" + "LT-PTRM-Z" 
-            print "meas_type=", meas_type
+            print("meas_type=", meas_type)
             MagRec['magic_method_codes'] = meas_type
             MagRec["measurement_magn_moment"] = measurement_magn_moment
             MagRec["measurement_magn_volume"] = measurement_magn_volume
@@ -274,12 +274,12 @@ def main(command_line=True, **kwargs):
 
 # write out the data to MagIC data files
     pmag.magic_write(samp_file, SampOuts, 'er_samples')
-    print "sample orientations put in ", samp_file
+    print("sample orientations put in ", samp_file)
 #    MagOuts = pmag.measurements_methods(MagRecs, noave)
 #    pmag.magic_write(meas_file, MagOuts, 'magic_measurements')
     pmag.magic_write(meas_file, MagRecs, 'magic_measurements')
-    print "results put in ", meas_file
-    print "exit!"
+    print("results put in ", meas_file)
+    print("exit!")
     return True, meas_file
 
 def do_help():

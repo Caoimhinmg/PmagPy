@@ -117,7 +117,7 @@ def main(command_line=True, **kwargs):
     if command_line:
         args=sys.argv
         if "-h" in args:
-            print main.__doc__
+            print(main.__doc__)
             return False
         if "-usr" in args:
             ind=args.index("-usr")
@@ -130,7 +130,7 @@ def main(command_line=True, **kwargs):
         if '-f' in args:
             ind=args.index("-f")
             magfile=args[ind+1]
-            print "got magfile:", magfile
+            print("got magfile:", magfile)
         if "-dc" in args:
             ind=args.index("-dc")
             labfield=float(args[ind+1])*1e-6
@@ -178,25 +178,25 @@ def main(command_line=True, **kwargs):
         try:
             input=open(magfile,'rU')
         except:
-            print "bad mag file name"
+            print("bad mag file name")
             return False, "bad mag file name"
     else: 
-        print "mag_file field is required option"
-        print main.__doc__
+        print("mag_file field is required option")
+        print(main.__doc__)
         return False, "mag_file field is required option"
                               
     if specnum!=0:
         specnum=-specnum
     if "4" in samp_con:
         if "-" not in samp_con:
-            print "option [4] must be in form 4-Z where Z is an integer"
+            print("option [4] must be in form 4-Z where Z is an integer")
             return False, "option [4] must be in form 4-Z where Z is an integer"
         else:
             Z=int(samp_con.split("-")[1])
             samp_con="4"
     if "7" in samp_con:
         if "-" not in samp_con:
-            print "option [7] must be in form 7-Z where Z is an integer"
+            print("option [7] must be in form 7-Z where Z is an integer")
             return False, "option [7] must be in form 7-Z where Z is an integer"
         else:
             Z=int(samp_con.split("-")[1])
@@ -205,7 +205,7 @@ def main(command_line=True, **kwargs):
     if codelist:
         codes=codelist.split(':')
     else:
-        print "Must select experiment type (-LP option)"
+        print("Must select experiment type (-LP option)")
         return False, "Must select experiment type (-LP option)"
     if "AF" in codes:
         demag='AF' 
@@ -216,7 +216,7 @@ def main(command_line=True, **kwargs):
         if labfield: LPcode="LP-PI-TRM"
         if "ANI" in codes:
             if not labfield:
-                print "missing lab field option"
+                print("missing lab field option")
                 return False, "missing lab field option"
             LPcode="LP-AN-TRM"
 
@@ -229,7 +229,7 @@ def main(command_line=True, **kwargs):
         demag="T"
         # dc should be in the code
         if not labfield:
-            print "missing lab field option"
+            print("missing lab field option")
             return False, "missing lab field option"
 
         LPcode="LP-TRM-CR" # TRM in different cooling rates
@@ -279,7 +279,7 @@ def main(command_line=True, **kwargs):
         inc_tilted=rec[11]
         moment_emu=float(rec[12])
 
-        if specimen not in Data.keys():
+        if specimen not in list(Data.keys()):
             Data[specimen]=[]
             
         # check duplicate treatments:
@@ -288,7 +288,7 @@ def main(command_line=True, **kwargs):
         if len(Data[specimen])>0:
             if treatment==Data[specimen][-1]['treatment']:
                 del(Data[specimen][-1])
-                print "-W- Identical treatments in file %s magfile line %i: specimen %s, treatment %s ignoring the first. " %(magfile, line_no, specimen,".".join(treatment))
+                print("-W- Identical treatments in file %s magfile line %i: specimen %s, treatment %s ignoring the first. " %(magfile, line_no, specimen,".".join(treatment)))
 
         this_line_data={}
         this_line_data['specimen']=specimen
@@ -306,13 +306,13 @@ def main(command_line=True, **kwargs):
         Data[specimen].append(this_line_data)
 
         
-    print "-I- done reading file %s"%magfile
+    print("-I- done reading file %s"%magfile)
 
     #--------------------------------------
     # Convert to MagIC
     #--------------------------------------
     
-    specimens_list=Data.keys()
+    specimens_list=list(Data.keys())
     specimens_list.sort()
 
 
@@ -395,12 +395,12 @@ def main(command_line=True, **kwargs):
                     elif treatment_type=="A":
                         methcode="LP-DIR-AF:LT-AF-Z"
                     else:
-                        print "ERROR in treatment field line %i... exiting until you fix the problem" %line_no
+                        print("ERROR in treatment field line %i... exiting until you fix the problem" %line_no)
                         return False, "ERROR in treatment field line %i... exiting until you fix the problem" %line_no
                                             
                 # AARM experiment    
                 else:
-                    print "Dont supprot AARM in HUJI format yet. sorry... do be DONE"
+                    print("Dont supprot AARM in HUJI format yet. sorry... do be DONE")
                 MagRec["magic_method_codes"]=methcode
                 MagRec["magic_experiment_name"]=specimen+ ":" + LPcode
                 MagRec["measurement_number"]="%i"%i
@@ -485,7 +485,7 @@ def main(command_line=True, **kwargs):
                             methcode="LP-PI-TRM:LP-PI-TRM-IZ"
 
                     else:
-                            print "ERROR in treatment field line %i... exiting until you fix the problem" %line_no
+                            print("ERROR in treatment field line %i... exiting until you fix the problem" %line_no)
                             return False, "ERROR in treatment field line %i... exiting until you fix the problem" %line_no
                     
                     MagRec["magic_method_codes"]=LT_code+":"+methcode
@@ -624,7 +624,7 @@ def main(command_line=True, **kwargs):
 
     
     pmag.magic_write(meas_file,MagRecs,'magic_measurements')
-    print "-I- results put in ",meas_file
+    print("-I- results put in ",meas_file)
     return True, meas_file
 
 def do_help():

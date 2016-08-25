@@ -30,7 +30,7 @@ def main():
         ind=args.index("-WD")
         dir_path=args[ind+1]
     if "-h" in args:
-        print main.__doc__
+        print(main.__doc__)
         sys.exit()
     if '-F' in args:
         ind=args.index("-F")

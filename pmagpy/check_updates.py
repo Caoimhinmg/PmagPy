@@ -16,7 +16,7 @@ def get_pmag_dir():
     # this is correct for py2exe
     win_frozen = is_frozen()
     if win_frozen:
-        path = os.path.abspath(unicode(sys.executable, sys.getfilesystemencoding()))
+        path = os.path.abspath(str(sys.executable, sys.getfilesystemencoding()))
         path = os.path.split(path)[0]
         return path
     # this is correct for py2app
@@ -33,7 +33,7 @@ def get_pmag_dir():
         if not os.path.exists(lib_dir):
             lib_dir = os.getcwd()
         if not os.path.exists(lib_dir):
-            print '-W- Can\'t find the data model!  Make sure you have installed pmagpy using pip: "pip install pmagpy --upgrade"'
+            print('-W- Can\'t find the data model!  Make sure you have installed pmagpy using pip: "pip install pmagpy --upgrade"')
             return
         lib_dir = lib_dir.strip(os.pathsep)
         if lib_dir.endswith('pmagpy'):
@@ -41,7 +41,7 @@ def get_pmag_dir():
         else:
             pmag_dir = lib_dir
         if not os.path.exists(pmag_dir):
-            print '-W- Can\'t find the data model!  Make sure you have installed pmagpy using pip: "pip install pmagpy --upgrade"'
+            print('-W- Can\'t find the data model!  Make sure you have installed pmagpy using pip: "pip install pmagpy --upgrade"')
             return
         return pmag_dir # os.path.dirname(os.path.realpath(__file__))
 
@@ -59,7 +59,7 @@ def is_frozen():
     return False
 
 def get_version():
-    import version
+    from . import version
     #global pmagpy_path
     pmagpy_path = get_pmag_dir()
     return version.version

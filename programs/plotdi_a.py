@@ -29,7 +29,7 @@ def main():
     fmt,plot='svg',0
     if len(sys.argv) > 0:
         if '-h' in sys.argv: # check if help is needed
-            print main.__doc__
+            print(main.__doc__)
             sys.exit() # graceful quit
         if '-fmt' in sys.argv:
             ind=sys.argv.index('-fmt')
@@ -65,7 +65,7 @@ def main():
     for k in range(len(Pars)):
         pmagplotlib.plotELL(EQ['eq'],Pars[k],'b',0,1) # plot ellipses
     files={}
-    for key in EQ.keys():
+    for key in list(EQ.keys()):
         files[key]=key+'.'+fmt 
     titles={}
     titles['eq']='Equal Area Plot'
@@ -76,7 +76,7 @@ def main():
         pmagplotlib.saveP(EQ,files)
     elif plot==0:
         pmagplotlib.drawFIGS(EQ)
-        ans=raw_input(" S[a]ve to save plot, [q]uit, Return to continue:  ")
+        ans=input(" S[a]ve to save plot, [q]uit, Return to continue:  ")
         if ans=="q": sys.exit()
         if ans=="a": 
             pmagplotlib.saveP(EQ,files) 

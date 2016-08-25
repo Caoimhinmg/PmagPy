@@ -13,7 +13,7 @@ here = path.abspath(path.dirname(__file__))
 
 packages=find_packages(exclude=['pmagpy', 'pmagpy_tests.examples'
                                 'SPD', 'pmag_env'])
-print 'packages', packages
+print(('packages', packages))
 
 
 # Get the long description from the README file

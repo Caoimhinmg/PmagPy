@@ -5,7 +5,7 @@ from os import path
 import pkg_resources
 command = path.split(sys.argv[0])[-1]
 
-from program_envs import prog_env
+from .program_envs import prog_env
 mpl_env = prog_env.get(command[:-3])
 import matplotlib
 if mpl_env:
@@ -14,32 +14,32 @@ else:
     matplotlib.use("TKAgg")
 
 if "-v" in sys.argv:
-    print "You are running:"
+    print("You are running:")
     try:
-        print pkg_resources.get_distribution('pmagpy')
+        print(pkg_resources.get_distribution('pmagpy'))
     except pkg_resources.DistributionNotFound:
         pass
     try:
-        print pkg_resources.get_distribution('pmagpy-cli')
+        print(pkg_resources.get_distribution('pmagpy-cli'))
     except pkg_resources.DistributionNotFound:
         pass
 
 
-import generic_magic
-import sio_magic
-import cit_magic
-import _2g_bin_magic
-import huji_magic
-import huji_magic_new
-import ldeo_magic
-import iodp_srm_magic
-import iodp_dscr_magic
-import iodp_samples_magic
-import pmd_magic
-import tdt_magic
-import jr6_jr6_magic
-import jr6_txt_magic
-import bgc_magic
+from . import generic_magic
+from . import sio_magic
+from . import cit_magic
+from . import _2g_bin_magic
+from . import huji_magic
+from . import huji_magic_new
+from . import ldeo_magic
+from . import iodp_srm_magic
+from . import iodp_dscr_magic
+from . import iodp_samples_magic
+from . import pmd_magic
+from . import tdt_magic
+from . import jr6_jr6_magic
+from . import jr6_txt_magic
+from . import bgc_magic
 
 
 __all__ = [generic_magic, sio_magic, cit_magic, _2g_bin_magic, huji_magic,

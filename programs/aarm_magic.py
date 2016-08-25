@@ -53,7 +53,7 @@ def main():
         ind=args.index('-WD')
         dir_path=args[ind+1]
     if "-h" in args:
-        print main.__doc__
+        print(main.__doc__)
         sys.exit()
     if "-usr" in args:
         ind=args.index("-usr")
@@ -85,15 +85,15 @@ def main():
     meas_data,file_type=pmag.magic_read(meas_file)
     meas_data=pmag.get_dictitem(meas_data,'magic_method_codes','LP-AN-ARM','has')
     if file_type != 'magic_measurements':
-        print file_type
-        print file_type,"This is not a valid magic_measurements file " 
+        print(file_type)
+        print(file_type,"This is not a valid magic_measurements file ") 
         sys.exit()
     if coord!='-1': # need to read in sample data
         samp_data,file_type=pmag.magic_read(samp_file)
         if file_type != 'er_samples':
-            print file_type
-            print file_type,"This is not a valid er_samples file " 
-            print "Only specimen coordinates will be calculated"
+            print(file_type)
+            print(file_type,"This is not a valid er_samples file ") 
+            print("Only specimen coordinates will be calculated")
             coord='-1'
     #
     # sort the specimen names
@@ -196,7 +196,7 @@ def main():
             RmagResRec["er_site_names"]=data[0]["er_site_name"]
             RmagResRec["magic_experiment_names"]=RmagSpecRec["rmag_anisotropy_name"]+":AARM"
             RmagResRec["er_citation_names"]="This study"
-            if "magic_instrument_codes" in data[0].keys():
+            if "magic_instrument_codes" in list(data[0].keys()):
                 RmagSpecRec["magic_instrument_codes"]=data[0]["magic_instrument_codes"]
             else:  
                 RmagSpecRec["magic_instrument_codes"]=""
@@ -223,7 +223,7 @@ def main():
                     redo=0
                 while redo==1:
                     if p>=len(SO_priorities):
-                        print "no orientation data for ",s
+                        print("no orientation data for ",s)
                         orient["sample_azimuth"]=""
                         orient["sample_dip"]=""
                         method_codes.append("SO-NO")
@@ -332,14 +332,14 @@ def main():
             RmagSpecRecs.append(RmagSpecRec)
             RmagResRecs.append(RmagResRec)
         else:
-            print 'skipping specimen ',s,' only 9 positions supported','; this has ',npos
+            print('skipping specimen ',s,' only 9 positions supported','; this has ',npos)
             specimen+=1
     if rmag_anis=="":rmag_anis="rmag_anisotropy.txt"
     pmag.magic_write(rmag_anis,RmagSpecRecs,'rmag_anisotropy')
-    print "specimen tensor elements stored in ",rmag_anis
+    print("specimen tensor elements stored in ",rmag_anis)
     if rmag_res=="":rmag_res="rmag_results.txt"
     pmag.magic_write(rmag_res,RmagResRecs,'rmag_results')
-    print "specimen statistics and eigenparameters stored in ",rmag_res
+    print("specimen statistics and eigenparameters stored in ",rmag_res)
 
 if __name__ == "__main__":
     main()

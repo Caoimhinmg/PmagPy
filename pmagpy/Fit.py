@@ -74,7 +74,7 @@ class Fit():
         elif coordinate_system == 'DA-DIR-TILT' or coordinate_system == 'tilt-corrected':
             return self.tiltpars
         else:
-            print("-E- no such parameters to fetch for " + coordinate_system + " in fit: " + self.name)
+            print(("-E- no such parameters to fetch for " + coordinate_system + " in fit: " + self.name))
             return None
 
     def put(self,specimen,coordinate_system,new_pars):
@@ -89,8 +89,8 @@ class Fit():
         """
 
         if specimen != None:
-            if type(new_pars) != dict or 'measurement_step_min' not in new_pars.keys() or 'measurement_step_max' not in new_pars.keys() or 'calculation_type' not in new_pars.keys():
-                print("-E- invalid parameters cannot assign to fit %s for specimen %s - was given:\n%s"%(self.name,specimen,str(new_pars)))
+            if type(new_pars) != dict or 'measurement_step_min' not in list(new_pars.keys()) or 'measurement_step_max' not in list(new_pars.keys()) or 'calculation_type' not in list(new_pars.keys()):
+                print(("-E- invalid parameters cannot assign to fit %s for specimen %s - was given:\n%s"%(self.name,specimen,str(new_pars))))
                 return self.get(coordinate_system)
 
             self.tmin = new_pars['measurement_step_min']
@@ -106,7 +106,7 @@ class Fit():
                     elif "%.1fmT"%t in steps: tl[i] = "%.1fmT"%t
                     elif "%.0fC"%t in steps: tl[i] = "%.0fC"%t
                     else:
-                        print("-E- Step " + str(tl[i]) + " does not exsist (func: Fit.put)")
+                        print(("-E- Step " + str(tl[i]) + " does not exsist (func: Fit.put)"))
                         tl[i] = str(t)
                 self.tmin,self.tmax = tl
             elif meas_data != None:
@@ -118,10 +118,10 @@ class Fit():
                     elif "%.1fmT"%t in steps: tl[i] = "%.1fmT"%t
                     elif "%.0fC"%t in steps: tl[i] = "%.0fC"%t
                     else:
-                        print("-E- Step " + str(tl[i]) + " does not exsist (func: Fit.put)")
+                        print(("-E- Step " + str(tl[i]) + " does not exsist (func: Fit.put)"))
                         tl[i] = str(t)
                 self.tmin,self.tmax = tl
-            else: self.tmin,self.tmax = map(str, tl)
+            else: self.tmin,self.tmax = list(map(str, tl))
 
         if coordinate_system == 'DA-DIR' or coordinate_system == 'specimen':
             self.pars = new_pars

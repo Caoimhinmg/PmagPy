@@ -124,7 +124,7 @@ class ErMagicBuilder(object):
         if not self.data_model:
             self.data_model = validate_upload.get_data_model()
             if not self.data_model:
-                print "Can't access MagIC-data-model at the moment.\nIf you are working offline, make sure MagIC-data-model.txt is in your PmagPy directory (or download it from https://github.com/ltauxe/PmagPy and put it in your PmagPy directory).\nOtherwise, check your internet connection"
+                print("Can't access MagIC-data-model at the moment.\nIf you are working offline, make sure MagIC-data-model.txt is in your PmagPy directory (or download it from https://github.com/ltauxe/PmagPy and put it in your PmagPy directory).\nOtherwise, check your internet connection")
                 return False
 
         # actual is at position 0, reqd is at position 1, optional at position 2
@@ -144,8 +144,8 @@ class ErMagicBuilder(object):
             data_dict = self.data_model[data_type]
         except KeyError:
             return [], []
-        reqd_headers = sorted([header for header in data_dict.keys() if data_dict[header]['data_status'] == 'Required'])
-        optional_headers = sorted([header for header in data_dict.keys() if data_dict[header]['data_status'] != 'Required'])
+        reqd_headers = sorted([header for header in list(data_dict.keys()) if data_dict[header]['data_status'] == 'Required'])
+        optional_headers = sorted([header for header in list(data_dict.keys()) if data_dict[header]['data_status'] != 'Required'])
         return reqd_headers, optional_headers
 
     def init_actual_headers(self):
@@ -153,9 +153,9 @@ class ErMagicBuilder(object):
             if data_list:
                 er_header, pmag_header = set([]), set([])
                 for item in data_list:
-                    for key in item.data.keys():
+                    for key in list(item.data.keys()):
                         er_header.add(key)
-                    for key in item.pmag_data.keys():
+                    for key in list(item.pmag_data.keys()):
                         pmag_header.add(key)
                 ## old non-thorough way
                 #er_header = data_list[0].data.keys()
@@ -181,7 +181,7 @@ class ErMagicBuilder(object):
         if age_list:
             age_headers = []
             for item in age_list:
-                for header in item.age_data.keys():
+                for header in list(item.age_data.keys()):
                     if header not in age_headers:
                         age_headers.append(header)
             self.headers['age']['er'][0] = age_headers
@@ -212,13 +212,13 @@ class ErMagicBuilder(object):
         """
         specimen = self.find_by_name(old_spec_name, self.specimens)
         if not specimen:
-            print '-W- {} is not a currently existing specimen, so cannot be updated'.format(old_spec_name)
+            print('-W- {} is not a currently existing specimen, so cannot be updated'.format(old_spec_name))
             return False
         if new_sample_name:
             new_sample = self.find_by_name(new_sample_name, self.samples)
             if not new_sample:
-                print """-W- {} is not a currently existing sample.
-Creating a new sample named: {} """.format(new_sample_name, new_sample_name)
+                print("""-W- {} is not a currently existing sample.
+Creating a new sample named: {} """.format(new_sample_name, new_sample_name))
                 new_sample = self.add_sample(new_sample_name)
         else:
             new_sample = None
@@ -248,8 +248,8 @@ Creating a new sample named: {} """.format(new_sample_name, new_sample_name)
         if samp_name:
             sample = self.find_by_name(samp_name, self.samples)
             if not sample:
-                print """-W- {} is not a currently existing sample.
-Creating a new sample named: {} """.format(samp_name, samp_name)
+                print("""-W- {} is not a currently existing sample.
+Creating a new sample named: {} """.format(samp_name, samp_name))
                 sample = self.add_sample(samp_name)
         else:
             sample = None
@@ -269,13 +269,13 @@ Creating a new sample named: {} """.format(samp_name, samp_name)
         """
         sample = self.find_by_name(old_samp_name, self.samples)
         if not sample:
-            print '-W- {} is not a currently existing sample, so it cannot be updated'.format(old_samp_name)
+            print('-W- {} is not a currently existing sample, so it cannot be updated'.format(old_samp_name))
             return False
         if new_site_name:
             new_site = self.find_by_name(new_site_name, self.sites)
             if not new_site:
-                print """-W- {} is not a currently existing site.
-Adding site named: {}""".format(new_site_name, new_site_name)#sample.site or '*empty*', sample)
+                print("""-W- {} is not a currently existing site.
+Adding site named: {}""".format(new_site_name, new_site_name))#sample.site or '*empty*', sample)
                 new_site = self.add_site(new_site_name)
         else:
             new_site = None
@@ -290,8 +290,8 @@ Adding site named: {}""".format(new_site_name, new_site_name)#sample.site or '*e
         if site_name:
             site = self.find_by_name(site_name, self.sites)
             if not site:
-                print """-W- {} is not a currently existing site.
-Creating a new site named: {} """.format(site_name, site_name)
+                print("""-W- {} is not a currently existing site.
+Creating a new site named: {} """.format(site_name, site_name))
                 site = self.add_site(site_name)
         else:
             site = None
@@ -337,7 +337,7 @@ Creating a new site named: {} """.format(site_name, site_name)
         """
         site = self.find_by_name(old_site_name, self.sites)
         if not site:
-            print '-W- {} is not a currently existing site, so it cannot be updated.'.format(old_site_name)
+            print('-W- {} is not a currently existing site, so it cannot be updated.'.format(old_site_name))
             return False
         if new_location_name:
             if site.location:
@@ -346,8 +346,8 @@ Creating a new site named: {} """.format(site_name, site_name)
                     old_location.sites.remove(site)
             new_location = self.find_by_name(new_location_name, self.locations)
             if not new_location:
-                print """-W- {} is not a currently existing location.
-Adding location with name: {}""".format(new_location_name, new_location_name)
+                print("""-W- {} is not a currently existing location.
+Adding location with name: {}""".format(new_location_name, new_location_name))
                 new_location = self.add_location(new_location_name)
             new_location.sites.append(site)
         else:
@@ -406,7 +406,7 @@ Adding location with name: {}""".format(new_location_name, new_location_name)
         """
         location = self.find_by_name(old_location_name, self.locations)
         if not location:
-            print '-W- {} is not a currently existing location, so it cannot be updated.'.format(old_location_name)
+            print('-W- {} is not a currently existing location, so it cannot be updated.'.format(old_location_name))
             return False
         location.change_location(new_location_name, new_data, replace_data)
         return location
@@ -442,7 +442,7 @@ Adding location with name: {}""".format(new_location_name, new_location_name)
         item = self.find_by_name(item_name, items_list)
         if not item:
             msg = '-W- You have tried to add age data for {}, but there is no {} by that name'.format(item_name, self.age_type)
-            print msg
+            print(msg)
             return False
         else:
             required = {key: '' for key in self.headers['age']['er'][1]}
@@ -461,15 +461,15 @@ Adding location with name: {}""".format(new_location_name, new_location_name)
         """
         meas_file = os.path.join(self.WD, 'magic_measurements.txt')
         if not os.path.isfile(meas_file):
-            print "-I- No magic_measurements.txt file"
+            print("-I- No magic_measurements.txt file")
             return {}
         try:
             meas_data, file_type = pmag.magic_read(meas_file)
         except IOError:
-            print "-I- No magic_measurements.txt file"
+            print("-I- No magic_measurements.txt file")
             return {}
         if file_type == 'bad_file':
-            print "-E- ERROR: Can't read magic_measurements.txt file. File is corrupted."
+            print("-E- ERROR: Can't read magic_measurements.txt file. File is corrupted.")
 
         old_specimen_name = ''
         #start_time = time.time()
@@ -533,7 +533,7 @@ Adding location with name: {}""".format(new_location_name, new_location_name)
         self.get_data()
         for child, parent in [('specimen', 'sample'), ('sample', 'site'),
                               ('site', 'location'), ('location', '')]:
-            print '-I- Getting {} info'.format(child)
+            print('-I- Getting {} info'.format(child))
             self.get_magic_info(child, parent)
         self.get_age_info()
 
@@ -558,23 +558,23 @@ Adding location with name: {}""".format(new_location_name, new_location_name)
         else:
             short_filename = os.path.split(filename)[1]
             magic_file = filename
-        print '-I- Attempting to read {}'.format(magic_file)
+        print('-I- Attempting to read {}'.format(magic_file))
         if not os.path.isfile(magic_file):
-            print '-W- Could not find {}'.format(magic_file)
+            print('-W- Could not find {}'.format(magic_file))
             return False
         # get the data from the appropriate .txt file
 
         data_dict, header, file_type = self.read_magic_file(magic_file, magic_name,
                                                             sort_by_file_type=sort_by_file_type)
         if not data_dict:
-            print '-W- Could not read in file: {}.\n    Make sure it is a MagIC-format file'.format(magic_file)
+            print('-W- Could not read in file: {}.\n    Make sure it is a MagIC-format file'.format(magic_file))
             return False
 
         item_type = file_type[:-1]
         if item_type != expected_item_type:
-            print '-W- Expected data of type: {} but instead got: {}'.format(expected_item_type,
-                                                                             item_type)
-            print '-W- Using type: {}'.format(item_type)
+            print('-W- Expected data of type: {} but instead got: {}'.format(expected_item_type,
+                                                                             item_type))
+            print('-W- Using type: {}'.format(item_type))
             if item_type == 'age':
                 self.get_age_info(filename)
                 return 'age'
@@ -657,7 +657,7 @@ Adding location with name: {}""".format(new_location_name, new_location_name)
         else:
             magic_file = filename
         if not os.path.isfile(magic_file):
-            print '-W- Could not find {}'.format(magic_file)
+            print('-W- Could not find {}'.format(magic_file))
             return False
 
         data_dict, header, file_type = self.read_magic_file(magic_file, 'by_line_number')
@@ -670,26 +670,26 @@ Adding location with name: {}""".format(new_location_name, new_location_name)
 
         # if it is an age file,
         # determine level for each age and assign it to the appropriate pmag object
-        for item_dict in data_dict.values():
+        for item_dict in list(data_dict.values()):
             item_type = None
             for dtype in ['specimen', 'sample', 'site', 'location']:
                 header_name = dtype + '_name'
-                if header_name in item_dict.keys():
+                if header_name in list(item_dict.keys()):
                     if item_dict[header_name]:
                         item_type = dtype
                         item_name = item_dict[header_name]
                         break
             if not item_type:
-                print '-W- You must provide a name for your age'
-                print '    These data:\n{}\n    will not be imported'.format(item_dict)
+                print('-W- You must provide a name for your age')
+                print('    These data:\n{}\n    will not be imported'.format(item_dict))
                 continue
             items_list = self.data_lists[item_type][0]
             item = self.find_by_name(item_name, items_list)
             if not item:
                 ## the following code creates any item in ages that does not exist already
                 ## however, we may not WANT that behavior
-                print """-I- A {} named {} in your age file was not found in the data object:
-    Now initializing {} {}""".format(item_type, item_name, item_type, item_name)
+                print("""-I- A {} named {} in your age file was not found in the data object:
+    Now initializing {} {}""".format(item_type, item_name, item_type, item_name))
                 ind = self.ancestry.index(item_type)
                 parent_type = self.ancestry[ind+1]
                 parent_header, parent_constructor = None, None
@@ -700,8 +700,8 @@ Adding location with name: {}""".format(new_location_name, new_location_name)
                 parent = self.find_by_name(parent_name, parent_list)
                 # if the parent item doesn't exist, and should, create it
                 if parent_name and not parent:
-                    print """-I- A {} named {} in your age file was not found in the data object:
-    Now initializing {} {}""".format(parent_type, parent_name, parent_type, parent_name)
+                    print("""-I- A {} named {} in your age file was not found in the data object:
+    Now initializing {} {}""".format(parent_type, parent_name, parent_type, parent_name))
                     parent = parent_constructor(parent_name, None)
                 item_constructor = self.data_lists[item_type][2]
                 if not parent:
@@ -730,7 +730,7 @@ Adding location with name: {}""".format(new_location_name, new_location_name)
         elif first_line[0] == "t" or first_line[1] == "t":
             delim = '\t'
         else:
-            print '-W- error reading ', path
+            print('-W- error reading ', path)
             return False, None, 'bad_file'
 
         file_type = first_line.strip('\n').split(delim)[1]
@@ -746,7 +746,7 @@ Adding location with name: {}""".format(new_location_name, new_location_name)
         for line in fin.readlines():
             tmp_data = {}
             tmp_line = line.strip('\n').split(delim)
-            for i in xrange(len(header)):
+            for i in range(len(header)):
                 if i < len(tmp_line):
                     tmp_data[header[i]] = tmp_line[i]
                 else:
@@ -811,7 +811,7 @@ Adding location with name: {}""".format(new_location_name, new_location_name)
         """
         warnings = self.validate_data()
 
-        print '-I- Writing all saved data to files'
+        print('-I- Writing all saved data to files')
         if self.measurements:
             self.write_measurements_file()
         for dtype in ['specimen', 'sample', 'site']:
@@ -824,7 +824,7 @@ Adding location with name: {}""".format(new_location_name, new_location_name)
         self.write_age_file()
 
         if warnings:
-            print '-W- ' + str(warnings)
+            print('-W- ' + str(warnings))
             return False, warnings
 
         return True, None
@@ -947,7 +947,7 @@ Adding location with name: {}""".format(new_location_name, new_location_name)
         Write ages.txt based on updated ErMagicBuilder data object
         """
         if not self.write_ages:
-            print '-I- No age data available to write'
+            print('-I- No age data available to write')
             return
         first_headers = self.first_age_headers
         actual_headers = sorted(self.headers['age']['er'][0])
@@ -1319,8 +1319,8 @@ class Pmag_object(object):
             data_dict = self.data_model[data_type]
         except KeyError:
             return [], []
-        reqd_headers = sorted([header for header in data_dict.keys() if data_dict[header]['data_status'] == 'Required'])
-        optional_headers = sorted([header for header in data_dict.keys() if data_dict[header]['data_status'] != 'Required'])
+        reqd_headers = sorted([header for header in list(data_dict.keys()) if data_dict[header]['data_status'] == 'Required'])
+        optional_headers = sorted([header for header in list(data_dict.keys()) if data_dict[header]['data_status'] != 'Required'])
         return reqd_headers, optional_headers
 
     def update_data(self, data=None, replace_data=False):
@@ -1377,7 +1377,7 @@ class Specimen(Pmag_object):
         if not self.sample:
             return
         for dtype in ['class', 'lithology', 'type']:
-            if 'specimen_' + dtype in self.data.keys():
+            if 'specimen_' + dtype in list(self.data.keys()):
                 if (not self.data['specimen_' + dtype]) or (self.data['specimen_' + dtype].lower() == "not specified"):
                     if self.sample.data['sample_' + dtype]:
                         value = self.sample.data['sample_' + dtype]
@@ -1426,7 +1426,7 @@ class Sample(Pmag_object):
         if not self.site:
             return
         for dtype in ['geologic_classes', 'geologic_lithologies', 'geologic_types']:
-            if dtype in self.data.keys():
+            if dtype in list(self.data.keys()):
                 if (not self.data[dtype]) or (self.data[dtype].lower() == "not specified"):
                     if site_key not in self.site.data:
                         self.site.data[dtype] = ''
@@ -1434,9 +1434,9 @@ class Sample(Pmag_object):
                         value = self.site.data[dtype]
                         self.data[dtype] = value
         for dtype in ['lat', 'lon']:
-            if dtype in self.data.keys():
+            if dtype in list(self.data.keys()):
                 if not self.data[dtype]:
-                    if dtype in self.site.data.keys():
+                    if dtype in list(self.site.data.keys()):
                         self.data[dtype] = self.site.data[dtype]
 
 
@@ -1537,7 +1537,7 @@ def remove_dict_headers(data_dict):
                    'er_location_name', 'pmag_result_name',
                    'er_specimen_names', 'er_sample_names', 'er_site_names',
                    'magic_experiment_name', 'measurement_number']:
-        if header in data_dict.keys():
+        if header in list(data_dict.keys()):
             data_dict.pop(header)
     return data_dict
 
@@ -1556,8 +1556,8 @@ def combine_dicts(new_dict, old_dict):
     also returns key, value pairs from old_dict, if that key does not exist in new_dict.
     if a key is present in both new_dict and old_dict, the new_dict value will take precedence.
     """
-    old_data_keys = old_dict.keys()
-    new_data_keys = new_dict.keys()
+    old_data_keys = list(old_dict.keys())
+    new_data_keys = list(new_dict.keys())
     all_keys = set(old_data_keys).union(new_data_keys)
     combined_data_dict = {}
     for k in all_keys:

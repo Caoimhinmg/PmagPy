@@ -1,8 +1,8 @@
-import pmag
-import pmagplotlib
-import data_model3 as data_model
-from new_builder import Contribution
-import validate_upload3 as val_up3
+from . import pmag
+from . import pmagplotlib
+from . import data_model3 as data_model
+from .new_builder import Contribution
+from . import validate_upload3 as val_up3
 import copy
 import numpy as np
 import random
@@ -34,9 +34,9 @@ def igrf(input_list):
 
 
 def igrf_print(igrf_array):
-    print "Declination: %0.3f"%(igrf_array[0])
-    print "Inclination: %0.3f"%(igrf_array[1])
-    print "Intensity: %0.3f nT"%(igrf_array[0])
+    print("Declination: %0.3f"%(igrf_array[0]))
+    print("Inclination: %0.3f"%(igrf_array[1]))
+    print("Intensity: %0.3f nT"%(igrf_array[0]))
 
 
 def fisher_mean(dec=None, inc=None, di_block=None):
@@ -100,10 +100,10 @@ def print_direction_mean(mean_dictionary):
     ----------
     mean_dictionary: output dictionary of pmag.fisher_mean
     """
-    print 'Dec: ' + str(round(mean_dictionary['dec'],1)) + '  Inc: ' + str(round(mean_dictionary['inc'],1))
-    print 'Number of directions in mean (n): ' + str(mean_dictionary['n'])
-    print 'Angular radius of 95% confidence (a_95): ' + str(round(mean_dictionary['alpha95'],1))
-    print 'Precision parameter (k) estimate: ' + str(round(mean_dictionary['k'],1))
+    print('Dec: ' + str(round(mean_dictionary['dec'],1)) + '  Inc: ' + str(round(mean_dictionary['inc'],1)))
+    print('Number of directions in mean (n): ' + str(mean_dictionary['n']))
+    print('Angular radius of 95% confidence (a_95): ' + str(round(mean_dictionary['alpha95'],1)))
+    print('Precision parameter (k) estimate: ' + str(round(mean_dictionary['k'],1)))
 
 
 def print_pole_mean(mean_dictionary):
@@ -115,10 +115,10 @@ def print_pole_mean(mean_dictionary):
     ----------
     mean_dictionary: output dictionary of pmag.fisher_mean
     """
-    print 'Plong: ' + str(round(mean_dictionary['dec'],1)) + '  Plat: ' + str(round(mean_dictionary['inc'],1))
-    print 'Number of directions in mean (n): ' + str(mean_dictionary['n'])
-    print 'Angular radius of 95% confidence (A_95): ' + str(round(mean_dictionary['alpha95'],1))
-    print 'Precision parameter (k) estimate: ' + str(round(mean_dictionary['k'],1))
+    print('Plong: ' + str(round(mean_dictionary['dec'],1)) + '  Plat: ' + str(round(mean_dictionary['inc'],1)))
+    print('Number of directions in mean (n): ' + str(mean_dictionary['n']))
+    print('Angular radius of 95% confidence (A_95): ' + str(round(mean_dictionary['alpha95'],1)))
+    print('Precision parameter (k) estimate: ' + str(round(mean_dictionary['k'],1)))
 
 
 def fishrot(k=20, n=100, dec=0, inc=90, di_block=True):
@@ -173,7 +173,7 @@ def tk03(n=100,dec=0,lat=0,rev='no',G2=0,G3=0):
     for k in range(n):
         gh=pmag.mktk03(8,k,G2,G3) # terms and random seed
         long=random.randint(0,360) # get a random longitude, between 0 and 359
-        vec= pmag.getvec(gh,lat,long)  # send field model and lat to getvec
+        vec= pmag.getvec(gh,lat,int)  # send field model and lat to getvec
         vec[0]+=dec
         if vec[0]>=360.:
             vec[0]-=360.
@@ -297,7 +297,7 @@ def bootstrap_fold_test(Data,num_sims=1000,min_untilt=-10,max_untilt=120, beddin
     bedding_error : (circular standard deviation) for uncertainty on bedding poles
     """
 
-    print 'doing ',num_sims,' iterations...please be patient.....'
+    print('doing ',num_sims,' iterations...please be patient.....')
 
     if bedding_error!=0:
         kappa=(81./bedding_error)**2
@@ -322,7 +322,7 @@ def bootstrap_fold_test(Data,num_sims=1000,min_untilt=-10,max_untilt=120, beddin
         plt.savefig(os.path.join(save_folder, 'eq_tc') + '.' + fmt)
     plt.show()
 
-    Percs = range(min_untilt,max_untilt)
+    Percs = list(range(min_untilt,max_untilt))
     Cdf = []
     Untilt = []
     plt.figure()
@@ -357,13 +357,13 @@ def bootstrap_fold_test(Data,num_sims=1000,min_untilt=-10,max_untilt=120, beddin
     plt.axvline(x=Untilt[upper],ymin=0,ymax=1,linewidth=1,linestyle='--')
     title = '%i - %i %s'%(Untilt[lower],Untilt[upper],'percent unfolding')
     if ninety_nine is True:
-        print 'tightest grouping of vectors obtained at (99% confidence bounds):'
-        print int(.005*num_sims), ' - ', int(.995*num_sims),'percent unfolding'
-    print ""
-    print 'tightest grouping of vectors obtained at (95% confidence bounds):'
-    print title
-    print 'range of all bootstrap samples: '
-    print Untilt[0], ' - ', Untilt[-1],'percent unfolding'
+        print('tightest grouping of vectors obtained at (99% confidence bounds):')
+        print(int(.005*num_sims), ' - ', int(.995*num_sims),'percent unfolding')
+    print("")
+    print('tightest grouping of vectors obtained at (95% confidence bounds):')
+    print(title)
+    print('range of all bootstrap samples: ')
+    print(Untilt[0], ' - ', Untilt[-1],'percent unfolding')
     plt.title(title)
     if save == True:
         plt.savefig(os.path.join(save_folder, 'bootstrap_CDF') + '.' + fmt)
@@ -545,39 +545,39 @@ def common_mean_watson(Data1,Data2,NumSims=5000,plot='no', save=False, save_fold
     D2=(pars_2['dec'],pars_2['inc'])
     angle=pmag.angle(D1,D2)
 
-    print "Results of Watson V test: "
-    print ""
-    print "Watson's V:           " '%.1f' %(V)
-    print "Critical value of V:  " '%.1f' %(Vcrit)
+    print("Results of Watson V test: ")
+    print("")
+    print("Watson's V:           " '%.1f' %(V))
+    print("Critical value of V:  " '%.1f' %(Vcrit))
 
     if V<Vcrit:
-        print '"Pass": Since V is less than Vcrit, the null hypothesis'
-        print 'that the two populations are drawn from distributions'
-        print 'that share a common mean direction can not be rejected.'
+        print('"Pass": Since V is less than Vcrit, the null hypothesis')
+        print('that the two populations are drawn from distributions')
+        print('that share a common mean direction can not be rejected.')
     elif V>Vcrit:
-        print '"Fail": Since V is greater than Vcrit, the two means can'
-        print 'be distinguished at the 95% confidence level.'
-    print ""
-    print "M&M1990 classification:"
-    print ""
-    print "Angle between data set means: " '%.1f'%(angle)
-    print "Critical angle for M&M1990:   " '%.1f'%(critical_angle)
+        print('"Fail": Since V is greater than Vcrit, the two means can')
+        print('be distinguished at the 95% confidence level.')
+    print("")
+    print("M&M1990 classification:")
+    print("")
+    print("Angle between data set means: " '%.1f'%(angle))
+    print("Critical angle for M&M1990:   " '%.1f'%(critical_angle))
 
     if V>Vcrit:
-        print ""
+        print("")
     elif V<Vcrit:
         if critical_angle<5:
-            print "The McFadden and McElhinny (1990) classification for"
-            print "this test is: 'A'"
+            print("The McFadden and McElhinny (1990) classification for")
+            print("this test is: 'A'")
         elif critical_angle<10:
-            print "The McFadden and McElhinny (1990) classification for"
-            print "this test is: 'B'"
+            print("The McFadden and McElhinny (1990) classification for")
+            print("this test is: 'B'")
         elif critical_angle<20:
-            print "The McFadden and McElhinny (1990) classification for"
-            print "this test is: 'C'"
+            print("The McFadden and McElhinny (1990) classification for")
+            print("this test is: 'C'")
         else:
-            print "The McFadden and McElhinny (1990) classification for"
-            print "this test is: 'INDETERMINATE;"
+            print("The McFadden and McElhinny (1990) classification for")
+            print("this test is: 'INDETERMINATE;")
 
     if plot=='yes':
         CDF={'cdf':1}
@@ -822,7 +822,7 @@ def fishqq(lon=None, lat=None, di_block=None):
     elif QQ_dict1:
         return QQ_dict1
     else:
-        print 'you need N> 10 for at least one mode'
+        print('you need N> 10 for at least one mode')
 
 
 def lat_from_inc(inc,a95=None):
@@ -1469,20 +1469,20 @@ def combine_magic(filenames, outfile):
     """
     datasets = []
     if not filenames:
-        print "You must provide at least one file"
+        print("You must provide at least one file")
         return False
     for infile in filenames:
         if not os.path.isfile(infile):
-            print "{} is not a valid file name".format(infile)
+            print("{} is not a valid file name".format(infile))
             return False
         dataset, file_type = pmag.magic_read(infile)
-        print "File ",infile," read in with ",len(dataset), " records"
+        print("File ",infile," read in with ",len(dataset), " records")
         for rec in dataset:
             datasets.append(rec)
 
     Recs, keys = pmag.fillkeys(datasets)
     pmag.magic_write(outfile,Recs,file_type)
-    print "All records stored in ",outfile
+    print("All records stored in ",outfile)
     return True
 
 
@@ -1500,7 +1500,7 @@ def aniso_depthplot(ani_file='rmag_anisotropy.txt', meas_file='magic_measurement
     # format files to use full path
     ani_file = os.path.join(dir_path, ani_file)
     if not os.path.isfile(ani_file):
-        print "Could not find rmag_anisotropy type file: {}.\nPlease provide a valid file path and try again".format(ani_file)
+        print("Could not find rmag_anisotropy type file: {}.\nPlease provide a valid file path and try again".format(ani_file))
         return False, "Could not find rmag_anisotropy type file: {}.\nPlease provide a valid file path and try again".format(ani_file)
 
     meas_file = os.path.join(dir_path, meas_file)
@@ -1508,14 +1508,14 @@ def aniso_depthplot(ani_file='rmag_anisotropy.txt', meas_file='magic_measurement
 
     if age_file:
         if not os.path.isfile(age_file):
-            print 'Warning: you have provided an invalid age file.  Attempting to use sample file instead'
+            print('Warning: you have provided an invalid age file.  Attempting to use sample file instead')
             age_file = None
             depth_scale = 'sample_core_depth'
             samp_file = os.path.join(dir_path, samp_file)
         else:
             samp_file = os.path.join(dir_path, age_file)
             depth_scale='age'
-            print 'Warning: you have provided an er_ages format file, which will take precedence over er_samples'
+            print('Warning: you have provided an er_ages format file, which will take precedence over er_samples')
     else:
         samp_file = os.path.join(dir_path, samp_file)
 
@@ -1783,7 +1783,7 @@ def core_depthplot(input_dir_path='.', meas_file='magic_measurements.txt', spc_f
     #        print 'error in susceptibility units'
     #        return False, 'error in susceptibility units'
     else:
-       print 'method: {} not supported'.format(meth)
+       print('method: {} not supported'.format(meth))
        return False, 'method: "{}" not supported'.format(meth)
 
     if wt_file:
@@ -1822,7 +1822,7 @@ def core_depthplot(input_dir_path='.', meas_file='magic_measurements.txt', spc_f
         Results,file_type=pmag.magic_read(res_file)
     if norm:
         ErSpecs,file_type=pmag.magic_read(wt_file)
-        print len(ErSpecs), ' specimens read in from ',wt_file
+        print(len(ErSpecs), ' specimens read in from ',wt_file)
 
     if not os.path.isfile(spc_file):
         if not os.path.isfile(meas_file):
@@ -1852,7 +1852,7 @@ def core_depthplot(input_dir_path='.', meas_file='magic_measurements.txt', spc_f
                 for k in range(len(keys)):CoreRec[keys[k]]=line.split(',')[k]
                 Cores.append(CoreRec)
         if len(Cores)==0:
-            print 'no Core depth information available: import core summary file'
+            print('no Core depth information available: import core summary file')
             sum_file=""
     Data=[]
     if depth_scale=='sample_core_depth' or depth_scale == 'mbsf':
@@ -1864,7 +1864,7 @@ def core_depthplot(input_dir_path='.', meas_file='magic_measurements.txt', spc_f
         ylab="Depth (mcd)"
         depth_scale = 'sample_composite_depth'
     else:
-        print 'Warning: You have provided unsupported depth scale: {}.\nUsing default (mbsf) instead.'.format(depth_scale)
+        print('Warning: You have provided unsupported depth scale: {}.\nUsing default (mbsf) instead.'.format(depth_scale))
         depth_scale = 'sample_core_depth'
         ylab="Depth (mbsf)"
     # collect the data for plotting declination
@@ -1876,7 +1876,7 @@ def core_depthplot(input_dir_path='.', meas_file='magic_measurements.txt', spc_f
     if pltSus and os.path.isfile(meas_file): # plot the bulk measurement data
         Meas,file_type=pmag.magic_read(meas_file)
         meas_key='measurement_magn_moment'
-        print len(Meas), ' measurements read in from ',meas_file
+        print(len(Meas), ' measurements read in from ',meas_file)
         for m in intlist: # find the intensity key with data
             meas_data=pmag.get_dictitem(Meas,m,'','F') # get all non-blank data for this specimen
             if len(meas_data)>0:
@@ -1937,37 +1937,37 @@ def core_depthplot(input_dir_path='.', meas_file='magic_measurements.txt', spc_f
                 maxInt=max(Ints)
                 minInt=min(Ints)
         if len(Depths)==0:
-            print 'no bulk measurement data matched your request'
+            print('no bulk measurement data matched your request')
     SpecDepths,SpecDecs,SpecIncs=[],[],[]
     FDepths,FDecs,FIncs=[],[],[]
     if spc_file: # add depths to spec data
-        print 'spec file found'
+        print('spec file found')
         BFLs=pmag.get_dictitem(Specs,'magic_method_codes','DE-BFL','has')  # get all the discrete data with best fit lines
         for spec in BFLs:
             if location=="":
                location=spec['er_location_name']
             samp=pmag.get_dictitem(Samps,'er_sample_name',spec['er_sample_name'],'T')
-            if len(samp)>0 and depth_scale in samp[0].keys() and samp[0][depth_scale]!="":
+            if len(samp)>0 and depth_scale in list(samp[0].keys()) and samp[0][depth_scale]!="":
               if ylab=='Age': ylab=ylab+' ('+samp[0]['age_unit']+')' # get units of ages - assume they are all the same!
               if dmax==-1 or float(samp[0][depth_scale])<dmax and float(samp[0][depth_scale])>dmin: # filter for depth
                 SpecDepths.append(float(samp[0][depth_scale])) # fish out data with core_depth
                 SpecDecs.append(float(spec['specimen_dec'])) # fish out data with core_depth
                 SpecIncs.append(float(spec['specimen_inc'])) # fish out data with core_depth
             else:
-                print 'no core_depth found for: ',spec['er_specimen_name']
+                print('no core_depth found for: ',spec['er_specimen_name'])
         FMs=pmag.get_dictitem(Specs,'magic_method_codes','DE-FM','has')  # get all the discrete data with best fit lines
         for spec in FMs:
             if location=="":
                location=spec['er_location_name']
             samp=pmag.get_dictitem(Samps,'er_sample_name',spec['er_sample_name'],'T')
-            if len(samp)>0 and depth_scale in samp[0].keys() and samp[0][depth_scale]!="":
+            if len(samp)>0 and depth_scale in list(samp[0].keys()) and samp[0][depth_scale]!="":
               if ylab=='Age': ylab=ylab+' ('+samp[0]['age_unit']+')' # get units of ages - assume they are all the same!
               if dmax==-1 or float(samp[0][depth_scale])<dmax and float(samp[0][depth_scale])>dmin: # filter for depth
                 FDepths.append(float(samp[0][depth_scale]))# fish out data with core_depth
                 FDecs.append(float(spec['specimen_dec'])) # fish out data with core_depth
                 FIncs.append(float(spec['specimen_inc'])) # fish out data with core_depth
             else:
-                print 'no core_depth found for: ',spec['er_specimen_name']
+                print('no core_depth found for: ',spec['er_specimen_name'])
     ResDepths,ResDecs,ResIncs=[],[],[]
     if 'age' in depth_scale: # set y-key
         res_scale='average_age'
@@ -2009,7 +2009,7 @@ def core_depthplot(input_dir_path='.', meas_file='magic_measurements.txt', spc_f
     if wig_file:
         wigdat,file_type=pmag.magic_read(wig_file)
         swigdat=pmag.sort_diclist(wigdat,depth_scale)
-        keys=wigdat[0].keys()
+        keys=list(wigdat[0].keys())
         for key in keys:
             if key!=depth_scale:
                 plt_key=key
@@ -2240,7 +2240,7 @@ def download_magic(infile, dir_path='.', input_dir_path='.',
         if file_type[-1]=="\n":
             file_type=file_type[:-1]
         if print_progress==True:
-            print 'working on: ', repr(file_type)
+            print('working on: ', repr(file_type))
         if file_type not in type_list:
             type_list.append(file_type)
         else:
@@ -2263,7 +2263,7 @@ def download_magic(infile, dir_path='.', input_dir_path='.',
                     outfile=dir_path+"/"+file_type.strip()+'_'+str(filenum)+'.txt'
                 NewRecs=[]
                 for rec in Recs:
-                    if method_col in rec.keys():
+                    if method_col in list(rec.keys()):
                         meths=rec[method_col].split(":")
                         if len(meths)>0:
                             methods=""
@@ -2273,7 +2273,7 @@ def download_magic(infile, dir_path='.', input_dir_path='.',
                     NewRecs.append(rec)
                 pmag.magic_write(outfile,Recs,file_type)
                 if print_progress==True:
-                    print file_type," data put in ",outfile
+                    print(file_type," data put in ",outfile)
                 Recs=[]
                 LN+=1
                 break
@@ -2291,9 +2291,9 @@ def download_magic(infile, dir_path='.', input_dir_path='.',
                         Rec[keys[k]]=rec[k]
                         Recs.append(Rec)
                 else:
-                    print 'WARNING:  problem in file with line: '
-                    print line
-                    print 'skipping....'
+                    print('WARNING:  problem in file with line: ')
+                    print(line)
+                    print('skipping....')
                 LN+=1
     if len(Recs)>0:
         if filenum==0:
@@ -2302,7 +2302,7 @@ def download_magic(infile, dir_path='.', input_dir_path='.',
             outfile=dir_path+"/"+file_type.strip()+'_'+str(filenum)+'.txt'
         NewRecs=[]
         for rec in Recs:
-            if method_col in rec.keys():
+            if method_col in list(rec.keys()):
                 meths=rec[method_col].split(":")
                 if len(meths)>0:
                     methods=""
@@ -2312,7 +2312,7 @@ def download_magic(infile, dir_path='.', input_dir_path='.',
             NewRecs.append(rec)
         pmag.magic_write(outfile,Recs,file_type)
         if print_progress==True:
-            print file_type," data put in ",outfile
+            print(file_type," data put in ",outfile)
     # look through locations table and create separate directories for each location
     locs,locnum=[],1
     if 'locations' in type_list:
@@ -2321,27 +2321,27 @@ def download_magic(infile, dir_path='.', input_dir_path='.',
         for loc in locs:
             loc_name = loc['location']
             if print_progress==True:
-                print 'location_'+str(locnum)+": ", loc_name
+                print('location_'+str(locnum)+": ", loc_name)
             lpath=dir_path+'/Location_'+str(locnum)
             locnum+=1
             try:
                 os.mkdir(lpath)
             except:
-                print 'directory ',lpath,' already exists - overwriting everything: {}'.format(overwrite)
+                print('directory ',lpath,' already exists - overwriting everything: {}'.format(overwrite))
                 if not overwrite:
-                    print "-W- download_magic encountered a duplicate subdirectory ({}) and could not finish.\nRerun with overwrite=True, or unpack this file in a different directory.".format(lpath)
+                    print("-W- download_magic encountered a duplicate subdirectory ({}) and could not finish.\nRerun with overwrite=True, or unpack this file in a different directory.".format(lpath))
                     return False
             for f in type_list:
                 if print_progress==True:
-                    print 'unpacking: ',dir_path+'/'+f+'.txt'
+                    print('unpacking: ',dir_path+'/'+f+'.txt')
                 recs,file_type=pmag.magic_read(dir_path+'/'+f+'.txt')
                 if print_progress==True:
-                    print len(recs),' read in'
+                    print(len(recs),' read in')
                 lrecs=pmag.get_dictitem(recs, 'location', loc_name, 'T')
                 if len(lrecs)>0:
                     pmag.magic_write(lpath+'/'+f+'.txt',lrecs,file_type)
                     if print_progress==True:
-                        print len(lrecs),' stored in ',lpath+'/'+f+'.txt'
+                        print(len(lrecs),' stored in ',lpath+'/'+f+'.txt')
     return True
 
 
@@ -2369,7 +2369,7 @@ def upload_magic(concat=0, dir_path='.', data_model=None):
               'measurement_chi', 'specimen_k_prime','specimen_k_prime_sse','external_database_names',
               'external_database_ids', 'Further Notes', 'Typology', 'Notes (Year/Area/Locus/Level)',
               'Site', 'Object Number']
-    print "-I- Removing: ", RmKeys
+    print("-I- Removing: ", RmKeys)
     CheckDec = ['_dec', '_lon', '_azimuth', 'dip_direction']
     CheckSign = ['specimen_b_beta']
     last = file_names[-1]
@@ -2378,20 +2378,20 @@ def upload_magic(concat=0, dir_path='.', data_model=None):
     # read in the data
         Data,file_type=pmag.magic_read(File)
         if file_type!="bad_file":
-            print "-I- file", File, " successfully read in"
+            print("-I- file", File, " successfully read in")
             if len(RmKeys)>0:
                 for rec in Data:
                     # remove unwanted keys
                     for key in RmKeys:
-                        if key=='specimen_Z' and key in rec.keys():
+                        if key=='specimen_Z' and key in list(rec.keys()):
                             rec[key]='specimen_z' # change  # change this to lower case
-                        if key in rec.keys():
+                        if key in list(rec.keys()):
                             del rec[key] # get rid of unwanted keys
                     # make sure b_beta is positive
-                    if 'specimen_b_beta' in rec.keys() and rec['specimen_b_beta']!="": # ignore blanks
+                    if 'specimen_b_beta' in list(rec.keys()) and rec['specimen_b_beta']!="": # ignore blanks
                         if float(rec['specimen_b_beta'])< 0:
                             rec['specimen_b_beta']=str(-float(rec['specimen_b_beta']))  # make sure value is positive
-                            print '-I- adjusted to positive: ','specimen_b_beta',rec['specimen_b_beta']
+                            print('-I- adjusted to positive: ','specimen_b_beta',rec['specimen_b_beta'])
                     # make all declinations/azimuths/longitudes in range 0=>360.
                     rec = pmag.adjust_all_to_360(rec)
             if file_type=='er_locations':
@@ -2405,7 +2405,7 @@ def upload_magic(concat=0, dir_path='.', data_model=None):
                 for rec in Data:
                     if ignore == False:
                         break
-                    keys = rec.keys()
+                    keys = list(rec.keys())
                     exclude_keys = ['er_citation_names', 'er_site_name', 'er_sample_name',
                                     'er_location_name', 'er_specimen_names', 'er_sample_names']
                     for key in exclude_keys:
@@ -2426,7 +2426,7 @@ def upload_magic(concat=0, dir_path='.', data_model=None):
                         NewSamps.append(orient)
                         Done.append(rec['er_sample_name'])
                 Data=NewSamps
-                print 'only highest priority orientation record from er_samples.txt read in '
+                print('only highest priority orientation record from er_samples.txt read in ')
             if file_type=='er_specimens': #  only specimens that have sample names
                 NewData,SpecDone=[],[]
                 for rec in Data:
@@ -2434,8 +2434,8 @@ def upload_magic(concat=0, dir_path='.', data_model=None):
                         NewData.append(rec)
                         SpecDone.append(rec['er_specimen_name'])
                     else:
-                        print 'no valid sample record found for: '
-                        print rec
+                        print('no valid sample record found for: ')
+                        print(rec)
                 Data=NewData
                 #print 'only measurements that have specimen/sample info'
             if file_type=='magic_measurements': #  only measurements that have specimen names
@@ -2445,8 +2445,8 @@ def upload_magic(concat=0, dir_path='.', data_model=None):
                     if rec['er_specimen_name'] in SpecDone:
                         NewData.append(rec)
                     else:
-                        print 'no valid specimen record found for: '
-                        print rec
+                        print('no valid specimen record found for: ')
+                        print(rec)
                         no_specs.append(rec)
                 #print set([record['er_specimen_name'] for record in no_specs])
                 Data = NewData
@@ -2459,7 +2459,7 @@ def upload_magic(concat=0, dir_path='.', data_model=None):
                     keystring = pmag.first_up(up,Data[0],file_type)
                 for rec in Data:
     # collect the method codes
-                    if "magic_method_codes" in rec.keys():
+                    if "magic_method_codes" in list(rec.keys()):
                         meths = rec["magic_method_codes"].split(':')
                         for meth in meths:
                             if meth.strip() not in methods:
@@ -2468,7 +2468,7 @@ def upload_magic(concat=0, dir_path='.', data_model=None):
                     try:
                         pmag.putout(up,keystring,rec)
                     except IOError:
-                        print '-W- File input error: slowing down'
+                        print('-W- File input error: slowing down')
                         time.sleep(1)
                         pmag.putout(up, keystring, rec)
 
@@ -2476,10 +2476,10 @@ def upload_magic(concat=0, dir_path='.', data_model=None):
             f=open(up,'a')
             f.write('>>>>>>>>>>\n')
             f.close()
-            print file_type, 'written to ',up
+            print(file_type, 'written to ',up)
         else:
-            print 'File:', File
-            print file_type, 'is bad or non-existent - skipping '
+            print('File:', File)
+            print(file_type, 'is bad or non-existent - skipping ')
 
     # write out the methods table
     first_rec,MethRec=1,{}
@@ -2490,7 +2490,7 @@ def upload_magic(concat=0, dir_path='.', data_model=None):
         try:
             pmag.putout(up,meth_keys,MethRec)
         except IOError:
-            print '-W- File input error: slowing down'
+            print('-W- File input error: slowing down')
             time.sleep(1)
             pmag.putout(up,meth_keys,MethRec)
     if concat==1:
@@ -2500,12 +2500,12 @@ def upload_magic(concat=0, dir_path='.', data_model=None):
 
 
     if os.path.isfile(up):
-        import validate_upload2 as validate_upload
+        from . import validate_upload2 as validate_upload
         validated = False
         validated, errors = validate_upload.read_upload(up, data_model)
 
     else:
-        print "no data found, upload file not created"
+        print("no data found, upload file not created")
         return False, "no data found, upload file not created", None
 
     #rename upload.txt according to location + timestamp
@@ -2526,9 +2526,9 @@ def upload_magic(concat=0, dir_path='.', data_model=None):
                 new_up = fname + "_" + str(i) + extension
                 break
     os.rename(up, new_up)
-    print "Finished preparing upload file: {} ".format(new_up)
+    print("Finished preparing upload file: {} ".format(new_up))
     if not validated:
-        print "-W- validation of upload file has failed.\nPlease fix above errors and try again.\nYou may run into problems if you try to upload this file to the MagIC database"
+        print("-W- validation of upload file has failed.\nPlease fix above errors and try again.\nYou may run into problems if you try to upload this file to the MagIC database")
         return False, "file validation has failed.  You may run into problems if you try to upload this file.", errors
     return new_up, '', None
 
@@ -2559,7 +2559,7 @@ def upload_magic3(concat=0, dir_path='.', dmodel=None, vocab=""):
               'measurement_chi', 'specimen_k_prime','specimen_k_prime_sse','external_database_names',
               'external_database_ids', 'Further Notes', 'Typology', 'Notes (Year/Area/Locus/Level)',
               'Site', 'Object Number']
-    print "-I- Removing: ", RmKeys
+    print("-I- Removing: ", RmKeys)
     last = file_names[-1]
     first_file = 1
     failing = []
@@ -2567,16 +2567,16 @@ def upload_magic3(concat=0, dir_path='.', dmodel=None, vocab=""):
     if not dmodel:
         dmodel = data_model.DataModel()
     for file_type in dtypes:
-        print "-"
+        print("-")
     # read in the data
         #Data, file_type = pmag.magic_read(File)
-        if file_type not in con.tables.keys():
-            print "-I- No {} file found, continuing".format(file_type)
+        if file_type not in list(con.tables.keys()):
+            print("-I- No {} file found, continuing".format(file_type))
             continue
         container = con.tables[file_type]
         df = container.df
         if len(df):
-            print "-I- {} file successfully read in".format(file_type)
+            print("-I- {} file successfully read in".format(file_type))
     # make some adjustments to clean up data
             # drop non MagIC keys
             DropKeys = set(RmKeys).intersection(df.columns)
@@ -2625,10 +2625,10 @@ def upload_magic3(concat=0, dir_path='.', dmodel=None, vocab=""):
             f = open(up, 'a')
             f.write('>>>>>>>>>>\n')
             f.close()
-            print "-I-", file_type, 'written to ',up
+            print("-I-", file_type, 'written to ',up)
         else:
             #print 'File:', File
-            print file_type, 'is bad or non-existent - skipping '
+            print(file_type, 'is bad or non-existent - skipping ')
     ## add to existing file
     if concat == 1:
         f = open(up, 'a')
@@ -2636,7 +2636,7 @@ def upload_magic3(concat=0, dir_path='.', dmodel=None, vocab=""):
         f.close()
 
     if not os.path.isfile(up):
-        print "no data found, upload file not created"
+        print("no data found, upload file not created")
         return False, "no data found, upload file not created", None
 
     #rename upload.txt according to location + timestamp
@@ -2661,18 +2661,18 @@ def upload_magic3(concat=0, dir_path='.', dmodel=None, vocab=""):
                 new_up = fname + "_" + str(i) + extension
                 break
     if not up:
-        print "-W- Could not create an upload file"
+        print("-W- Could not create an upload file")
         return False, "Could not create an upload file", None, None
     os.rename(up, new_up)
-    print "Finished preparing upload file: {} ".format(new_up)
+    print("Finished preparing upload file: {} ".format(new_up))
     if failing:
-        print "-W- validation of upload file has failed."
-        print "These tables have errors: {}".format(", ".join(failing))
-        print "Please fix above errors and try again."
-        print "You may run into problems if you try to upload this file to the MagIC database."
+        print("-W- validation of upload file has failed.")
+        print("These tables have errors: {}".format(", ".join(failing)))
+        print("Please fix above errors and try again.")
+        print("You may run into problems if you try to upload this file to the MagIC database.")
         return False, "file validation has failed.  You may run into problems if you try to upload this file.", failing, all_failing_items
     else:
-        print "-I- Your file has passed validation.  You should be able to upload it to the MagIC database without trouble!"
+        print("-I- Your file has passed validation.  You should be able to upload it to the MagIC database without trouble!")
     return new_up, '', None, None
 
 
@@ -2732,7 +2732,7 @@ def specimens_results_magic(infile='pmag_specimens.txt', measfile='magic_measure
     if not skip_intensities:
         # set model lat and
         if use_sample_latitude and use_paleolatitude:
-            print "you should set a paleolatitude file OR use present day lat - not both"
+            print("you should set a paleolatitude file OR use present day lat - not both")
             return False
         elif use_sample_latitude:
             get_model_lat = 1
@@ -2752,13 +2752,13 @@ def specimens_results_magic(infile='pmag_specimens.txt', measfile='magic_measure
                     ModelLat["sample_lat"]=tmp[1]
                     ModelLats.append(ModelLat)
             except:
-                print "use_paleolatitude option requires a valid paleolatitude file"
+                print("use_paleolatitude option requires a valid paleolatitude file")
         else:
             get_model_lat = 0 # skips VADM calculation entirely
 
 
     if plotsites and not skip_directions: # plot by site - set up plot window
-        import pmagplotlib
+        from . import pmagplotlib
         EQ={}
         EQ['eqarea']=1
         pmagplotlib.plot_init(EQ['eqarea'],5,5) # define figure 1 as equal area projection
@@ -2786,23 +2786,23 @@ def specimens_results_magic(infile='pmag_specimens.txt', measfile='magic_measure
         crit_data=pmag.default_criteria(nocrit) # use default criteria
     elif use_criteria == 'existing':
         crit_data,file_type=pmag.magic_read(critout) # use pmag_criteria file
-        print "Acceptance criteria read in from ", critout
+        print("Acceptance criteria read in from ", critout)
     accept={}
     for critrec in crit_data:
-        for key in critrec.keys():
+        for key in list(critrec.keys()):
 # need to migrate specimen_dang to specimen_int_dang for intensity data using old format
-            if 'IE-SPEC' in critrec.keys() and 'specimen_dang' in critrec.keys() and 'specimen_int_dang' not in critrec.keys():
+            if 'IE-SPEC' in list(critrec.keys()) and 'specimen_dang' in list(critrec.keys()) and 'specimen_int_dang' not in list(critrec.keys()):
                 critrec['specimen_int_dang']=critrec['specimen_dang']
                 del critrec['specimen_dang']
 # need to get rid of ron shaars sample_int_sigma_uT
-            if 'sample_int_sigma_uT' in critrec.keys():
+            if 'sample_int_sigma_uT' in list(critrec.keys()):
                 critrec['sample_int_sigma']='%10.3e'%(eval(critrec['sample_int_sigma_uT'])*1e-6)
-            if key not in accept.keys() and critrec[key]!='':
+            if key not in list(accept.keys()) and critrec[key]!='':
                 accept[key]=critrec[key]
 
     if use_criteria == 'default':
         pmag.magic_write(critout,[accept],'pmag_criteria')
-        print "\n Pmag Criteria stored in ",critout,'\n'
+        print("\n Pmag Criteria stored in ",critout,'\n')
 
 # now we're done slow dancing
 
@@ -2817,25 +2817,25 @@ def specimens_results_magic(infile='pmag_specimens.txt', measfile='magic_measure
     samples,sites=[],[]
     for rec in Data: # run through the data filling in missing keys and finding all components, coordinates available
 # fill in missing fields, collect unique sample and site names
-        if 'er_sample_name' not in rec.keys():
+        if 'er_sample_name' not in list(rec.keys()):
             rec['er_sample_name']=""
         elif rec['er_sample_name'] not in samples:
             samples.append(rec['er_sample_name'])
-        if 'er_site_name' not in rec.keys():
+        if 'er_site_name' not in list(rec.keys()):
             rec['er_site_name']=""
         elif rec['er_site_name'] not in sites:
             sites.append(rec['er_site_name'])
-        if 'specimen_int' not in rec.keys():rec['specimen_int']=''
-        if 'specimen_comp_name' not in rec.keys() or rec['specimen_comp_name']=="":rec['specimen_comp_name']='A'
+        if 'specimen_int' not in list(rec.keys()):rec['specimen_int']=''
+        if 'specimen_comp_name' not in list(rec.keys()) or rec['specimen_comp_name']=="":rec['specimen_comp_name']='A'
         if rec['specimen_comp_name'] not in Comps:Comps.append(rec['specimen_comp_name'])
         rec['specimen_tilt_correction']=rec['specimen_tilt_correction'].strip('\n')
-        if "specimen_tilt_correction" not in rec.keys(): rec["specimen_tilt_correction"]="-1" # assume sample coordinates
+        if "specimen_tilt_correction" not in list(rec.keys()): rec["specimen_tilt_correction"]="-1" # assume sample coordinates
         if rec["specimen_tilt_correction"] not in orient: orient.append(rec["specimen_tilt_correction"])  # collect available coordinate systems
-        if "specimen_direction_type" not in rec.keys(): rec["specimen_direction_type"]='l'  # assume direction is line - not plane
-        if "specimen_dec" not in rec.keys(): rec["specimen_direction_type"]=''  # if no declination, set direction type to blank
-        if "specimen_n" not in rec.keys(): rec["specimen_n"]=''  # put in n
-        if "specimen_alpha95" not in rec.keys(): rec["specimen_alpha95"]=''  # put in alpha95
-        if "magic_method_codes" not in rec.keys(): rec["magic_method_codes"]=''
+        if "specimen_direction_type" not in list(rec.keys()): rec["specimen_direction_type"]='l'  # assume direction is line - not plane
+        if "specimen_dec" not in list(rec.keys()): rec["specimen_direction_type"]=''  # if no declination, set direction type to blank
+        if "specimen_n" not in list(rec.keys()): rec["specimen_n"]=''  # put in n
+        if "specimen_alpha95" not in list(rec.keys()): rec["specimen_alpha95"]=''  # put in alpha95
+        if "magic_method_codes" not in list(rec.keys()): rec["magic_method_codes"]=''
      # start parsing data into SpecDirs, SpecPlanes, SpecInts
     SpecInts,SpecDirs,SpecPlanes=[],[],[]
     samples.sort() # get sorted list of samples and sites
@@ -3005,7 +3005,7 @@ def specimens_results_magic(infile='pmag_specimens.txt', measfile='magic_measure
     if len(PmagSamps)>0:
         TmpSamps,keylist=pmag.fillkeys(PmagSamps) # fill in missing keys from different types of records
         pmag.magic_write(sampout,TmpSamps,'pmag_samples') # save in sample output file
-        print ' sample averages written to ',sampout
+        print(' sample averages written to ',sampout)
 
 #
 #create site averages from specimens or samples as specified
@@ -3023,8 +3023,8 @@ def specimens_results_magic(infile='pmag_specimens.txt', measfile='magic_measure
                     for comp in Comps:
                         siteD=pmag.get_dictitem(tmp1,key+'_comp_name',comp,'T') # get all components comp
                         #remove bad data from means
-                        siteD=filter(lambda x: x['specimen_flag']=='g' if 'specimen_flag' in x else True , siteD)
-                        siteD=filter(lambda x: x['sample_flag']=='g' if 'sample_flag' in x else True , siteD)
+                        siteD=[x if 'specimen_flag' in x and x['specimen_flag']=='g' else True for x in siteD]
+                        siteD=[x if 'sample_flag' in x and x['sample_flag']=='g' else True for x in siteD]
                         if len(siteD)>0: # there are some for this site and component name
                             PmagSiteRec=pmag.lnpbykey(siteD,'site',key) # get an average for this site
                             PmagSiteRec['site_comp_name']=comp # decorate the site record
@@ -3045,7 +3045,7 @@ def specimens_results_magic(infile='pmag_specimens.txt', measfile='magic_measure
                             PmagSiteRec['magic_method_codes']= pmag.get_list(siteD,'magic_method_codes')+':'+ 'LP-DC'+str(DC)
                             PmagSiteRec['magic_method_codes'].strip(":")
                             if plotsites:
-                                print PmagSiteRec['er_site_name']
+                                print(PmagSiteRec['er_site_name'])
                                 pmagplotlib.plotSITE(EQ['eqarea'],PmagSiteRec,siteD,key) # plot and list the data
                                 pmagplotlib.drawFIGS(EQ)
                             PmagSites.append(PmagSiteRec)
@@ -3073,14 +3073,14 @@ def specimens_results_magic(infile='pmag_specimens.txt', measfile='magic_measure
                             pmagplotlib.drawFIGS(EQ)
                         PmagSites.append(PmagSiteRec)
             else:
-                print 'site information not found in er_sites for site, ',site,' site will be skipped'
+                print('site information not found in er_sites for site, ',site,' site will be skipped')
     for PmagSiteRec in PmagSites: # now decorate each dictionary some more, and calculate VGPs etc. for results table
         PmagSiteRec["er_citation_names"]="This study"
         PmagSiteRec["er_analyst_mail_names"]=user
         PmagSiteRec['magic_software_packages']=version_num
         if agefile != "": PmagSiteRec= pmag.get_age(PmagSiteRec,"er_site_name","site_inferred_",AgeNFO,DefaultAge)
         PmagSiteRec['pmag_criteria_codes']='ACCEPT'
-        if 'site_n_lines' in PmagSiteRec.keys() and 'site_n_planes' in PmagSiteRec.keys() and PmagSiteRec['site_n_lines']!="" and PmagSiteRec['site_n_planes']!="":
+        if 'site_n_lines' in list(PmagSiteRec.keys()) and 'site_n_planes' in list(PmagSiteRec.keys()) and PmagSiteRec['site_n_lines']!="" and PmagSiteRec['site_n_planes']!="":
             if int(PmagSiteRec["site_n_planes"])>0:
                 PmagSiteRec["magic_method_codes"]=PmagSiteRec['magic_method_codes']+":DE-FM-LP"
             elif int(PmagSiteRec["site_n_lines"])>2:
@@ -3094,7 +3094,7 @@ def specimens_results_magic(infile='pmag_specimens.txt', measfile='magic_measure
                 PmagResRec['pmag_criteria_codes']='ACCEPT'
                 dec=float(PmagSiteRec["site_dec"])
                 inc=float(PmagSiteRec["site_inc"])
-                if 'site_alpha95' in PmagSiteRec.keys() and PmagSiteRec['site_alpha95']!="":
+                if 'site_alpha95' in list(PmagSiteRec.keys()) and PmagSiteRec['site_alpha95']!="":
                     a95=float(PmagSiteRec["site_alpha95"])
                 else:a95=180.
                 sitedat=pmag.get_dictitem(SiteNFO,'er_site_name',PmagSiteRec['er_site_name'],'T')[0] # fish out site information (lat/lon, etc.)
@@ -3155,7 +3155,7 @@ def specimens_results_magic(infile='pmag_specimens.txt', measfile='magic_measure
             for rec in crecs:
                 precs.append({'dec':rec['site_dec'],'inc':rec['site_inc'],'name':rec['er_site_name'],'loc':rec['er_location_name']})
             polpars=pmag.fisher_by_pol(precs) # calculate average by polarity
-            for mode in polpars.keys(): # hunt through all the modes (normal=A, reverse=B, all=ALL)
+            for mode in list(polpars.keys()): # hunt through all the modes (normal=A, reverse=B, all=ALL)
                 PolRes={}
                 PolRes['er_citation_names']='This study'
                 PolRes["pmag_result_name"]="Polarity Average: Polarity "+mode #
@@ -3173,7 +3173,7 @@ def specimens_results_magic(infile='pmag_specimens.txt', measfile='magic_measure
 
     if not skip_intensities and nositeints!=1:
       for site in sites: # now do intensities for each site
-        if plotsites:print site
+        if plotsites:print(site)
         if not avg_intensities_by_sample: key,intlist='specimen',SpecInts # if using specimen level data
         if avg_intensities_by_sample: key,intlist='sample',PmagSamps # if using sample level data
         Ints=pmag.get_dictitem(intlist,'er_site_name',site,'T') # get all the intensities  for this site
@@ -3181,11 +3181,11 @@ def specimens_results_magic(infile='pmag_specimens.txt', measfile='magic_measure
             PmagSiteRec=pmag.average_int(Ints,key,'site') # get average intensity stuff for site table
             PmagResRec=pmag.average_int(Ints,key,'average') # get average intensity stuff for results table
             if plotsites: # if site by site examination requested - print this site out to the screen
-                for rec in Ints:print rec['er_'+key+'_name'],' %7.1f'%(1e6*float(rec[key+'_int']))
+                for rec in Ints:print(rec['er_'+key+'_name'],' %7.1f'%(1e6*float(rec[key+'_int'])))
                 if len(Ints)>1:
-                    print 'Average: ','%7.1f'%(1e6*float(PmagResRec['average_int'])),'N: ',len(Ints)
-                    print 'Sigma: ','%7.1f'%(1e6*float(PmagResRec['average_int_sigma'])),'Sigma %: ',PmagResRec['average_int_sigma_perc']
-                raw_input('Press any key to continue\n')
+                    print('Average: ','%7.1f'%(1e6*float(PmagResRec['average_int'])),'N: ',len(Ints))
+                    print('Sigma: ','%7.1f'%(1e6*float(PmagResRec['average_int_sigma'])),'Sigma %: ',PmagResRec['average_int_sigma_perc'])
+                input('Press any key to continue\n')
             er_location_name=Ints[0]["er_location_name"]
             PmagSiteRec["er_location_name"]=er_location_name # decorate the records
             PmagSiteRec["er_citation_names"]="This study"
@@ -3214,7 +3214,7 @@ def specimens_results_magic(infile='pmag_specimens.txt', measfile='magic_measure
                         mlat=pmag.magnetic_lat(inc) # get magnetic latitude using dipole formula
                         PmagResRec["vdm"]='%8.3e '% (pmag.b_vdm(b,mlat)) # get VDM with magnetic latitude
                         PmagResRec["vdm_n"]=PmagResRec['average_int_n']
-                        if 'average_int_sigma' in PmagResRec.keys() and PmagResRec['average_int_sigma']!="":
+                        if 'average_int_sigma' in list(PmagResRec.keys()) and PmagResRec['average_int_sigma']!="":
                             vdm_sig=pmag.b_vdm(float(PmagResRec['average_int_sigma']),mlat)
                             PmagResRec["vdm_sigma"]='%8.3e '% (vdm_sig)
                         else:
@@ -3255,13 +3255,13 @@ def specimens_results_magic(infile='pmag_specimens.txt', measfile='magic_measure
     if len(PmagSites)>0:
         Tmp,keylist=pmag.fillkeys(PmagSites)
         pmag.magic_write(siteout,Tmp,'pmag_sites')
-        print ' sites written to ',siteout
-    else: print "No Site level table"
+        print(' sites written to ',siteout)
+    else: print("No Site level table")
     if len(PmagResults)>0:
         TmpRes,keylist=pmag.fillkeys(PmagResults)
         pmag.magic_write(resout,TmpRes,'pmag_results')
-        print ' results written to ',resout
-    else: print "No Results level table"
+        print(' results written to ',resout)
+    else: print("No Results level table")
 
 
 def orientation_magic(or_con=1, dec_correction_con=1, dec_correction=0, bed_correction=True,
@@ -3409,10 +3409,10 @@ is the percent cooling rate factor to apply to specimens from this sample, DA-CR
                     rec = map_magic.mapping(samp_rec, map_magic.samp_magic3_2_magic2_map)
                     SampRecs.append(rec)
             SampRecs_sorted=pmag.sort_magic_data(SampRecs,'er_sample_name') # magic_data dictionary sorted by sample_name
-            print 'sample data to be appended to: ', samp_file
+            print('sample data to be appended to: ', samp_file)
         except Exception as ex:
-            print ex
-            print 'problem with existing file: ',samp_file, ' will create new.'
+            print(ex)
+            print('problem with existing file: ',samp_file, ' will create new.')
         try:
             SiteRecs,file_type=pmag.magic_read(site_file)
             # convert 3.0. site file to 2.5 format
@@ -3422,10 +3422,10 @@ is the percent cooling rate factor to apply to specimens from this sample, DA-CR
                 for site_rec in SiteRecs3:
                     SiteRecs.append(map_magic.mapping(site_rec, map_magic.site_magic3_2_magic2_map))
             SiteRecs_sorted=pmag.sort_magic_data(SiteRecs,'er_site_name') # magic_data dictionary sorted by site_name
-            print 'site data to be appended to: ',site_file
+            print('site data to be appended to: ',site_file)
         except Exception as ex:
-            print ex
-            print 'problem with existing file: ',site_file,' will create new.'
+            print(ex)
+            print('problem with existing file: ',site_file,' will create new.')
         try:
             ImageRecs,file_type=pmag.magic_read(image_file)
             # convert from 3.0. --> 2.5
@@ -3434,9 +3434,9 @@ is the percent cooling rate factor to apply to specimens from this sample, DA-CR
                 ImageRecs = []
                 for image_rec in ImageRecs3:
                     ImageRecs.append(map_magic.mapping(image_rec, map_magic.image_magic3_2_magic2_map))
-            print 'image data to be appended to: ',image_file
+            print('image data to be appended to: ',image_file)
         except:
-            print 'problem with existing file: ',image_file,' will create new.'
+            print('problem with existing file: ',image_file,' will create new.')
     #
     # read in file to convert
     #
@@ -3449,33 +3449,33 @@ is the percent cooling rate factor to apply to specimens from this sample, DA-CR
     # use map_magic in here...
 
     for OrRec in OrData:
-        if 'mag_azimuth' not in OrRec.keys():
+        if 'mag_azimuth' not in list(OrRec.keys()):
             OrRec['mag_azimuth']=""
-        if 'field_dip' not in OrRec.keys():
+        if 'field_dip' not in list(OrRec.keys()):
             OrRec['field_dip']=""
         if OrRec['mag_azimuth']==" ":
             OrRec["mag_azimuth"]=""
         if OrRec['field_dip']==" ":
             OrRec["field_dip"]=""
-        if 'sample_description' in OrRec.keys():
+        if 'sample_description' in list(OrRec.keys()):
             sample_description=OrRec['sample_description']
         else:
             sample_description=""
-        if 'sample_igsn' in OrRec.keys():
+        if 'sample_igsn' in list(OrRec.keys()):
             sample_igsn=OrRec['sample_igsn']
         else:
             sample_igsn=""
-        if 'sample_texture' in OrRec.keys():
+        if 'sample_texture' in list(OrRec.keys()):
             sample_texture=OrRec['sample_texture']
         else:
             sample_texture=""
-        if 'sample_cooling_rate' in OrRec.keys():
+        if 'sample_cooling_rate' in list(OrRec.keys()):
             sample_cooling_rate=OrRec['sample_cooling_rate']
         else:
             sample_cooling_rate=""
-        if 'cooling_rate_corr' in OrRec.keys():
+        if 'cooling_rate_corr' in list(OrRec.keys()):
             cooling_rate_corr=OrRec['cooling_rate_corr']
-            if 'cooling_rate_mcd' in OrRec.keys():
+            if 'cooling_rate_mcd' in list(OrRec.keys()):
                 cooling_rate_mcd=OrRec['cooling_rate_mcd']
             else:
                 cooling_rate_mcd='DA-CR'
@@ -3483,15 +3483,15 @@ is the percent cooling rate factor to apply to specimens from this sample, DA-CR
             cooling_rate_corr=""
             cooling_rate_mcd=""
         sample_orientation_flag='g'
-        if 'sample_orientation_flag' in OrRec.keys():
+        if 'sample_orientation_flag' in list(OrRec.keys()):
             if OrRec['sample_orientation_flag']=='b' or OrRec["mag_azimuth"]=="":
                 sample_orientation_flag='b'
         methcodes=method_codes  # initialize method codes
         if methcodes:
-            if 'method_codes' in OrRec.keys() and OrRec['method_codes'].strip()!="":
+            if 'method_codes' in list(OrRec.keys()) and OrRec['method_codes'].strip()!="":
                 methcodes=methcodes+":"+OrRec['method_codes'] # add notes
         else:
-            if 'method_codes' in OrRec.keys() and OrRec['method_codes'].strip()!="":
+            if 'method_codes' in list(OrRec.keys()) and OrRec['method_codes'].strip()!="":
                 methcodes=OrRec['method_codes'] # add notes
         codes=methcodes.replace(" ","").split(":")
         sample_name=OrRec["sample_name"]
@@ -3500,7 +3500,7 @@ is the percent cooling rate factor to apply to specimens from this sample, DA-CR
         # merge the new data colmuns calculated by orientation_magic with the existing data colmuns
         # this is done to make sure no previous data in er_samples.txt and er_sites.txt is lost.
 
-        if sample_name in SampRecs_sorted.keys():
+        if sample_name in list(SampRecs_sorted.keys()):
             Prev_MagRec=SampRecs_sorted[sample_name][-1]
             MagRec=Prev_MagRec
         else:
@@ -3511,26 +3511,26 @@ is the percent cooling rate factor to apply to specimens from this sample, DA-CR
         # the following keys were calculated or defined in the code above:
         for key in ['sample_igsn','sample_texture','sample_cooling_rate','cooling_rate_corr','cooling_rate_mcd','participantlist']:
             command= "var= %s"%key
-            exec command
+            exec(command)
             if var!="":
                 MagRec[key]=var
-            elif  key  in  Prev_MagRec.keys():
+            elif  key  in  list(Prev_MagRec.keys()):
                 MagRec[key]=Prev_MagRec[key]
             else:
                 MagRec[key]=""
 
             if location_name!="":
                 MagRec["er_location_name"]=location_name
-            elif  "er_location_name"  in  Prev_MagRec.keys():
+            elif  "er_location_name"  in  list(Prev_MagRec.keys()):
                 MagRec["er_location_name"]=Prev_MagRec["er_location_name"]
             else:
                 MagRec["er_location_name"]=""
 
         # the following keys are taken directly from OrRec dictionary:
         for key in ["sample_height","er_sample_alternatives"]:
-            if key  in OrRec.keys() and OrRec[key]!= "":
+            if key  in list(OrRec.keys()) and OrRec[key]!= "":
                 MagRec[key]=OrRec[key]
-            elif  key  in  Prev_MagRec.keys():
+            elif  key  in  list(Prev_MagRec.keys()):
                 MagRec[key]=Prev_MagRec[key]
             else:
                 MagRec[key]=""
@@ -3538,9 +3538,9 @@ is the percent cooling rate factor to apply to specimens from this sample, DA-CR
         # the following keys are cab be defined here as "Not Specified" :
 
         for key in ["sample_class","sample_lithology","sample_type"]:
-            if key  in OrRec.keys() and OrRec[key]!= "" and  OrRec[key]!= "Not Specified" :
+            if key  in list(OrRec.keys()) and OrRec[key]!= "" and  OrRec[key]!= "Not Specified" :
                 MagRec[key]=OrRec[key]
-            elif  key  in  Prev_MagRec.keys() and  Prev_MagRec[key]!= "" and  Prev_MagRec[key]!= "Not Specified" :
+            elif  key  in  list(Prev_MagRec.keys()) and  Prev_MagRec[key]!= "" and  Prev_MagRec[key]!= "Not Specified" :
                 MagRec[key]=Prev_MagRec[key]
             else:
                 MagRec[key]="Not Specified"
@@ -3551,7 +3551,7 @@ is the percent cooling rate factor to apply to specimens from this sample, DA-CR
     # parse information common to all orientation methods
     #
         MagRec["er_sample_name"]=OrRec["sample_name"]
-        if "IGSN" in OrRec.keys():
+        if "IGSN" in list(OrRec.keys()):
             MagRec["sample_igsn"]=OrRec["IGSN"]
         else:
             MagRec["sample_igsn"]=""
@@ -3568,11 +3568,11 @@ is the percent cooling rate factor to apply to specimens from this sample, DA-CR
         else:
             labaz,labdip="",""
         if  OrRec['mag_azimuth']=='999':labaz=""
-        if "GPS_baseline" in OrRec.keys() and OrRec['GPS_baseline']!="":
+        if "GPS_baseline" in list(OrRec.keys()) and OrRec['GPS_baseline']!="":
             newbaseline=OrRec["GPS_baseline"]
         if newbaseline!="":
             baseline=float(newbaseline)
-        if 'participants' in OrRec.keys() and OrRec['participants']!="" and OrRec['participants']!=participantlist:
+        if 'participants' in list(OrRec.keys()) and OrRec['participants']!="" and OrRec['participants']!=participantlist:
             participantlist=OrRec['participants']
         MagRec['er_scientist_mail_names']=participantlist
         MagRec.pop("participantlist")
@@ -3580,21 +3580,21 @@ is the percent cooling rate factor to apply to specimens from this sample, DA-CR
         if newlat!="":
             lat=float(newlat)
         if lat=="":
-            print "No latitude specified for ! ",sample, ". Latitude is required for all samples."
+            print("No latitude specified for ! ",sample, ". Latitude is required for all samples.")
             return False, "No latitude specified for ! " + sample + ". Latitude is required for all samples."
         MagRec["sample_lat"]='%11.5f'%(lat)
         newlon=OrRec["long"]
         if newlon!="":
             lon=float(newlon)
         if lon=="":
-            print "No longitude specified for ! ",sample, ". Longitude is required for all samples."
+            print("No longitude specified for ! ",sample, ". Longitude is required for all samples.")
             return False, str("No longitude specified for ! " + sample + ". Longitude is required for all samples.")
         MagRec["sample_lon"]='%11.5f'%(lon)
-        if 'bedding_dip_direction' in OrRec.keys():
+        if 'bedding_dip_direction' in list(OrRec.keys()):
             newbeddir=OrRec["bedding_dip_direction"]
         if newbeddir!="":
             bed_dip_dir=OrRec['bedding_dip_direction']
-        if 'bedding_dip' in OrRec.keys():
+        if 'bedding_dip' in list(OrRec.keys()):
             newbeddip=OrRec["bedding_dip"]
         if newbeddip!="":
             bed_dip=OrRec['bedding_dip']
@@ -3605,7 +3605,7 @@ is the percent cooling rate factor to apply to specimens from this sample, DA-CR
             MagRec["sample_dip"]='%7.1f'%labdip
         else:
             MagRec["sample_dip"]=""
-        if "date" in OrRec.keys() and OrRec["date"]!="":
+        if "date" in list(OrRec.keys()) and OrRec["date"]!="":
             newdate=OrRec["date"]
             if newdate!="":
                 date=newdate
@@ -3625,7 +3625,7 @@ is the percent cooling rate factor to apply to specimens from this sample, DA-CR
             MagRec["sample_azimuth"]='%7.1f'%(labaz)
         else:
             MagRec["sample_azimuth"]=""
-        if "stratigraphic_height" in OrRec.keys():
+        if "stratigraphic_height" in list(OrRec.keys()):
             if OrRec["stratigraphic_height"]!="":
                 MagRec["sample_height"]=OrRec["stratigraphic_height"]
                 stratpos=OrRec["stratigraphic_height"]
@@ -3638,14 +3638,14 @@ is the percent cooling rate factor to apply to specimens from this sample, DA-CR
             x,y,z,f=pmag.doigrf(lon,lat,0,decimal_year)
             Dir=pmag.cart2dir( (x,y,z))
             dec_correction=Dir[0]
-        if "bedding_dip" in OrRec.keys():
+        if "bedding_dip" in list(OrRec.keys()):
             if OrRec["bedding_dip"]!="":
                 MagRec["sample_bed_dip"]=OrRec["bedding_dip"]
                 bed_dip=OrRec["bedding_dip"]
             else:
                 MagRec["sample_bed_dip"]=bed_dip
         else: MagRec["sample_bed_dip"]='0'
-        if "bedding_dip_direction" in OrRec.keys():
+        if "bedding_dip_direction" in list(OrRec.keys()):
             if OrRec["bedding_dip_direction"]!="" and bed_correction==1:
                 dd=float(OrRec["bedding_dip_direction"])+dec_correction
                 if dd>360.:dd=dd-360.
@@ -3665,23 +3665,23 @@ is the percent cooling rate factor to apply to specimens from this sample, DA-CR
         MagRec['sample_description']=sample_description
     #
     # work on the site stuff too
-        if 'site_name' in OrRec.keys() and OrRec['site_name']!="":
+        if 'site_name' in list(OrRec.keys()) and OrRec['site_name']!="":
             site=OrRec['site_name']
-        elif 'site_name' in Prev_MagRec.keys() and  Prev_MagRec['site_name']!="":
+        elif 'site_name' in list(Prev_MagRec.keys()) and  Prev_MagRec['site_name']!="":
             site=Prev_MagRec['site_name']
         else:
             site=pmag.parse_site(OrRec["sample_name"],samp_con,Z) # parse out the site name
         MagRec["er_site_name"]=site
         site_description="" # overwrite any prior description
-        if 'site_description' in OrRec.keys() and OrRec['site_description']!="":
+        if 'site_description' in list(OrRec.keys()) and OrRec['site_description']!="":
             site_description=OrRec['site_description'].replace(",",";")
-        if "image_name" in OrRec.keys():
+        if "image_name" in list(OrRec.keys()):
             images=OrRec["image_name"].split(":")
-            if "image_look" in OrRec.keys():
+            if "image_look" in list(OrRec.keys()):
                 looks=OrRec['image_look'].split(":")
             else:
                 looks=[]
-            if "image_photographer" in OrRec.keys():
+            if "image_photographer" in list(OrRec.keys()):
                 photographers=OrRec['image_photographer'].split(":")
             else:
                 photographers=[]
@@ -3716,7 +3716,7 @@ is the percent cooling rate factor to apply to specimens from this sample, DA-CR
             # merge the new data colmuns calculated by orientation_magic with the existing data colmuns
             # this is done to make sure no previous data in er_samples.txt and er_sites.txt is lost.
 
-            if site in SiteRecs_sorted.keys():
+            if site in list(SiteRecs_sorted.keys()):
                 Prev_MagRec=SiteRecs_sorted[site][-1]
                 SiteRec=Prev_MagRec
             else:
@@ -3727,13 +3727,13 @@ is the percent cooling rate factor to apply to specimens from this sample, DA-CR
             SiteRec["site_definition"]="s"
 
             for key in ["er_location_name"]:
-                if key in Prev_MagRec.keys() and Prev_MagRec[key]!="":
+                if key in list(Prev_MagRec.keys()) and Prev_MagRec[key]!="":
                     SiteRec[key]=Prev_MagRec[key]
                 else:
                     SiteRec[key]=""
 
             for key in ["lat","lon","height"]:
-                if "site_"+key in Prev_MagRec.keys() and Prev_MagRec["site_"+key]!="":
+                if "site_"+key in list(Prev_MagRec.keys()) and Prev_MagRec["site_"+key]!="":
                     SiteRec["site_"+key]=Prev_MagRec["site_"+key]
                 else:
                     SiteRec["site_"+key]=MagRec["sample_"+key]
@@ -3744,7 +3744,7 @@ is the percent cooling rate factor to apply to specimens from this sample, DA-CR
             #SiteRec["site_height"]=MagRec["sample_height"]
 
             for key in ["class","lithology","type"]:
-                if "site_"+key in Prev_MagRec.keys() and Prev_MagRec["site_"+key]!="Not Specified":
+                if "site_"+key in list(Prev_MagRec.keys()) and Prev_MagRec["site_"+key]!="Not Specified":
                     SiteRec["site_"+key]=Prev_MagRec["site_"+key]
                 else:
                     SiteRec["site_"+key]=MagRec["sample_"+key]
@@ -3766,7 +3766,7 @@ is the percent cooling rate factor to apply to specimens from this sample, DA-CR
                 az=labaz+dec_correction
                 if az>360.:az=az-360.
                 CMDRec={}
-                for key in MagRec.keys():
+                for key in list(MagRec.keys()):
                     CMDRec[key]=MagRec[key] # make a copy of MagRec
                 CMDRec["sample_azimuth"]='%7.1f'%(az)
                 CMDRec["magic_method_codes"]=methcodes+':SO-CMD-NORTH'
@@ -3778,9 +3778,9 @@ is the percent cooling rate factor to apply to specimens from this sample, DA-CR
                     CMDRec['sample_description']=sample_description+':Declination correction supplied by user'
                 CMDRec["sample_description"]=CMDRec['sample_description'].strip(':')
                 SampOuts.append(CMDRec)
-            if "mag_az_bs" in OrRec.keys() and OrRec["mag_az_bs"] !="" and OrRec["mag_az_bs"]!=" ":
+            if "mag_az_bs" in list(OrRec.keys()) and OrRec["mag_az_bs"] !="" and OrRec["mag_az_bs"]!=" ":
                 SRec={}
-                for key in MagRec.keys():
+                for key in list(MagRec.keys()):
                     SRec[key]=MagRec[key] # make a copy of MagRec
                 labaz=float(OrRec["mag_az_bs"])
                 az=labaz+dec_correction
@@ -3792,14 +3792,14 @@ is the percent cooling rate factor to apply to specimens from this sample, DA-CR
     #
     # check for suncompass data
     #
-            if "shadow_angle" in OrRec.keys() and OrRec["shadow_angle"]!="":  # there are sun compass data
+            if "shadow_angle" in list(OrRec.keys()) and OrRec["shadow_angle"]!="":  # there are sun compass data
                 if hours_from_gmt=="":
                     #hours_from_gmt=raw_input("Enter hours to SUBTRACT from time for  GMT: [0] ")
                     hours_from_gmt=0
                 SunRec,sundata={},{}
                 shad_az=float(OrRec["shadow_angle"])
                 if not OrRec["hhmm"]:
-                    print 'If using the column shadow_angle for sun compass data, you must also provide the time for each sample.  Sample ', sample, ' has shadow_angle but is missing the "hh:mm" column.'
+                    print('If using the column shadow_angle for sun compass data, you must also provide the time for each sample.  Sample ', sample, ' has shadow_angle but is missing the "hh:mm" column.')
                 else: # calculate sun declination
                     sundata["date"]='%i:%s:%s:%s'%(yy,mmddyy[0],mmddyy[1],OrRec["hhmm"])
     #                if eval(hours_from_gmt)<0:
@@ -3811,7 +3811,7 @@ is the percent cooling rate factor to apply to specimens from this sample, DA-CR
                     sundata["lat"]='%7.1f'%(lat)
                     sundata["shadow_angle"]=OrRec["shadow_angle"]
                     sundec=pmag.dosundec(sundata)
-                    for key in MagRec.keys():
+                    for key in list(MagRec.keys()):
                         SunRec[key]=MagRec[key]  # make a copy of MagRec
                     SunRec["sample_azimuth"]='%7.1f'%(sundec)
                     SunRec["sample_declination_correction"]=''
@@ -3821,9 +3821,9 @@ is the percent cooling rate factor to apply to specimens from this sample, DA-CR
     #
     # check for differential GPS data
     #
-            if "prism_angle" in OrRec.keys() and OrRec["prism_angle"]!="":  # there are diff GPS data
+            if "prism_angle" in list(OrRec.keys()) and OrRec["prism_angle"]!="":  # there are diff GPS data
                 GPSRec={}
-                for key in MagRec.keys():
+                for key in list(MagRec.keys()):
                     GPSRec[key]=MagRec[key]  # make a copy of MagRec
                 prism_angle=float(OrRec["prism_angle"])
                 laser_angle=float(OrRec["laser_angle"])
@@ -3833,15 +3833,15 @@ is the percent cooling rate factor to apply to specimens from this sample, DA-CR
                     gps_dec=gps_dec-360.
                 while gps_dec<0:
                     gps_dec=gps_dec+360.
-                for key in MagRec.keys():
+                for key in list(MagRec.keys()):
                     GPSRec[key]=MagRec[key]  # make a copy of MagRec
                 GPSRec["sample_azimuth"]='%7.1f'%(gps_dec)
                 GPSRec["sample_declination_correction"]=''
                 GPSRec["magic_method_codes"]=methcodes+':SO-GPS-DIFF'
                 SampOuts.append(GPSRec)
-            if "GPS_Az" in OrRec.keys() and OrRec["GPS_Az"]!="":  # there are differential GPS Azimuth data
+            if "GPS_Az" in list(OrRec.keys()) and OrRec["GPS_Az"]!="":  # there are differential GPS Azimuth data
                 GPSRec={}
-                for key in MagRec.keys():
+                for key in list(MagRec.keys()):
                     GPSRec[key]=MagRec[key]  # make a copy of MagRec
                 GPSRec["sample_azimuth"]='%7.1f'%(float(OrRec["GPS_Az"]))
                 GPSRec["sample_declination_correction"]=''
@@ -3849,7 +3849,7 @@ is the percent cooling rate factor to apply to specimens from this sample, DA-CR
                 SampOuts.append(GPSRec)
         if average_bedding!="0" and fpars:
             fpars=pmag.fisher_mean(BPs)
-            print 'over-writing all bedding with average '
+            print('over-writing all bedding with average ')
     Samps=[]
     for  rec in SampOuts:
         if average_bedding!="0" and fpars:
@@ -3867,7 +3867,7 @@ is the percent cooling rate factor to apply to specimens from this sample, DA-CR
     for rec in ImageRecs:
         if rec['er_image_name'] not in imagelist: # overwrite prior for this sample
             ImageOuts.append(rec)
-    print 'saving data...'
+    print('saving data...')
     SampsOut,keys=pmag.fillkeys(Samps)
     Sites,keys=pmag.fillkeys(SiteOuts)
     if data_model == 3:
@@ -3885,9 +3885,9 @@ is the percent cooling rate factor to apply to specimens from this sample, DA-CR
         wrote_samps = pmag.magic_write(samp_file,SampsOut,"er_samples")
         wrote_sites = pmag.magic_write(site_file,Sites,"er_sites")
     if wrote_samps:
-        print "Data saved in ", samp_file,' and ',site_file
+        print("Data saved in ", samp_file,' and ',site_file)
     else:
-        print "No data found"
+        print("No data found")
     if len(ImageOuts)>0:
         # need to do conversion here 3.0. --> 2.5
         Images,keys=pmag.fillkeys(ImageOuts)
@@ -3900,7 +3900,7 @@ is the percent cooling rate factor to apply to specimens from this sample, DA-CR
             for image_rec in Images2:
                 Images.append(map_magic.mapping(image_rec, map_magic.image_magic2_2_magic3_map))
         pmag.magic_write(image_file, Images, image_type)
-        print "Image info saved in ", image_file
+        print("Image info saved in ", image_file)
     return True, None
 
 
@@ -3969,9 +3969,9 @@ def azdip_magic(orient_file='orient.txt', samp_file="er_samples.txt", samp_con="
     if append:
         try:
             SampRecs,file_type=pmag.magic_read(samp_file)
-            print "sample data to be appended to: ",samp_file
+            print("sample data to be appended to: ",samp_file)
         except:
-            print 'problem with existing samp file: ',samp_file,' will create new'
+            print('problem with existing samp file: ',samp_file,' will create new')
     #
     # read in file to convert
     #
@@ -4021,7 +4021,7 @@ def azdip_magic(orient_file='orient.txt', samp_file="er_samples.txt", samp_con="
             SampOut.append(samp)
     Samps,keys=pmag.fillkeys(SampOut)
     pmag.magic_write(samp_file,Samps,"er_samples")
-    print "Data saved in ", samp_file
+    print("Data saved in ", samp_file)
     return True, None
 
 
@@ -4038,7 +4038,7 @@ def iodp_samples_magic(samp_file, output_samp_file=None, output_dir_path='.', in
     if output_samp_file:
         samp_out = os.path.join(output_dir_path, output_samp_file)
         Samps,file_type = pmag.magic_read(samp_out)
-        print len(Samps), ' read in from: ',samp_out
+        print(len(Samps), ' read in from: ',samp_out)
     else:
         samp_out = os.path.join(output_dir_path, 'er_samples.txt')
     file_input = open(samp_file,"rU").readlines()
@@ -4079,7 +4079,7 @@ def iodp_samples_magic(samp_file, output_samp_file=None, output_dir_path='.', in
         interval,core="",""
         rec=line.replace('\n','').split(',')
         if len(rec)<2:
-            print "Error in csv file, blank columns"
+            print("Error in csv file, blank columns")
             break
         for k in range(len(keys)):
             ODPRec[keys[k]]=rec[k].strip('"')
@@ -4136,7 +4136,7 @@ def iodp_samples_magic(samp_file, output_samp_file=None, output_dir_path='.', in
                ErSamples.append(samp)
     Recs,keys=pmag.fillkeys(ErSamples)
     pmag.magic_write(samp_out,Recs,'er_samples')
-    print 'sample information written to: ',samp_out
+    print('sample information written to: ',samp_out)
     return True, samp_out
 
 
@@ -4242,14 +4242,14 @@ def kly4s_magic(infile, specnum=0, locname="unknown", inst='SIO-KLY4S',
     # validate variables
     if "4" in samp_con[0]:
         if "-" not in samp_con:
-            print "option [4] must be in form 4-Z where Z is an integer"
+            print("option [4] must be in form 4-Z where Z is an integer")
             return False, "option [4] must be in form 4-Z where Z is an integer"
         else:
             Z=samp_con.split("-")[1]
             samp_con="4"
     if "7" in samp_con[0]:
         if "-" not in samp_con:
-            print "option [7] must be in form 7-Z where Z is an integer"
+            print("option [7] must be in form 7-Z where Z is an integer")
             return False, "option [7] must be in form 7-Z where Z is an integer"
         else:
             Z=samp_con.split("-")[1]
@@ -4258,7 +4258,7 @@ def kly4s_magic(infile, specnum=0, locname="unknown", inst='SIO-KLY4S',
     try:
         file_input=open(amsfile,'rU')
     except:
-        print 'Error opening file: ', amsfile
+        print('Error opening file: ', amsfile)
         return False, 'Error opening file: {}'.format(amsfile)
 
     # parse file
@@ -4271,14 +4271,14 @@ def kly4s_magic(infile, specnum=0, locname="unknown", inst='SIO-KLY4S',
                     if spec['er_specimen_name'] not in speclist:
                         speclist.append(spec['er_specimen_name'])
         except IOError:
-            print 'trouble opening ',spec_infile
+            print('trouble opening ',spec_infile)
     Data=file_input.readlines()
     samps=[]
     if samp_infile:
         samps,file_type=pmag.magic_read(samp_infile)
         SO_methods=[]
         for rec in samps:
-           if "magic_method_codes" in rec.keys():
+           if "magic_method_codes" in list(rec.keys()):
                methlist=rec["magic_method_codes"].replace(" ","").split(":")
                for meth in methlist:
                    if "SO" in meth and "SO-POM" not in meth and "SO-GT5" not in meth and "SO-ASC" not in meth and "SO-BAD" not in meth:
@@ -4306,7 +4306,7 @@ def kly4s_magic(infile, specnum=0, locname="unknown", inst='SIO-KLY4S',
         AniRec['er_specimen_name']=specname
         labaz,labdip,bed_dip_direction,bed_dip="","","",""
         if azdip_infile:
-            for key in AniRec.keys():
+            for key in list(AniRec.keys()):
                 SampRec[key]=AniRec[key]
             for oline in AzDipDat: # look for exact match first
                 orec=oline.replace('\n','').split()
@@ -4324,10 +4324,10 @@ def kly4s_magic(infile, specnum=0, locname="unknown", inst='SIO-KLY4S',
                        bed_dip=float(orec[4])
                        break
             if labaz=="":  # found no exact match - now look at sample level
-                print 'found no orientation data - will use specimen coordinates'
+                print('found no orientation data - will use specimen coordinates')
                 #raw_input("<return> to continue")
             else:
-                for key in AniRec.keys():
+                for key in list(AniRec.keys()):
                     SampRec[key]=AniRec[key]
                 SampRec['sample_azimuth']='%7.1f'%(labaz)
                 SampRec['sample_dip']='%7.1f'%(labdip)
@@ -4343,7 +4343,7 @@ def kly4s_magic(infile, specnum=0, locname="unknown", inst='SIO-KLY4S',
                 if orient['sample_azimuth']!="":
                     method_codes.append(az_type)
                 else:
-                    print "no orientation data for ",AniRec["er_sample_name"],labaz
+                    print("no orientation data for ",AniRec["er_sample_name"],labaz)
                     orient["sample_azimuth"]=""
                     orient["sample_dip"]=""
                     orient["sample_bed_dip_direction"]=""
@@ -4354,7 +4354,7 @@ def kly4s_magic(infile, specnum=0, locname="unknown", inst='SIO-KLY4S',
                 redo=0
            while redo==1:
                 if p>=len(SO_priorities):
-                    print "no orientation data for ",AniRec["er_sample_name"],labaz
+                    print("no orientation data for ",AniRec["er_sample_name"],labaz)
                     orient["sample_azimuth"]=""
                     orient["sample_dip"]=""
                     orient["sample_bed_dip_direction"]=""
@@ -4374,13 +4374,13 @@ def kly4s_magic(infile, specnum=0, locname="unknown", inst='SIO-KLY4S',
                labaz=float(orient['sample_azimuth'])
            if orient['sample_dip']!="":
                labdip=float(orient['sample_dip'])
-           if "sample_bed_dip_direction" in orient.keys() and orient['sample_bed_dip_direction']!="":
+           if "sample_bed_dip_direction" in list(orient.keys()) and orient['sample_bed_dip_direction']!="":
                bed_dip_direction=float(orient['sample_bed_dip_direction'])
-           if "sample_bed_dip" in orient.keys() and orient['sample_bed_dip']!="":
+           if "sample_bed_dip" in list(orient.keys()) and orient['sample_bed_dip']!="":
                sample_bed_dip=float(orient['sample_bed_dip'])
-        for key in AniRec.keys():
+        for key in list(AniRec.keys()):
             SpecRec[key]=AniRec[key]
-        for key in AniRec.keys():
+        for key in list(AniRec.keys()):
             MeasRec[key]=AniRec[key]
         AniRec['anisotropy_type']="AMS"
         AniRec['anisotropy_n']="192"
@@ -4421,8 +4421,8 @@ def kly4s_magic(infile, specnum=0, locname="unknown", inst='SIO-KLY4S',
         AniRecs.append(AniRec)
         if labaz!="": # have orientation info
             AniRecG,AniRecT={},{}
-            for key in AniRec.keys():AniRecG[key]=AniRec[key]
-            for key in AniRec.keys():AniRecT[key]=AniRec[key]
+            for key in list(AniRec.keys()):AniRecG[key]=AniRec[key]
+            for key in list(AniRec.keys()):AniRecT[key]=AniRec[key]
             sbar=[]
             sbar.append(float(AniRec['anisotropy_s1']))
             sbar.append(float(AniRec['anisotropy_s2']))
@@ -4453,16 +4453,16 @@ def kly4s_magic(infile, specnum=0, locname="unknown", inst='SIO-KLY4S',
     pmag.magic_write(measfile,MeasRecs,'magic_measurements')
     if AppSpec:
         pmag.magic_write(spec_infile,SpecRecs,'er_specimens')
-        print 'specimen information appended to {}'.format(spec_infile)
+        print('specimen information appended to {}'.format(spec_infile))
     else:
         pmag.magic_write(spec_outfile, SpecRecs, 'er_specimens')
-        print 'specimen information written to new file: {}'.format(spec_outfile)
-    print 'anisotropy data saved in ',anisfile
-    print 'measurement data saved in ',measfile
+        print('specimen information written to new file: {}'.format(spec_outfile))
+    print('anisotropy data saved in ',anisfile)
+    print('measurement data saved in ',measfile)
     if azdip_infile:
         sampfile='er_samples.txt'
         pmag.magic_write(sampfile,SampRecs,'er_samples')
-        print 'sample data saved in ',sampfile
+        print('sample data saved in ',sampfile)
     return True, measfile
 
 
@@ -4533,7 +4533,7 @@ def k15_magic(k15file, specnum=0, sample_naming_con='1', er_location_name="unkno
     Z=""
     if "4" in sample_naming_con:
         if "-" not in sample_naming_con:
-            print "option [4] must be in form 4-Z where Z is an integer"
+            print("option [4] must be in form 4-Z where Z is an integer")
             return False, "option [4] must be in form 4-Z where Z is an integer"
         else:
             Z=sample_naming_con.split("-")[1]
@@ -4546,7 +4546,7 @@ def k15_magic(k15file, specnum=0, sample_naming_con='1', er_location_name="unkno
     result_file= os.path.join(output_dir_path, result_file)
     k15file = os.path.join(input_dir_path, k15file)
     if not os.path.exists(k15file):
-        print k15file
+        print(k15file)
         return False, "You must provide a valid k15 format file"
     try:
         SampRecs,filetype=pmag.magic_read(sampfile) # append new records to existing
@@ -4775,7 +4775,7 @@ def k15_magic(k15file, specnum=0, sample_naming_con='1', er_location_name="unkno
     pmag.magic_write(aniso_outfile,AnisRecs,'rmag_anisotropy')
     pmag.magic_write(result_file,ResRecs,'rmag_results')
     pmag.magic_write(measfile,MeasRecs,'magic_measurements')
-    print "Data saved to: ",sampfile,aniso_outfile,result_file,measfile
+    print("Data saved to: ",sampfile,aniso_outfile,result_file,measfile)
     return True, measfile
 
 
@@ -4851,14 +4851,14 @@ def SUFAR4_magic(ascfile, meas_output='magic_measurements.txt', aniso_output='rm
 
     if "4" in sample_naming_con:
         if "-" not in sample_naming_con:
-            print "option [4] must be in form 4-Z where Z is an integer"
+            print("option [4] must be in form 4-Z where Z is an integer")
             return False, "option [4] must be in form 4-Z where Z is an integer"
         else:
             Z=sample_naming_con.split("-")[1]
             sample_naming_con="4"
     if "7" in sample_naming_con:
         if "-" not in sample_naming_con:
-            print "option [7] must be in form 7-Z where Z is an integer"
+            print("option [7] must be in form 7-Z where Z is an integer")
             return False, "option [7] must be in form 7-Z where Z is an integer"
         else:
             Z=sample_naming_con.split("-")[1]
@@ -4901,7 +4901,7 @@ def SUFAR4_magic(ascfile, meas_output='magic_measurements.txt', aniso_output='rm
     try:
         file_input=open(ascfile,'rU')
     except:
-        print 'Error opening file: ', ascfile
+        print('Error opening file: ', ascfile)
         return False, 'Error opening file: {}'.format(ascfile)
     Data=file_input.readlines()
     k=0
@@ -4959,7 +4959,7 @@ def SUFAR4_magic(ascfile, meas_output='magic_measurements.txt', aniso_output='rm
             AniRec['magic_method_codes']="LP-X:AE-H:LP-AN-MS"
             AniRec['magic_experiment_names']=specname+":"+"LP-AN-MS"
             AniRec['er_analyst_mail_names']=user
-            for key in AniRec.keys():MeasRec[key]=AniRec[key]
+            for key in list(AniRec.keys()):MeasRec[key]=AniRec[key]
             MeasRec['measurement_flag']='g'
             AniRec['anisotropy_flag']='g'
             MeasRec['measurement_standard']='u'
@@ -5011,8 +5011,8 @@ def SUFAR4_magic(ascfile, meas_output='magic_measurements.txt', aniso_output='rm
             AniRec['anisotropy_tilt_correction']='-1'
             AniRecs.append(AniRec)
             AniRecG,AniRecT={},{}
-            for key in AniRec.keys():AniRecG[key]=AniRec[key]
-            for key in AniRec.keys():AniRecT[key]=AniRec[key]
+            for key in list(AniRec.keys()):AniRecG[key]=AniRec[key]
+            for key in list(AniRec.keys()):AniRecT[key]=AniRec[key]
             sbar=[]
             sbar.append(float(AniRec['anisotropy_s1']))
             sbar.append(float(AniRec['anisotropy_s2']))
@@ -5051,22 +5051,22 @@ def SUFAR4_magic(ascfile, meas_output='magic_measurements.txt', aniso_output='rm
                 sitenames.append(SiteRec['er_site_name'])
         k+=1 # skip to next specimen
     pmag.magic_write(aniso_output,AniRecs,'rmag_anisotropy')
-    print "anisotropy tensors put in ",aniso_output
+    print("anisotropy tensors put in ",aniso_output)
     pmag.magic_write(meas_output,MeasRecs,'magic_measurements')
-    print "bulk measurements put in ",meas_output
+    print("bulk measurements put in ",meas_output)
     #if isspec=="0":
     SpecOut,keys=pmag.fillkeys(SpecRecs)
     #output = output_dir_path+"/er_specimens.txt"
     pmag.magic_write(spec_outfile,SpecOut,'er_specimens')
-    print "specimen info put in ", spec_outfile
+    print("specimen info put in ", spec_outfile)
     #output = output_dir_path+"/er_samples.txt"
     SampOut,keys=pmag.fillkeys(SampRecs)
     pmag.magic_write(samp_outfile,SampOut,'er_samples')
-    print "sample info put in ", samp_outfile
+    print("sample info put in ", samp_outfile)
     #output = output_dir_path+"/er_sites.txt"
     SiteOut,keys=pmag.fillkeys(SiteRecs)
     pmag.magic_write(site_outfile,SiteOut,'er_sites')
-    print "site info put in ", site_outfile
+    print("site info put in ", site_outfile)
     return True, meas_output
 
 
@@ -5143,20 +5143,20 @@ def agm_magic(agm_file, samp_infile=None, outfile='agm_measurements.txt', spec_o
     if samp_infile:
         samp_infile = os.path.join(input_dir_path, samp_infile)
         Samps,file_type=pmag.magic_read(samp_infile)
-        print 'sample_file successfully read in'
+        print('sample_file successfully read in')
 
 
     # validate some things
     if "4" in samp_con:
         if "-" not in samp_con:
-            print "option [4] must be in form 4-Z where Z is an integer"
+            print("option [4] must be in form 4-Z where Z is an integer")
             return False, "option [4] must be in form 4-Z where Z is an integer"
         else:
             Z=samp_con.split("-")[1]
             samp_con="4"
     if "7" in samp_con:
         if "-" not in samp_con:
-            print "option [7] must be in form 7-Z where Z is an integer"
+            print("option [7] must be in form 7-Z where Z is an integer")
             return False, "option [7] must be in form 7-Z where Z is an integer"
         else:
             Z=samp_con.split("-")[1]
@@ -5192,7 +5192,7 @@ def agm_magic(agm_file, samp_infile=None, outfile='agm_measurements.txt', spec_o
         ErSpecRecs.append(ErSpecRec)
         ErSpecRecs,keylist=pmag.fillkeys(ErSpecRecs)
         pmag.magic_write(specfile,ErSpecRecs,'er_specimens')
-        print "specimen name put in ",specfile
+        print("specimen name put in ",specfile)
     f=open(agm_file,'rU')
     Data=f.readlines()
     if "ASCII" not in Data[0]:
@@ -5218,11 +5218,11 @@ def agm_magic(agm_file, samp_infile=None, outfile='agm_measurements.txt', spec_o
         end=1
     for i in range(start,len(Data)-end): # skip header stuff
         MeasRec={}
-        for key in ErSpecRec.keys():
+        for key in list(ErSpecRec.keys()):
             MeasRec[key]=ErSpecRec[key]
         MeasRec['magic_instrument_codes']=inst
         MeasRec['magic_method_codes']=meth
-        if 'er_synthetic_name' in MeasRec.keys() and MeasRec['er_synthetic_name']!="":
+        if 'er_synthetic_name' in list(MeasRec.keys()) and MeasRec['er_synthetic_name']!="":
             MeasRec['magic_experiment_name']=er_synthetic_name+':'+meth
         else:
             MeasRec['magic_experiment_name']=er_specimen_name+':'+meth
@@ -5260,7 +5260,7 @@ def agm_magic(agm_file, samp_infile=None, outfile='agm_measurements.txt', spec_o
             recnum+=1
 #
     pmag.magic_write(output,MeasRecs,'magic_measurements')
-    print "results put in ",output
+    print("results put in ",output)
     return True, output
 
 
@@ -5288,7 +5288,7 @@ def read_core_csv_file(sum_file):
                 for k in range(len(keys)):CoreRec[keys[k]]=line.split(',')[k]
                 Cores.append(CoreRec)
         if len(Cores)==0:
-            print 'no Core depth information available: import core summary file'
+            print('no Core depth information available: import core summary file')
             return False, False, []
         else:
             return core_depth_key, core_label_key, Cores
@@ -5381,7 +5381,7 @@ class Site(object):
         self.fit_types = self.fits.specimen_comp_name.unique().tolist()
         for fit_type in self.fit_types:
             self.parse_fits(fit_type)
-        print "Data separated by ", self.fit_types, "fits and can be accessed by <site_name>.<fit_name>"
+        print("Data separated by ", self.fit_types, "fits and can be accessed by <site_name>.<fit_name>")
 
 
     def get_fit_names(self):
@@ -5429,11 +5429,11 @@ class Site(object):
         clr_idx = 0
         for fits in self.fit_types:
             mean_code = str(fits)+"_mean"
-            print mean_code
+            print(mean_code)
             if clrs is not None:
                 plot_di(getattr(self,fits).specimen_dec,
                 getattr(self,fits).specimen_inc,color=clrs[clr_idx], label=fits+' directions')
-                print float(getattr(self,mean_code).site_dec),float(getattr(self,mean_code).site_inc)
+                print(float(getattr(self,mean_code).site_dec),float(getattr(self,mean_code).site_inc))
                 plot_di_mean(float(getattr(self,mean_code).site_dec),
                                    float(getattr(self,mean_code).site_inc),
                                    float(getattr(self,mean_code).site_alpha95),
@@ -5444,7 +5444,7 @@ class Site(object):
                 self.random_color = np.random.rand(3)
                 plot_di(getattr(self,fits).specimen_dec,
                 getattr(self,fits).specimen_inc,color=self.random_color, label=fits+' directions')
-                print float(getattr(self,mean_code).site_dec),float(getattr(self,mean_code).site_inc)
+                print(float(getattr(self,mean_code).site_dec),float(getattr(self,mean_code).site_inc))
                 plot_di_mean(float(getattr(self,mean_code).site_dec),
                                    float(getattr(self,mean_code).site_inc),
                                    float(getattr(self,mean_code).site_alpha95),
@@ -5532,13 +5532,13 @@ def dayplot(path_to_file = '.',hyst_file="rmag_hysteresis.txt",
     Ms,Bcr1,Bcr1Bc,S1=[],[],[],[]
     locations=''
     for rec in  hyst_data:
-        if 'er_location_name' in rec.keys() and rec['er_location_name'] not in locations: locations=locations+rec['er_location_name']+'_'
+        if 'er_location_name' in list(rec.keys()) and rec['er_location_name'] not in locations: locations=locations+rec['er_location_name']+'_'
         if rec['hysteresis_bcr'] !="" and rec['hysteresis_mr_moment']!="":
             S.append(float(rec['hysteresis_mr_moment'])/float(rec['hysteresis_ms_moment']))
             Bcr.append(float(rec['hysteresis_bcr']))
             Bc.append(float(rec['hysteresis_bc']))
             BcrBc.append(Bcr[-1]/Bc[-1])
-            if 'er_synthetic_name' in rec.keys() and rec['er_synthetic_name']!="":
+            if 'er_synthetic_name' in list(rec.keys()) and rec['er_synthetic_name']!="":
                 rec['er_specimen_name']=rec['er_synthetic_name']
             hsids.append(rec['er_specimen_name'])
     if len(rem_data)>0:
@@ -5551,7 +5551,7 @@ def dayplot(path_to_file = '.',hyst_file="rmag_hysteresis.txt",
                     S1.append(S[ind])
                     Bcr2.append(Bcr[ind])
                 except ValueError:
-                    if verbose:print 'hysteresis data for ',rec['er_specimen_name'],' not found'
+                    if verbose:print('hysteresis data for ',rec['er_specimen_name'],' not found')
     #
     # now plot the day and S-Bc, S-Bcr plots
     #
@@ -5603,17 +5603,17 @@ def smooth(x,window_len,window='bartlett'):
     """
 
     if x.ndim != 1:
-        raise ValueError, "smooth only accepts 1 dimension arrays."
+        raise ValueError("smooth only accepts 1 dimension arrays.")
 
     if x.size < window_len:
-        raise ValueError, "Input vector needs to be bigger than window size."
+        raise ValueError("Input vector needs to be bigger than window size.")
 
     if window_len<3:
         return x
 
     # numpy available windows
     if not window in ['flat', 'hanning', 'hamming', 'bartlett', 'blackman']:
-        raise ValueError, "Window is on of 'flat', 'hanning', 'hamming', 'bartlett', 'blackman'"
+        raise ValueError("Window is on of 'flat', 'hanning', 'hamming', 'bartlett', 'blackman'")
 
     # padding the beggining and the end of the signal with an average value to evoid edge effect
     start=[np.average(x[0:10])]*window_len
@@ -5707,15 +5707,15 @@ def curie(path_to_file = '.',file_name = 'magic_measurements.txt',
     i=0
     while i<(len(T)-1):
         if (T[i+1]-T[i])%1>0.001:
-            print "delta T should be integer, this program will not work!"
-            print "temperature range:",T[i],T[i+1]
+            print("delta T should be integer, this program will not work!")
+            print("temperature range:",T[i],T[i+1])
             sys.exit()
         if (T[i+1]-T[i])==0.:
             M[i]=np.average([M[i],M[i+1]])
             M.pop(i+1);T.pop(i+1)
         elif (T[i+1]-T[i])<0.:
             M.pop(i+1);T.pop(i+1)
-            print "check data in T=%.0f ,M[T] is ignored"%(T[i])
+            print("check data in T=%.0f ,M[T] is ignored"%(T[i]))
         elif (T[i+1]-T[i])>1.:
             slope,b=np.polyfit([T[i],T[i+1]],[M[i],M[i+1]],1)
             for j in range(int(T[i+1])-int(T[i])-1):
@@ -5769,11 +5769,11 @@ def curie(path_to_file = '.',file_name = 'magic_measurements.txt',
     string='2nd derivative (sliding window=%i)'%int(window_len)
     pmagplotlib.plotXY(PLT['der2'],T_d2,d2,sym='-',xlab='Temperature C',title=string)
     d2=list(d2)
-    print 'second derivative maximum is at T=%i'%int(T_d2[d2.index(max(d2))])
+    print('second derivative maximum is at T=%i'%int(T_d2[d2.index(max(d2))]))
 
     # calculate Curie temperature for different width of sliding windows
     curie,curie_1=[],[]
-    wn=range(5,50,1)
+    wn=list(range(5,50,1))
     for win in wn:
         # calculate the smoothed signal
         M_smooth=[]
@@ -5805,15 +5805,15 @@ def curie(path_to_file = '.',file_name = 'magic_measurements.txt',
     plt.figure(num=PLT['Curie'],figsize=(5,5))
     pmagplotlib.plotXY(PLT['Curie'],wn,curie,sym='.',xlab='Sliding Window Width (degrees)',ylab='Curie Temp',title='Curie Statistics')
     files = {}
-    for key in PLT.keys(): files[key]=str(key) + '.' + fmt
+    for key in list(PLT.keys()): files[key]=str(key) + '.' + fmt
     if save == True:
-        for key in PLT.keys():
+        for key in list(PLT.keys()):
             try:
                 plt.figure(num=PLT[key])
                 plt.savefig(save_folder + '/' + files[key].replace('/','-'))
             except:
-                print 'could not save: ',PLT[key],files[key]
-                print "output file format not supported "
+                print('could not save: ',PLT[key],files[key])
+                print("output file format not supported ")
     plt.show()
 
 def chi_magic(path_to_file = '.', file_name = 'magic_measurements.txt',
@@ -5848,11 +5848,11 @@ def chi_magic(path_to_file = '.', file_name = 'magic_measurements.txt',
         try:
             k=experiment_names.index(EXP)
         except:
-            print "Bad experiment name"
+            print("Bad experiment name")
             sys.exit()
     while k < len(experiment_names):
         e=experiment_names[k]
-        if EXP=="":print e, k+1 , 'out of ',len(experiment_names)
+        if EXP=="":print(e, k+1 , 'out of ',len(experiment_names))
     #
     #  initialize lists of data, susceptibility, temperature, frequency and field
         X,T,F,B=[],[],[],[]
@@ -5860,9 +5860,9 @@ def chi_magic(path_to_file = '.', file_name = 'magic_measurements.txt',
             methcodes=rec['magic_method_codes']
             meths=methcodes.strip().split(':')
             if rec['magic_experiment_name']==e and "LP-X" in meths: # looking for chi measurement
-                if 'measurement_temp' not in rec.keys():rec['measurement_temp']='300' # set defaults
-                if 'measurement_freq' not in rec.keys():rec['measurement_freq']='0' # set defaults
-                if 'measurement_lab_field_ac' not in rec.keys():rec['measurement_lab_field_ac']='0' # set default
+                if 'measurement_temp' not in list(rec.keys()):rec['measurement_temp']='300' # set defaults
+                if 'measurement_freq' not in list(rec.keys()):rec['measurement_freq']='0' # set defaults
+                if 'measurement_lab_field_ac' not in list(rec.keys()):rec['measurement_lab_field_ac']='0' # set default
                 X.append(float(rec['measurement_x']))
                 T.append(float(rec['measurement_temp']))
                 F.append(float(rec['measurement_freq']))
@@ -5920,13 +5920,13 @@ def chi_magic(path_to_file = '.', file_name = 'magic_measurements.txt',
                     key=str(p)
                     files[key]=e+'_'+key+'.'+fmt
                     PLTS[key]=p
-                for key in PLTS.keys():
+                for key in list(PLTS.keys()):
                     try:
                         plt.figure(num=PLTS[key])
                         plt.savefig(save_folder + '/' + files[key].replace('/','-'))
                     except:
-                        print 'could not save: ',PLTS[key],files[key]
-                        print "output file format not supported "
+                        print('could not save: ',PLTS[key],files[key])
+                        print("output file format not supported ")
 
 
 def pmag_results_extract(res_file="pmag_results.txt", crit_file="", spec_file="",
@@ -6019,13 +6019,13 @@ def pmag_results_extract(res_file="pmag_results.txt", crit_file="", spec_file=""
                    'vgp_alpha95', 'vgp_n', 'vdm_sigma', 'vdm_n', 'vadm_sigma', 'vadm_n']
     if crit_file:
         crit = Crits[0] # get a list of useful keys
-        for key in crit.keys():
+        for key in list(crit.keys()):
             if key not in AllowedKeys:
                 del(crit[key])
-        for key in crit.keys():
+        for key in list(crit.keys()):
             if (not crit[key]) or (eval(crit[key]) > 1000) or (eval(crit[key])==0):
                 del(crit[key]) # get rid of all blank or too big ones or too little ones
-        CritKeys = crit.keys()
+        CritKeys = list(crit.keys())
     if spec_file:
         Specs, file_type =pmag.magic_read(spec_file)
         fsp = open(Specout,'w') # including specimen intensities if desired
@@ -6039,7 +6039,7 @@ def pmag_results_extract(res_file="pmag_results.txt", crit_file="", spec_file=""
             SpecCols.append('Grade')
             SpecKeys.append('specimen_grade')
         for x in Xtra:  # put in the new intensity keys if present
-            if x in Specs[0].keys():
+            if x in list(Specs[0].keys()):
                 SpecKeys.append(x)
                 newkey = ""
                 for k in x.split('_')[1:]:
@@ -6156,24 +6156,24 @@ def pmag_results_extract(res_file="pmag_results.txt", crit_file="", spec_file=""
     VGPs = pmag.get_dictitem(VGPs, 'data_type', 'i', 'T') # get site level stuff
     for site in VGPs:
         if len(site['er_site_names'].split(":"))==1:
-            if 'er_sample_names' not in site.keys():
+            if 'er_sample_names' not in list(site.keys()):
                 site['er_sample_names']=''
-            if 'pole_comp_name' not in site.keys():
+            if 'pole_comp_name' not in list(site.keys()):
                 site['pole_comp_name']="A"
-            if 'average_nn' not in site.keys() and 'average_n' in site.keys():
+            if 'average_nn' not in list(site.keys()) and 'average_n' in list(site.keys()):
                 site['average_nn']=site['average_n']
-            if 'average_n_lines' not in site.keys():
+            if 'average_n_lines' not in list(site.keys()):
                 site['average_n_lines']=site['average_nn']
-            if 'average_n_planes' not in site.keys():
+            if 'average_n_planes' not in list(site.keys()):
                 site['average_n_planes']=""
             Soutstring, Doutstring = "", ""
             for key in SiteKeys:
-                if key in site.keys():
+                if key in list(site.keys()):
                     Soutstring = Soutstring + site[key] + sep
             Soutstring = Soutstring.strip(sep) + end
             sf.write(Soutstring + '\n')
             for key in DirKeys:
-                if key in site.keys():
+                if key in list(site.keys()):
                     Doutstring = Doutstring + site[key] + sep
             Doutstring = Doutstring.strip(sep) + end
             f.write(Doutstring + '\n')
@@ -6184,14 +6184,14 @@ def pmag_results_extract(res_file="pmag_results.txt", crit_file="", spec_file=""
         if site not in VGPs:
             Soutstring = ""
             for key in SiteKeys:
-                if key in site.keys():
+                if key in list(site.keys()):
                     Soutstring = Soutstring + site[key] + sep
                 else:
                     Soutstring = Soutstring + " " + sep
             Soutstring = Soutstring.strip(sep) + end
             sf.write(Soutstring+'\n')
         if len(site['er_site_names'].split(":"))==1 and site['data_type']=='i':
-            if 'average_int_sigma_perc' not in site.keys():
+            if 'average_int_sigma_perc' not in list(site.keys()):
                 site['average_int_sigma_perc'] = "0"
             if site["average_int_sigma"] == "":
                 site["average_int_sigma"] = "0"
@@ -6201,14 +6201,14 @@ def pmag_results_extract(res_file="pmag_results.txt", crit_file="", spec_file=""
                 site["vadm"] = "0"
             if site["vadm_sigma"]=="":
                 site["vadm_sigma"]="0"
-        for key in site.keys(): # reformat vadms, intensities
+        for key in list(site.keys()): # reformat vadms, intensities
             if key in Micro:
                 site[key]='%7.1f'%(float(site[key])*1e6)
             if key in Zeta:
                 site[key]='%7.1f'%(float(site[key])*1e-21)
         outstring=""
         for key in IntKeys:
-          if key not in site.keys():
+          if key not in list(site.keys()):
               site[key]=""
           outstring = outstring + site[key] + sep
         outstring = outstring.strip(sep) + end + '\n'
@@ -6271,15 +6271,15 @@ def pmag_results_extract(res_file="pmag_results.txt", crit_file="", spec_file=""
     f.close()
     sf.close()
     fI.close()
-    print 'data saved in: ', outfile, Ioutfile, Soutfile
+    print('data saved in: ', outfile, Ioutfile, Soutfile)
     outfiles = [outfile, Ioutfile, Soutfile]
     if spec_file:
         fsp.close()
-        print 'specimen data saved in: ', Specout
+        print('specimen data saved in: ', Specout)
         outfiles.append(Specout)
     if crit_file:
         cr.close()
-        print 'Selection criteria saved in: ', Critout
+        print('Selection criteria saved in: ', Critout)
         outfiles.append(Critout)
     return True, outfiles
 
@@ -6356,7 +6356,7 @@ def demag_magic(path_to_file = '.', file_name = 'magic_measurements.txt',
     data,file_type=pmag.magic_read(in_file)
     sids=pmag.get_specs(data)
     plt.figure(num=FIG['demag'],figsize=(5,5))
-    print len(data),' records read from ',in_file
+    print(len(data),' records read from ',in_file)
     #
     #
     # find desired intensity data
@@ -6372,18 +6372,18 @@ def demag_magic(path_to_file = '.', file_name = 'magic_measurements.txt',
         methcodes=rec['magic_method_codes'].split(':')
         for meth in methcodes:
             meths.append(meth.strip())
-        for key in rec.keys():
+        for key in list(rec.keys()):
             if key in intlist and rec[key]!="":
                 if key not in IntMeths:
                     IntMeths.append(key)
                 if rec[plot_key] not in plotlist and LT in meths:
                     plotlist.append(rec[plot_key])
-                if 'measurement_flag' not in rec.keys():
+                if 'measurement_flag' not in list(rec.keys()):
                     rec['measurement_flag']='g'
                 FixData.append(rec)
         plotlist.sort()
     if len(IntMeths)==0:
-        print 'No intensity information found'
+        print('No intensity information found')
     data=FixData
     int_key=IntMeths[0] # plot first intensity method found - normalized to initial value anyway - doesn't matter which used
     # print plotlist
@@ -6394,7 +6394,7 @@ def demag_magic(path_to_file = '.', file_name = 'magic_measurements.txt',
             plotlist = []
             plotlist.append(individual)
     for plot in plotlist:
-        print plot,'plotting by: ',plot_key
+        print(plot,'plotting by: ',plot_key)
         PLTblock=pmag.get_dictitem(data,plot_key,plot,'T') # fish out all the data for this type of plot
         PLTblock=pmag.get_dictitem(PLTblock,'magic_method_codes',LT,'has') # fish out all the dmag for this experiment type
         PLTblock=pmag.get_dictitem(PLTblock,int_key,'','F') # get all with this intensity key non-blank
@@ -6422,7 +6422,7 @@ def demag_magic(path_to_file = '.', file_name = 'magic_measurements.txt',
                     SPCblock=pmag.get_dictitem(PLTblock,'er_specimen_name',spc,'T') # plot specimen by specimen
                     for rec in SPCblock:
                         if rec['measurement_flag'] == 'g':
-                            if float(rec[dmag_key]) not in AVGblock.keys():
+                            if float(rec[dmag_key]) not in list(AVGblock.keys()):
                                 AVGblock[float(rec[dmag_key])] = [float(rec[int_key])]
                             else:
                                 AVGblock[float(rec[dmag_key])].append(float(rec[int_key]))
@@ -6568,8 +6568,8 @@ def hysteresis_magic(path_to_file = '.',hyst_file="rmag_hysteresis.txt",
     #
     meas_data,file_type=pmag.magic_read(meas_file)
     if file_type!='magic_measurements':
-        print hysteresis_magic.__doc__
-        print 'bad file'
+        print(hysteresis_magic.__doc__)
+        print('bad file')
         return
 
     # initialize some variables
@@ -6584,7 +6584,7 @@ def hysteresis_magic(path_to_file = '.',hyst_file="rmag_hysteresis.txt",
         for meth in meths:
             methods.append(meth.strip())
         if 'LP-HYS' in methods:
-            if 'er_synthetic_name' in rec.keys() and rec['er_synthetic_name']!="":
+            if 'er_synthetic_name' in list(rec.keys()) and rec['er_synthetic_name']!="":
                 rec['er_specimen_name']=rec['er_synthetic_name']
             if rec['magic_experiment_name'] not in experiment_names:experiment_names.append(rec['magic_experiment_name'])
             if rec['er_specimen_name'] not in sids:sids.append(rec['er_specimen_name'])
@@ -6595,7 +6595,7 @@ def hysteresis_magic(path_to_file = '.',hyst_file="rmag_hysteresis.txt",
     first_dcd_rec,first_rec,first_imag_rec=1,1,1
     while sample_num < len(sids):
         sample = sids[sample_num]
-        print sample, sample_num+1 , 'out of ',len(sids)
+        print(sample, sample_num+1 , 'out of ',len(sids))
         B,M,Bdcd,Mdcd=[],[],[],[] #B,M for hysteresis, Bdcd,Mdcd for irm-dcd data
         Bimag,Mimag=[],[] #Bimag,Mimag for initial magnetization curves
         for rec in meas_data:
@@ -6610,12 +6610,12 @@ def hysteresis_magic(path_to_file = '.',hyst_file="rmag_hysteresis.txt",
                     e=rec['magic_experiment_name']
                     HystRec={}
                     first_rec=0
-                    if "er_location_name" in rec.keys():
+                    if "er_location_name" in list(rec.keys()):
                         HystRec["er_location_name"]=rec["er_location_name"]
                         locname=rec['er_location_name'].replace('/','-')
-                    if "er_sample_name" in rec.keys():HystRec["er_sample_name"]=rec["er_sample_name"]
-                    if "er_site_name" in rec.keys():HystRec["er_site_name"]=rec["er_site_name"]
-                    if "er_synthetic_name" in rec.keys() and rec['er_synthetic_name']!="":
+                    if "er_sample_name" in list(rec.keys()):HystRec["er_sample_name"]=rec["er_sample_name"]
+                    if "er_site_name" in list(rec.keys()):HystRec["er_site_name"]=rec["er_site_name"]
+                    if "er_synthetic_name" in list(rec.keys()) and rec['er_synthetic_name']!="":
                         HystRec["er_synthetic_name"]=rec["er_synthetic_name"]
                     else:
                         HystRec["er_specimen_name"]=rec["er_specimen_name"]
@@ -6626,10 +6626,10 @@ def hysteresis_magic(path_to_file = '.',hyst_file="rmag_hysteresis.txt",
                     RemRec={}
                     irm_exp=rec['magic_experiment_name']
                     first_dcd_rec=0
-                    if "er_location_name" in rec.keys():RemRec["er_location_name"]=rec["er_location_name"]
-                    if "er_sample_name" in rec.keys():RemRec["er_sample_name"]=rec["er_sample_name"]
-                    if "er_site_name" in rec.keys():RemRec["er_site_name"]=rec["er_site_name"]
-                    if "er_synthetic_name" in rec.keys() and rec['er_synthetic_name']!="":
+                    if "er_location_name" in list(rec.keys()):RemRec["er_location_name"]=rec["er_location_name"]
+                    if "er_sample_name" in list(rec.keys()):RemRec["er_sample_name"]=rec["er_sample_name"]
+                    if "er_site_name" in list(rec.keys()):RemRec["er_site_name"]=rec["er_site_name"]
+                    if "er_synthetic_name" in list(rec.keys()) and rec['er_synthetic_name']!="":
                         RemRec["er_synthetic_name"]=rec["er_synthetic_name"]
                     else:
                         RemRec["er_specimen_name"]=rec["er_specimen_name"]
@@ -6663,7 +6663,7 @@ def hysteresis_magic(path_to_file = '.',hyst_file="rmag_hysteresis.txt",
             ax1.text(bounds[1]-.9*bounds[1],-.7,n1, fontsize=9)
             n2='Bc: '+'%8.2e'%(float(hpars['hysteresis_bc']))+' T'
             ax1.text(bounds[1]-.9*bounds[1],-.5,n2, fontsize=9)
-            if 'hysteresis_xhf' in hpars.keys():
+            if 'hysteresis_xhf' in list(hpars.keys()):
                 n3=r'Xhf: '+'%8.2e'%(float(hpars['hysteresis_xhf']))+' m^3'
                 ax1.text(bounds[1]-.9*bounds[1],-.3,n3, fontsize=9)
     #         plt.subplot(1,2,2)
@@ -6706,7 +6706,7 @@ def hysteresis_magic(path_to_file = '.',hyst_file="rmag_hysteresis.txt",
                 ax4.set_xlabel('B (T)')
                 ax4.set_ylabel('M/Mr')
         except:
-            print "not doing it"
+            print("not doing it")
             hpars['hysteresis_bcr']='0'
             hpars['magic_method_codes']=""
         plt.gcf()
@@ -6757,8 +6757,8 @@ def find_ei(data, nb=1000, save = False, save_folder = '.', fmt='svg',
     NOTE: If distribution does not have a solution, plot labeled: Pathological.  Some bootstrap samples may have
        valid solutions and those are plotted in the CDFs and E/I plot.
     """
-    print "Bootstrapping.... be patient"
-    print ""
+    print("Bootstrapping.... be patient")
+    print("")
     sys.stdout.flush()
 
     upper,lower=int(round(.975*nb)),int(round(.025*nb))
@@ -6828,10 +6828,10 @@ def find_ei(data, nb=1000, save = False, save_folder = '.', fmt='svg',
     plot_net(4)
     plot_di(decs,unsquished_incs)
 
-    print "The original inclination was: " + str(Io)
-    print ""
-    print "The corrected inclination is: " + str(Inc)
-    print "with bootstrapped confidence bounds of: " +  str(I[lower]) + ' to ' + str(I[upper])
-    print "and elongation parameter of: " + str(Elong)
+    print("The original inclination was: " + str(Io))
+    print("")
+    print("The corrected inclination is: " + str(Inc))
+    print("with bootstrapped confidence bounds of: " +  str(I[lower]) + ' to ' + str(I[upper]))
+    print("and elongation parameter of: " + str(Elong))
     if return_new_dirs is True:
         return make_di_block(decs, unsquished_incs)

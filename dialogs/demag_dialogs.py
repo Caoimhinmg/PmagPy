@@ -5,6 +5,7 @@ import pmagpy.pmag as pmag
 import wx
 import copy
 import os
+from functools import reduce
 
 #============================================================================================
 # LOG HEADER:
@@ -171,7 +172,7 @@ class user_input(wx.Dialog):
                 except: return_dict[self.inputs[i]] = ctrl.GetValue()
             else:
                 return_dict[self.inputs[i]] = ctrl.GetValue()
-        return ('' not in return_dict.values(), return_dict)
+        return ('' not in list(return_dict.values()), return_dict)
 
 #--------------------------------------------------------------    
 # MagIC results tables dialog
@@ -441,23 +442,23 @@ class convert_generic_files_to_MagIC(wx.Frame):
         bSizer0.AddSpacer(5)
         for i in range(self.max_files):
             command= "self.file_path_%i = wx.TextCtrl(self.panel, id=-1, size=(200,25), style=wx.TE_READONLY)"%i
-            exec command
+            exec(command)
             command= "self.add_file_button_%i =  wx.Button(self.panel, id=-1, label='add',name='add_%i')"%(i,i)
-            exec command
+            exec(command)
             command= "self.Bind(wx.EVT_BUTTON, self.on_add_file_button_i, self.add_file_button_%i)"%i
             #print command
-            exec command            
+            exec(command)            
             command="bSizer0_%i = wx.BoxSizer(wx.HORIZONTAL)"%i
-            exec command
+            exec(command)
             command="bSizer0_%i.Add(wx.StaticText(pnl,label=('%i  '[:2])),wx.ALIGN_LEFT)"%(i,i+1)
-            exec command
+            exec(command)
             
             command="bSizer0_%i.Add(self.file_path_%i,wx.ALIGN_LEFT)" %(i,i)
-            exec command
+            exec(command)
             command="bSizer0_%i.Add(self.add_file_button_%i,wx.ALIGN_LEFT)" %(i,i)
-            exec command
+            exec(command)
             command="bSizer0.Add(bSizer0_%i,wx.ALIGN_TOP)" %i
-            exec command
+            exec(command)
             bSizer0.AddSpacer(5)
               
 #        #---sizer 1 ----
@@ -513,9 +514,9 @@ class convert_generic_files_to_MagIC(wx.Frame):
         bSizer3.AddSpacer(5)
         for i in range(self.max_files):
             command= "self.file_info_user_%i = wx.TextCtrl(self.panel, id=-1, size=(60,25))"%i
-            exec command
+            exec(command)
             command="bSizer3.Add(self.file_info_user_%i,wx.ALIGN_TOP)" %i
-            exec command
+            exec(command)
             bSizer3.AddSpacer(5)
 
         #---sizer 4 ----
@@ -527,17 +528,17 @@ class convert_generic_files_to_MagIC(wx.Frame):
         bSizer4.AddSpacer(5)
         for i in range(self.max_files):
             command="self.sample_naming_convention_%i = wx.ComboBox(self.panel, -1, self.sample_naming_conventions[0], size=(180,25), choices=self.sample_naming_conventions, style=wx.CB_DROPDOWN)"%i
-            exec command            
+            exec(command)            
             command="self.sample_naming_convention_char_%i = wx.TextCtrl(self.panel, id=-1, size=(40,25))"%i
-            exec command
+            exec(command)
             command="bSizer4_%i = wx.BoxSizer(wx.HORIZONTAL)"%i
-            exec command
+            exec(command)
             command="bSizer4_%i.Add(self.sample_naming_convention_%i,wx.ALIGN_LEFT)" %(i,i)
-            exec command
+            exec(command)
             command="bSizer4_%i.Add(self.sample_naming_convention_char_%i,wx.ALIGN_LEFT)" %(i,i)
-            exec command
+            exec(command)
             command="bSizer4.Add(bSizer4_%i,wx.ALIGN_TOP)"%i        
-            exec command
+            exec(command)
 
             bSizer4.AddSpacer(5)
 
@@ -550,17 +551,17 @@ class convert_generic_files_to_MagIC(wx.Frame):
         bSizer5.AddSpacer(5)
         for i in range(self.max_files):
             command="self.site_naming_convention_char_%i = wx.TextCtrl(self.panel, id=-1, size=(40,25))"%i
-            exec command
+            exec(command)
             command="self.site_naming_convention_%i = wx.ComboBox(self.panel, -1, self.site_naming_conventions[0], size=(180,25), choices=self.site_naming_conventions, style=wx.CB_DROPDOWN)"%i
-            exec command
+            exec(command)
             command="bSizer5_%i = wx.BoxSizer(wx.HORIZONTAL)"%i
-            exec command
+            exec(command)
             command="bSizer5_%i.Add(self.site_naming_convention_%i,wx.ALIGN_LEFT)" %(i,i)
-            exec command
+            exec(command)
             command="bSizer5_%i.Add(self.site_naming_convention_char_%i,wx.ALIGN_LEFT)" %(i,i)
-            exec command
+            exec(command)
             command="bSizer5.Add(bSizer5_%i,wx.ALIGN_TOP)"%i        
-            exec command
+            exec(command)
             bSizer5.AddSpacer(5)
 
         #---sizer 6 ----
@@ -571,9 +572,9 @@ class convert_generic_files_to_MagIC(wx.Frame):
         bSizer6.AddSpacer(5)
         for i in range(self.max_files):
             command= "self.file_info_location_%i = wx.TextCtrl(self.panel, id=-1, size=(60,25))"%i
-            exec command
+            exec(command)
             command="bSizer6.Add(self.file_info_location_%i,wx.ALIGN_TOP)" %i
-            exec command
+            exec(command)
             bSizer6.AddSpacer(5)
 
 
@@ -670,7 +671,7 @@ class convert_generic_files_to_MagIC(wx.Frame):
         #print "The button's name is " + button.GetName()
         
         command="self.file_path_%i.SetValue(FILE)"%i
-        exec command
+        exec(command)
 
         #self.file_path.AppendText(FILE)
         #self.protocol_info.AppendText("IZZI"+"\n")
@@ -693,13 +694,13 @@ class convert_generic_files_to_MagIC(wx.Frame):
                 for i in range(len(header)):
                     tmp_data[header[i]]=l[i]
                 specimen=tmp_data['specimen']
-                if specimen not in Data.keys():
+                if specimen not in list(Data.keys()):
                     Data[specimen]=[]
                 # check dupliactes
                 if len(Data[specimen]) >0:
                     if tmp_data['treatment']==Data[specimen][-1]['treatment']:
                         if tmp_data['step']==Data[specimen][-1]['step']:
-                            print "-W- WARNING: duplicate measurements specimen %s, Treatment %s:%s. keeping onlt the last one"%(tmp_data['specimen'],tmp_data['treatment'],tmp_data['step'])
+                            print("-W- WARNING: duplicate measurements specimen %s, Treatment %s:%s. keeping onlt the last one"%(tmp_data['specimen'],tmp_data['treatment'],tmp_data['step']))
                             Data[specimen].pop()
                         
                 Data[specimen].append(tmp_data)
@@ -735,14 +736,14 @@ class convert_generic_files_to_MagIC(wx.Frame):
         try:
             self.er_sample_data=self.read_magic_file(os.path.join(self.WD, "er_samples.txt"), 'er_sample_name')
         except:
-            print "-W- WARNING: Cant find er_samples.txt table"
+            print("-W- WARNING: Cant find er_samples.txt table")
             
         for i in range(self.max_files):
 
             # read data from generic file
             datafile=""
             command="datafile=self.file_path_%i.GetValue()"%i
-            exec command
+            exec(command)
             #if datafile!="":
             #    try:
             #        this_file_data= self.read_generic_file(datafile)
@@ -770,34 +771,34 @@ class convert_generic_files_to_MagIC(wx.Frame):
             # get User_name
             user_name=""
             command="user_name=self.file_info_user_%i.GetValue()"%i
-            exec command
+            exec(command)
             
             # get sample-specimen naming convention
 
             sample_naming_convenstion=["",""]
             command="sample_naming_convenstion[0]=self.sample_naming_convention_%i.GetValue()"%i
-            exec command
+            exec(command)
             command="sample_naming_convenstion[1]=self.sample_naming_convention_char_%i.GetValue()"%i
-            exec command
+            exec(command)
             
             # get site-sample naming convention
 
             site_naming_convenstion=["",""]
             command="site_naming_convenstion[0]=self.site_naming_convention_%i.GetValue()"%i
-            exec command
+            exec(command)
             command="site_naming_convenstion[1]=self.site_naming_convention_char_%i.GetValue()"%i
-            exec command
+            exec(command)
 
             # get location
             location_name=""
             command="location_name=self.file_info_location_%i.GetValue()"%i
-            exec command
+            exec(command)
 
             
             # read er_samples.txt
             # to check for sample orientation data and tilt-corrected data
             ErSamplesRecs=[]
-            for specimen in this_file_data.keys():
+            for specimen in list(this_file_data.keys()):
                 measurement_running_number=0
                 this_specimen_LT=[]
                 this_specimen_LP=[]
@@ -822,17 +823,17 @@ class convert_generic_files_to_MagIC(wx.Frame):
                     # see if core azimuth and tilt-corrected data are in er_samples.txt
                     sample=MagRec["er_sample_name"]
                     found_sample_azimuth,found_sample_dip,found_sample_bed_dip_direction,found_sample_bed_dip=False,False,False,False
-                    if sample in self.er_sample_data.keys():
-                        if "sample_azimuth" in self.er_sample_data[sample].keys() and self.er_sample_data[sample]['sample_azimuth'] !="":
+                    if sample in list(self.er_sample_data.keys()):
+                        if "sample_azimuth" in list(self.er_sample_data[sample].keys()) and self.er_sample_data[sample]['sample_azimuth'] !="":
                             sample_azimuth=float(self.er_sample_data[sample]['sample_azimuth'])
                             found_sample_azimuth=True
-                        if "sample_dip" in self.er_sample_data[sample].keys() and self.er_sample_data[sample]['sample_dip']!="":
+                        if "sample_dip" in list(self.er_sample_data[sample].keys()) and self.er_sample_data[sample]['sample_dip']!="":
                             sample_dip=float(self.er_sample_data[sample]['sample_dip'])
                             found_sample_dip=True
-                        if "sample_bed_dip_direction" in self.er_sample_data[sample].keys() and self.er_sample_data[sample]['sample_bed_dip_direction']!="":
+                        if "sample_bed_dip_direction" in list(self.er_sample_data[sample].keys()) and self.er_sample_data[sample]['sample_bed_dip_direction']!="":
                             sample_bed_dip_direction=float(self.er_sample_data[sample]['sample_bed_dip_direction'])
                             found_sample_bed_dip_direction=True
-                        if "sample_bed_dip" in self.er_sample_data[sample].keys() and self.er_sample_data[sample]['sample_bed_dip']!="":
+                        if "sample_bed_dip" in list(self.er_sample_data[sample].keys()) and self.er_sample_data[sample]['sample_bed_dip']!="":
                             sample_bed_dip=float(self.er_sample_data[sample]['sample_bed_dip'])
                             found_sample_bed_dip=True
                     else:
@@ -843,13 +844,13 @@ class convert_generic_files_to_MagIC(wx.Frame):
                     #--------------------
 
                     found_s,found_geo,found_tilt=False,False,False
-                    if "dec_s" in meas_line.keys() and "inc_s" in meas_line.keys():
+                    if "dec_s" in list(meas_line.keys()) and "inc_s" in list(meas_line.keys()):
                         found_s=True
                         MagRec["measurement_dec"]=meas_line["dec_s"]
                         MagRec["measurement_inc"]=meas_line["inc_s"]
-                    if "dec_g" in meas_line.keys() and "inc_g" in meas_line.keys():
+                    if "dec_g" in list(meas_line.keys()) and "inc_g" in list(meas_line.keys()):
                         found_geo=True
-                    if "dec_t" in meas_line.keys() and "inc_t" in meas_line.keys():
+                    if "dec_t" in list(meas_line.keys()) and "inc_t" in list(meas_line.keys()):
                         found_tilt=True
                         
                     #-----------------------------                    
@@ -871,15 +872,15 @@ class convert_generic_files_to_MagIC(wx.Frame):
                             sample_azimuth=float(self.er_sample_data[sample]['sample_azimuth'])  
                             sample_dip=float(self.er_sample_data[sample]['sample_dip'])   
                             if sample_azimuth!=0 and sample_dip!=0:
-                                print "-W- WARNING: delete core azimuth/plunge in er_samples.txt\n\
-                                becasue dec_s and inc_s are not avaialable" 
+                                print("-W- WARNING: delete core azimuth/plunge in er_samples.txt\n\
+                                becasue dec_s and inc_s are not avaialable") 
 
                     #-----------------------------                                                
                     # specimen coordinates: no
                     # geographic coordinates: no
                     #-----------------------------                    
                     if not found_geo and not found_s:
-                        print "-E- ERROR: sample %s does not have dec_s/inc_s or dec_g/inc_g. Ignore specimen %s "%(sample,specimen)
+                        print("-E- ERROR: sample %s does not have dec_s/inc_s or dec_g/inc_g. Ignore specimen %s "%(sample,specimen))
                         break
                            
                     #-----------------------------                                                
@@ -903,10 +904,10 @@ class convert_generic_files_to_MagIC(wx.Frame):
                         # core azimuth/plunge is in er_samples.txt
                         else:
                             if float(self.er_sample_data[sample]['sample_azimuth'])!= az:
-                                print "-E- ERROR in sample_azimuth sample %s. Check it! using the value in er_samples.txt"%sample
+                                print("-E- ERROR in sample_azimuth sample %s. Check it! using the value in er_samples.txt"%sample)
                                 
                             if float(self.er_sample_data[sample]['sample_dip'])!= pl:
-                                print "-E- ERROR in sample_dip sample %s. Check it! using the value in er_samples.txt"%sample
+                                print("-E- ERROR in sample_dip sample %s. Check it! using the value in er_samples.txt"%sample)
                             
                     #-----------------------------                                                
                     # specimen coordinates: yes
@@ -917,7 +918,7 @@ class convert_generic_files_to_MagIC(wx.Frame):
                             pass
                             # (nothing to do)
                         else:
-                            print "-E- ERROR: missing sample_dip or sample_azimuth for sample %s.ignoring specimens "%sample
+                            print("-E- ERROR: missing sample_dip or sample_azimuth for sample %s.ignoring specimens "%sample)
                             break 
  
                     #-----------------------------                                                
@@ -925,7 +926,7 @@ class convert_generic_files_to_MagIC(wx.Frame):
                     # geographic coordinates: no
                     #-----------------------------                    
                     if found_tilt and not found_geo:
-                            print "-E- ERROR: missing geographic data for sample %s. Ignoring tilt-corrected data "%sample
+                            print("-E- ERROR: missing geographic data for sample %s. Ignoring tilt-corrected data "%sample)
                     if found_tilt and found_geo:
                         dec_geo,inc_geo=float(meas_line["dec_g"]),float(meas_line["inc_g"])
                         dec_tilt,inc_tilt=float(meas_line["dec_t"]),float(meas_line["inc_t"])
@@ -935,7 +936,7 @@ class convert_generic_files_to_MagIC(wx.Frame):
                            DipDir,Dip=pmag.get_tilt(dec_geo,inc_geo,dec_tilt,inc_tilt)
                             
                         if not found_sample_bed_dip_direction or not found_sample_bed_dip:
-                            print "-I- calculating dip and dip direction used for tilt correction sample %s. results are put in er_samples.txt"%sample
+                            print("-I- calculating dip and dip direction used for tilt correction sample %s. results are put in er_samples.txt"%sample)
                             self.er_sample_data[sample]['sample_bed_dip_direction']="%.1f"%DipDir
                             self.er_sample_data[sample]['sample_bed_dip']="%.1f"%Dip
 
@@ -977,7 +978,7 @@ class convert_generic_files_to_MagIC(wx.Frame):
                     #-----------------
                     # er_samples_data
                     #
-                    if sample in self.er_sample_data.keys():
+                    if sample in list(self.er_sample_data.keys()):
                         self.er_sample_data[sample]['er_sample_name']=sample
                         self.er_sample_data[sample]['er_site_name']=MagRec["er_site_name"]
                         self.er_sample_data[sample]['er_location_name']=MagRec["er_location_name"]
@@ -1000,7 +1001,7 @@ class convert_generic_files_to_MagIC(wx.Frame):
         # write er_samples.txt
         #--
         ErSamplesRecs=[]
-        samples=self.er_sample_data.keys()
+        samples=list(self.er_sample_data.keys())
         for sample in samples:
             ErSamplesRecs.append(self.er_sample_data[sample])
         ErSamplesRecs_fixed=self.merge_pmag_recs(ErSamplesRecs)
@@ -1025,12 +1026,12 @@ class convert_generic_files_to_MagIC(wx.Frame):
         recs=copy.deepcopy(old_recs)
         headers=[]
         for rec in recs:
-            for key in rec.keys():
+            for key in list(rec.keys()):
                 if key not in headers:
                     headers.append(key)
         for rec in recs:
             for header in headers:
-                if header not in rec.keys():
+                if header not in list(rec.keys()):
                     rec[header]=""
         return recs
 
@@ -1082,8 +1083,8 @@ class convert_generic_files_to_MagIC(wx.Frame):
             tmp_line=line.strip('\n').split('\t')
             for i in range(len(tmp_line)):
                 tmp_data[header[i]]=tmp_line[i]
-            if tmp_data[sort_by_this_name] in DATA.keys():
-                print "-E- ERROR: magic file %s has more than one line for %s %s\n"%(path,sort_by_this_name,tmp_data[sort_by_this_name])
+            if tmp_data[sort_by_this_name] in list(DATA.keys()):
+                print("-E- ERROR: magic file %s has more than one line for %s %s\n"%(path,sort_by_this_name,tmp_data[sort_by_this_name]))
             DATA[tmp_data[sort_by_this_name]]=tmp_data
         fin.close()        
         return(DATA)
@@ -1127,7 +1128,7 @@ class GBPopupMenu(wx.Menu):
         
     def write_good_bad_magic_measurements(self):
         #print "write_good_bad_magic_measurements"
-        print "self.magic_file",self.magic_file
+        print("self.magic_file",self.magic_file)
         pmag.magic_write(self.magic_file,self.mag_meas_data,"magic_measurements")
                 
 
@@ -1162,7 +1163,7 @@ class demag_criteria_dialog(wx.Dialog):
         window_list_specimens=['specimen_n','specimen_mad','specimen_dang','specimen_alpha95']
         for key in window_list_specimens:
             command="self.set_%s=wx.TextCtrl(pnl1,style=wx.TE_CENTER,size=(50,20))"%key
-            exec command
+            exec(command)
         criteria_specimen_window = wx.GridSizer(2, len(window_list_specimens), 10, 10)
         criteria_specimen_window.AddMany( [(wx.StaticText(pnl1,label="n",style=wx.TE_CENTER), wx.EXPAND),
             (wx.StaticText(pnl1,label="MAD",style=wx.TE_CENTER), wx.EXPAND),
@@ -1189,7 +1190,7 @@ class demag_criteria_dialog(wx.Dialog):
         window_list_samples=['sample_n','sample_n_lines','sample_n_planes','sample_k','sample_r','sample_alpha95']
         for key in window_list_samples:
             command="self.set_%s=wx.TextCtrl(pnl1,style=wx.TE_CENTER,size=(50,20))"%key
-            exec command
+            exec(command)
         criteria_sample_window = wx.GridSizer(2, len(window_list_samples), 10, 10)
         criteria_sample_window.AddMany( [(wx.StaticText(pnl1,label="n",style=wx.TE_CENTER), wx.EXPAND),
             (wx.StaticText(pnl1,label="n lines",style=wx.TE_CENTER), wx.EXPAND),
@@ -1218,7 +1219,7 @@ class demag_criteria_dialog(wx.Dialog):
         window_list_sites=['site_n','site_n_lines','site_n_planes','site_k','site_r','site_alpha95']
         for key in window_list_sites:
             command="self.set_%s=wx.TextCtrl(pnl1,style=wx.TE_CENTER,size=(50,20))"%key
-            exec command
+            exec(command)
         criteria_site_window = wx.GridSizer(2, len(window_list_sites), 10, 10)
         criteria_site_window.AddMany( [(wx.StaticText(pnl1,label="n",style=wx.TE_CENTER), wx.EXPAND),
             (wx.StaticText(pnl1,label="n lines",style=wx.TE_CENTER), wx.EXPAND),
@@ -1255,14 +1256,14 @@ class demag_criteria_dialog(wx.Dialog):
         
         # initialize value:
         for crit in supported_crit:
-            if crit not in acceptance_criteria.keys():
+            if crit not in list(acceptance_criteria.keys()):
                 continue
             if acceptance_criteria[crit]['value']!="":
                 value=float(acceptance_criteria[crit]['value'])
                 if value!=-999:                                   
                     decimal_points=acceptance_criteria[crit]['decimal_points']
                     command="self.set_%s.SetValue('%%.%if'%%(value))"%(crit,int(decimal_points))
-                    exec command
+                    exec(command)
         
         #----------------------  
         vbox.AddSpacer(10)

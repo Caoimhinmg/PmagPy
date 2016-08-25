@@ -4,7 +4,7 @@ doc string
 """
 
 # pylint: disable=C0103,E402
-print '-I- Importing MagIC GUI dependencies'
+print('-I- Importing MagIC GUI dependencies')
 import matplotlib
 if not matplotlib.get_backend() == 'WXAgg':
     matplotlib.use('WXAgg')
@@ -44,21 +44,21 @@ class MainFrame(wx.Frame):
         #
         self.grid_frame = None
         self.panel = wx.Panel(self, size=wx.GetDisplaySize(), name='main panel')
-        print '-I- Fetching working directory'
+        print('-I- Fetching working directory')
         self.WD = os.path.realpath(WD) or os.getcwd()
 
-        print '-I- Initializing magic data model'
+        print('-I- Initializing magic data model')
         #self.data_model = validate_upload.get_data_model()
         self.data_model = data_model3.DataModel()
 
-        print '-I- Read in any available data from working directory'
+        print('-I- Read in any available data from working directory')
         self.contribution = nb.Contribution(self.WD, dmodel=self.data_model)
 
         #self.er_magic = builder.ErMagicBuilder(self.WD, self.data_model)
         self.edited = False
         self.validation_mode = False
 
-        print '-I- Initializing interface'
+        print('-I- Initializing interface')
         self.InitUI()
 
     def InitUI(self):
@@ -204,7 +204,7 @@ class MainFrame(wx.Frame):
         self.hbox.Fit(self)
 
         # do menu
-        print "-I- Initializing menu"
+        print("-I- Initializing menu")
         menubar = MagICMenu(self)
         self.SetMenuBar(menubar)
 
@@ -228,12 +228,12 @@ class MainFrame(wx.Frame):
         change_dir_dialog.Destroy()
         wait = wx.BusyInfo('Initializing data object in new directory, please wait...')
         wx.Yield()
-        print '-I- Initializing magic data object'
+        print('-I- Initializing magic data object')
         # make new contribution object, but reuse old data_model
         self.contribution = nb.Contribution(self.WD, dmodel=self.data_model)
         self.edited = False
-        print '-I- Read in any available data from working directory'
-        print '-I- Initializing headers'
+        print('-I- Read in any available data from working directory')
+        print('-I- Initializing headers')
         del wait
 
     def on_open_grid_frame(self):
@@ -252,7 +252,7 @@ class MainFrame(wx.Frame):
         Create a GridFrame for data type of the button that was clicked
         """
         if self.grid_frame:
-            print '-I- You already have a grid frame open'
+            print('-I- You already have a grid frame open')
             pw.simple_warning("You already have a grid open")
             return
 
@@ -383,7 +383,7 @@ For full error messages, see {}.""".format(grid_type + "_errors.txt")
                         self.warn_dict[item_type][item_name] = errors[item_type][item_name]
 
         has_problems = []
-        for item_type, warnings in self.warn_dict.items():
+        for item_type, warnings in list(self.warn_dict.items()):
             if warnings:
                 has_problems.append(item_type)
         # for any dtypes with validation problems (data or coherence),
@@ -496,7 +496,7 @@ class MagICMenu(wx.MenuBar):
         dia = pmag_menu_dialogs.ClearWD(self.parent, self.parent.WD)
         clear = dia.do_clear()
         if clear:
-            print '-I- Clear data object'
+            print('-I- Clear data object')
             self.contribution = nb.Contribution(self.WD, dmodel=self.data_model)
             self.edited = False
 
@@ -533,9 +533,9 @@ class MagICMenu(wx.MenuBar):
 
 def main():
     if '-h' in sys.argv:
-        print "See https://earthref.org/PmagPy/cookbook/#magic_gui.py for a complete tutorial"
+        print("See https://earthref.org/PmagPy/cookbook/#magic_gui.py for a complete tutorial")
         sys.exit()
-    print '-I- Starting MagIC GUI - please be patient'
+    print('-I- Starting MagIC GUI - please be patient')
 
     # if redirect is true, wxpython makes its own output window for stdout/stderr
     app = wx.App(redirect=False)

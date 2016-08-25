@@ -1,15 +1,15 @@
 #!/usr/bin/env python
 import pandas as pd
 from pandas import Series, DataFrame
-import urllib2
-import httplib
+import urllib.request, urllib.error, urllib.parse
+import http.client
 import json
 import os
-import backup_vocabulary as backup
+from . import backup_vocabulary as backup
 # get list of controlled vocabularies form this part of the api:
 #'http://api.earthref.org/MagIC/vocabularies.json'
 # then, use that list to determine whether or not any given column has a controlled vocabulary list
-import check_updates
+from . import check_updates
 pmag_dir = check_updates.get_pmag_dir()
 data_model_dir = os.path.join(pmag_dir, 'pmagpy', 'data_model')
 # if using with py2app, the directory structure is flat,
@@ -34,9 +34,9 @@ class Vocabulary(object):
         """
         try:
             raw_codes = pd.io.json.read_json('https://api.earthref.org/MagIC/method_codes.json')
-        except urllib2.URLError:
+        except urllib.error.URLError:
             return [], []
-        except httplib.BadStatusLine:
+        except http.client.BadStatusLine:
             return [], []
         code_types = raw_codes.ix['label']
         tot_codes = raw_codes.ix['count'].sum()
@@ -47,9 +47,9 @@ class Vocabulary(object):
             # if internet fails in the middle, cut out
             try:
                 raw_df = pd.io.json.read_json(code_url)
-            except urllib2.URLError:
+            except urllib.error.URLError:
                 return [], []
-            except httplib.BadStatusLine:
+            except http.client.BadStatusLine:
                 return [], []
             # unpack the data into a dataframe, drop unnecessary columns
             df = DataFrame(raw_df[code_name][0])[['definition', 'code']]
@@ -124,7 +124,7 @@ class Vocabulary(object):
         connected = True
         try:
             controlled_vocabularies = []
-            print '-I- Importing controlled vocabularies from https://earthref.org'
+            print('-I- Importing controlled vocabularies from https://earthref.org')
             url = 'https://api.earthref.org/MagIC/vocabularies.json'
             data = pd.io.json.read_json(url)
             possible_vocabularies = data.columns
@@ -142,7 +142,7 @@ class Vocabulary(object):
                         if not item: # ignore null values
                             continue
                         letter = item[0].upper()
-                        if letter not in dictionary.keys():
+                        if letter not in list(dictionary.keys()):
                             dictionary[letter] = []
                         dictionary[letter].append(item)
 
@@ -151,12 +151,12 @@ class Vocabulary(object):
                 controlled_vocabularies.append(stripped_list)
 
             vocabularies = pd.Series(controlled_vocabularies, index=vocab_types)
-        except urllib2.URLError:
+        except urllib.error.URLError:
             connected = False
-        except httplib.BadStatusLine:
+        except http.client.BadStatusLine:
             connected = False
         if not connected:
-            print "-W- Could not connect to internet -- will not be able to provide all controlled vocabularies"
+            print("-W- Could not connect to internet -- will not be able to provide all controlled vocabularies")
             vocabularies = pd.Series([backup.site_lithology, backup.site_class, backup.site_type,
                                       backup.location_type, backup.age_unit, backup.site_definition], index=vocab_types)
             possible_vocabularies = []

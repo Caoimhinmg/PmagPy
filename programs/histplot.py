@@ -39,7 +39,7 @@ def main():
     plot=0
     if '-sav' in sys.argv:plot=1
     if '-h' in sys.argv:
-        print main.__doc__
+        print(main.__doc__)
         sys.exit()
     if '-fmt' in sys.argv:
         ind=sys.argv.index('-fmt')
@@ -52,7 +52,7 @@ def main():
         outfile=sys.argv[ind+1]
         fmt=""
     else:  outfile='hist.'+fmt
-    print outfile
+    print(outfile)
     if '-N' in sys.argv:
         norm=0
         ylab='Number'
@@ -84,10 +84,10 @@ def main():
     pylab.title(name)
     if plot==0:
         pylab.draw()
-        p=raw_input('s[a]ve to save plot, [q]uit to exit without saving  ')
+        p=input('s[a]ve to save plot, [q]uit to exit without saving  ')
         if p!='a':  sys.exit()
     pylab.savefig(outfile)
-    print 'plot saved in ',outfile
+    print('plot saved in ',outfile)
 
 if __name__ == "__main__":
     main()

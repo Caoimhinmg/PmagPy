@@ -6,10 +6,10 @@ import wx
 import wx.grid
 #import sys
 import os
-import drop_down_menus
-import pmag_widgets as pw
-import magic_grid
-import grid_frame
+from . import drop_down_menus
+from . import pmag_widgets as pw
+from . import magic_grid
+from . import grid_frame
 import pmagpy.check_updates as check_updates
 
 
@@ -376,7 +376,7 @@ Fill in any blank cells using controlled vocabularies.
 
         col_names = ('location_begin_lat', 'location_end_lat', 'location_begin_lon', 'location_end_lon')
         col_inds = [self.grid.col_labels.index(name) for name in col_names]
-        col_info = zip(col_names, col_inds)
+        col_info = list(zip(col_names, col_inds))
         for loc in self.er_magic_data.locations:
             row_ind = self.grid.row_labels.index(loc.name)
             for col_name, col_ind in col_info:
@@ -562,8 +562,8 @@ You may use the drop-down menus to add as many values as needed in these columns
 
     def validate(self, grid):
         validations = ['er_specimen_name', 'er_sample_name', 'er_site_name', 'er_location_name', 'site_class', 'site_lithology', 'site_type', 'site_definition', 'site_lon', 'site_lat', 'sample_class', 'sample_lithology', 'sample_type', 'sample_lat', 'sample_lon', 'location_type', 'age_unit', 'age']#, 'magic_method_codes']
-        cols = range(grid.GetNumberCols())
-        rows = range(grid.GetNumberRows())
+        cols = list(range(grid.GetNumberCols()))
+        rows = list(range(grid.GetNumberRows()))
         data_missing = []
         for col in cols:
             col_label = str(grid.GetColLabelValue(col))
@@ -833,7 +833,7 @@ You may use the drop-down menus to add as many values as needed in these columns
 
         grid_name = str(grid.GetName())
 
-        cols = range(grid.GetNumberCols())
+        cols = list(range(grid.GetNumberCols()))
 
         col_labels = []
         for col in cols:

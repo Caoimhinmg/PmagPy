@@ -4,7 +4,7 @@ import pmagpy.pmag as pmag
 
 def spitout(kappa):
     dec,inc= pmag.fshdev(kappa)  # send kappa to fshdev
-    print '%7.1f %7.1f ' % (dec,inc)
+    print('%7.1f %7.1f ' % (dec,inc))
     return
 
 def main():
@@ -34,12 +34,12 @@ def main():
     """
     N,kappa=100,20
     if '-h' in sys.argv:
-        print main.__doc__
+        print(main.__doc__)
         sys.exit()
     elif '-i' in sys.argv:
-        ans=raw_input('    Kappa: ')
+        ans=input('    Kappa: ')
         kappa=float(ans)
-        ans=raw_input('    N: ')
+        ans=input('    N: ')
         N=int(ans)
     else:
         if '-k' in sys.argv:

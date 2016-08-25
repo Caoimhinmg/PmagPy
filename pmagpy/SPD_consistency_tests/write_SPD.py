@@ -19,10 +19,10 @@ import SPD.spd as spd
 infile = 'consistency_tests/Yamamoto_Hushi_2008_magic_measurements.txt' #'consistency_tests/Yamamoto_etal_2003_magic_measurements.txt' #'consistency_tests/Tanaka_etal_2012_magic_measurements.txt' #'consistency_tests/Selkin_etal_2000_magic_measurements.txt'#'consistency_tests/Pick_Tauxe_93_magic_measurements.txt'#'consistency_tests/Paterson_etal_2010_magic_measurements.txt' #'consistency_tests/Muxworthy_etal_2011_magic_measurements.txt' #'consistency_tests/Krasa_2000_magic_measurements.txt'#'consistency_tests/Donadini_etal_2007_magic_measurements.txt' #'consistency_tests/Biggin_etal_2007_magic_measurements.txt'#'consistency_tests/Bowles_etal_2006_magic_measurements.txt'#
 outfile ='consistency_tests/Yamamoto_Hushi_2008.out.csv' #'consistency_tests/Yamamoto_etal_2003.out.csv' #'consistency_tests/Tanaka_etal_2012.out.csv'#'consistency_tests/Selkin_etal_2000.out.csv' #'consistency_tests/Pick_Tauxe_93.out.csv' #'consistency_tests/Paterson_etal_2010.out.csv' #'consistency_tests/Muxworthy_etal_2011.out.csv' #consistency_tests/Krasa_2000.out.csv'#'consistency_tests/Donadini_etal_2007.out.csv' #'consistency_tests/Biggin_etal_2007.out.csv'# 'consistency_tests/Bowles_etal_2006.out.csv'# 
 
-print sys.argv
+print(sys.argv)
 
 if '-f' in sys.argv:
-    print 'ffffffff'
+    print('ffffffff')
     infile_ind = sys.argv.index('-f') + 1
     infile = sys.argv[infile_ind]
 
@@ -52,16 +52,16 @@ long_list = arai_plot_stats + directional_stats + ptrm_stats + tail_stats + addi
 
 import SPD.new_lj_thellier_gui_spd as tgs
 
-print "starting thingee"
+print("starting thingee")
 
-print 'outfile', outfile
-print 'infile', infile
+print('outfile', outfile)
+print('infile', infile)
 read_in = open(infile, 'r')
-print read_in
-print read_in.readline()
-print read_in.readline()
-print read_in.readline()
-print read_in.readline()
+print(read_in)
+print(read_in.readline())
+print(read_in.readline())
+print(read_in.readline())
+print(read_in.readline())
 # create tab file
 
 def init_outfile(outfile):
@@ -82,15 +82,15 @@ gui = tgs.Arai_GUI(infile, cwd)
 data = gui.Data
 
 def check_at_temperature(gui, out, tmin_index, tmax_index, rep=0):
-    print "checking at tmin: {}, tmax: {}".format(tmin_index, tmax_index)
-    specimen_names = gui.Data.keys()
+    print("checking at tmin: {}, tmax: {}".format(tmin_index, tmax_index))
+    specimen_names = list(gui.Data.keys())
     for s in specimen_names:
         try:
             spec = spd.PintPars(gui.Data, s, gui.Data[s]['t_Arai'][tmin_index], gui.Data[s]['t_Arai'][tmax_index])
             spec.s = spec.s.replace('-', '_')
             #spec.s = spec.s + "_rep_" + str(rep)
             spec.s = spec.s + "_" + str(tmin_index) + "_" + str(tmax_index)
-            print spec.s, spec.tmin, spec.tmax
+            print(spec.s, spec.tmin, spec.tmax)
             spec.calculate_all_statistics()
             out.write("s: {} \t n: {} \t Tmin: {} \t Tmax: {} \t".format(str(spec.s), str(spec.pars['specimen_n']), str(spec.tmin_K), str(spec.tmax_K)))
             for stat in long_list:
@@ -100,8 +100,8 @@ def check_at_temperature(gui, out, tmin_index, tmax_index, rep=0):
                     out.write(str(stat) + ": " + str(spec.pars[stat]) + '\t')
             out.write('\n')
         except IndexError as ex:
-            print ex
-            print type(ex)
+            print(ex)
+            print(type(ex))
     #out.write('Next temperature\n')
 #out.close()
 
@@ -109,7 +109,7 @@ def check_at_temperature(gui, out, tmin_index, tmax_index, rep=0):
 
 
 out = init_outfile(outfile)
-print type(out)
+print(type(out))
 #check_at_temperature(gui, out, 0, 6)
 
 #check_at_temperature(gui, out, 0, 19)
@@ -119,7 +119,7 @@ print type(out)
 
 
 def get_combos(nmax=20):
-    lst = range(nmax)
+    lst = list(range(nmax))
     combos = []
     for i in lst:
         start = i
@@ -128,7 +128,7 @@ def get_combos(nmax=20):
     return combos
 
 combos = get_combos()
-print combos
+print(combos)
 
 
 for num, c in enumerate(combos):

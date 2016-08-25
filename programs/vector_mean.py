@@ -28,7 +28,7 @@ def main():
 
     """
     if '-h' in sys.argv: # check if help is needed
-        print main.__doc__
+        print(main.__doc__)
         sys.exit() # graceful quit
     if '-f' in sys.argv:
         dat=[]
@@ -46,7 +46,7 @@ def main():
     vpars,R=pmag.vector_mean(DIIs)
     outstring='%7.1f %7.1f   %10.3e %i'%(vpars[0],vpars[1],R,len(DIIs))
     if ofile == "":
-        print outstring
+        print(outstring)
     else:
         out.write(outstring + "\n")
     #

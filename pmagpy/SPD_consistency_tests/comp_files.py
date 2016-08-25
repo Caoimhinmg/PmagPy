@@ -39,17 +39,17 @@ def parse_file(file_path):
 
 
 def print_all(categories, specs1, specs2):
-    for specimen in specs1.keys():
+    for specimen in list(specs1.keys()):
         #print "SPECIMEN: ", specimen
         data1 = specs1[specimen]
         data2 = specs2[specimen]
         for num, i in enumerate(data1):
             v1 = i
             v2 = data2[num]
-            print categories1[num]
-            print v1, v2
-        print '--------'
-        print '--------'
+            print(categories1[num])
+            print(v1, v2)
+        print('--------')
+        print('--------')
 
 
 def append_if_not_present(lst, item):
@@ -69,17 +69,17 @@ def add_to_dict(dct, item, value):
 problems = {}
 def compare_all(categories, specs1, specs2):
     if sorted(specs1.keys()) == sorted(specs2.keys()):
-        print "{} specimens compared".format(len(specs1.keys()))
+        print("{} specimens compared".format(len(list(specs1.keys()))))
         #pass
     else:
-        print "first file specimens:", len(sorted(specs1.keys()))
-        print "second file specimens:", len(sorted(specs2.keys()))
-        print "specimens in file1 but not file2:", [spec for spec in specs1.keys() if spec not in specs2.keys()]
-        print "specimens in file2 but not file1:", [spec for spec in specs2.keys() if spec not in specs1.keys()]
-        print "--"
-        print "--"
+        print("first file specimens:", len(sorted(specs1.keys())))
+        print("second file specimens:", len(sorted(specs2.keys())))
+        print("specimens in file1 but not file2:", [spec for spec in list(specs1.keys()) if spec not in list(specs2.keys())])
+        print("specimens in file2 but not file1:", [spec for spec in list(specs2.keys()) if spec not in list(specs1.keys())])
+        print("--")
+        print("--")
         raise NameError('different specimens detected')
-    for specimen in specs1.keys():
+    for specimen in list(specs1.keys()):
         #print "SPECIMEN: ", specimen
         data1 = specs1[specimen]
         data2 = specs2[specimen]
@@ -105,53 +105,53 @@ def compare_all(categories, specs1, specs2):
                         pass
                     else:
                         add_to_dict(problems, categories1[num], specimen)
-                        print categories1[num]
-                        print v1, "------", v2
+                        print(categories1[num])
+                        print(v1, "------", v2)
                 elif v1 == v2:
                     pass
                 else:
                     add_to_dict(problems, categories1[num], specimen)
-                    print "SPECIMEN: ", specimen
-                    print categories1[num]
-                    print v1, "------", v2
-                    print "--"
+                    print("SPECIMEN: ", specimen)
+                    print(categories1[num])
+                    print(v1, "------", v2)
+                    print("--")
             elif round(n1,-1) != round(n2,-1):  # it's not a string, and not nan, and the values don't match
                 add_to_dict(problems, categories1[num], specimen)
-                print "SPECIMEN: ", specimen
-                print categories1[num], categories2[num]
-                print v1, "-----",  v2
-                print n1, "-----", n2
-                print "--"
+                print("SPECIMEN: ", specimen)
+                print(categories1[num], categories2[num])
+                print(v1, "-----",  v2)
+                print(n1, "-----", n2)
+                print("--")
             else:
                 pass
                 #print "same"
         #print "--"
-    print "problems: {}".format(problems.keys())
-    for k, v in problems.items():
+    print("problems: {}".format(list(problems.keys())))
+    for k, v in list(problems.items()):
         if len(v) < 100:
-            print k, len(v)
+            print(k, len(v))
         else:
-            print k, ": lots"
-    print "{} specimens compared".format(len(specs1.keys()))
+            print(k, ": lots")
+    print("{} specimens compared".format(len(list(specs1.keys()))))
     return problems
 
 
 
 def compare_one_stat(stat, categories, specs1, specs2):
-    print "comparing one"
-    specimens = specs1.keys()
+    print("comparing one")
+    specimens = list(specs1.keys())
     i = categories.index(stat + ':')
     for spec in specimens:
-        print str(spec) + ": " + str(stat)
-        print specs1[spec][i], specs2[spec][i]
+        print(str(spec) + ": " + str(stat))
+        print(specs1[spec][i], specs2[spec][i])
 
 
 def compare_one_spec(spec, categories, specs1, specs2):
-    print "mine, Greig's"
+    print("mine, Greig's")
     for num, stat in enumerate(specs1[spec]):
-        print categories[num]
-        print specs1[spec][num],
-        print specs2[spec][num]
+        print(categories[num])
+        print(specs1[spec][num], end=' ')
+        print(specs2[spec][num])
 
 
 

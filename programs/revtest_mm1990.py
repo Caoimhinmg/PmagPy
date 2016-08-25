@@ -38,7 +38,7 @@ def main():
     plot=1
     Flip=1
     if '-h' in sys.argv: # check if help is needed
-        print main.__doc__
+        print(main.__doc__)
         sys.exit() # graceful quit
     if '-P' in  sys.argv: plot=0
     if '-f' in sys.argv:
@@ -54,7 +54,7 @@ def main():
         ind=sys.argv.index('-f2')
         file2=sys.argv[ind+1]
     	f2=open(file2,'rU')
-    	print "be patient, your computer is doing 5000 simulations..." 
+    	print("be patient, your computer is doing 5000 simulations...") 
     for line in f2.readlines():
         rec=line.split()
         Dec,Inc=float(rec[0]),float(rec[1]) 
@@ -130,33 +130,33 @@ def main():
 #
 # print the results of the test 
 #
-    print "" 
-    print "Results of Watson V test: "
-    print "" 
-    print "Watson's V:           " '%.1f' %(V)
-    print "Critical value of V:  " '%.1f' %(Vcrit)
+    print("") 
+    print("Results of Watson V test: ")
+    print("") 
+    print("Watson's V:           " '%.1f' %(V))
+    print("Critical value of V:  " '%.1f' %(Vcrit))
 
     if V<Vcrit:
-        print '"Pass": Since V is less than Vcrit, the null hypothesis that the two populations are drawn from distributions that share a common mean direction (antipodal to one another) cannot be rejected.'
+        print('"Pass": Since V is less than Vcrit, the null hypothesis that the two populations are drawn from distributions that share a common mean direction (antipodal to one another) cannot be rejected.')
     elif V>Vcrit:
-        print '"Fail": Since V is greater than Vcrit, the two means can be distinguished at the 95% confidence level.'
-    print ""    
-    print "M&M1990 classification:"
-    print "" 
-    print "Angle between data set means: " '%.1f'%(angle)
-    print "Critical angle of M&M1990:   " '%.1f'%(critical_angle)
+        print('"Fail": Since V is greater than Vcrit, the two means can be distinguished at the 95% confidence level.')
+    print("")    
+    print("M&M1990 classification:")
+    print("") 
+    print("Angle between data set means: " '%.1f'%(angle))
+    print("Critical angle of M&M1990:   " '%.1f'%(critical_angle))
     
     if V>Vcrit:
-        print ""
+        print("")
     elif V<Vcrit:
         if critical_angle<5:
-            print "The McFadden and McElhinny (1990) classification for this test is: 'A'"
+            print("The McFadden and McElhinny (1990) classification for this test is: 'A'")
         elif critical_angle<10:
-            print "The McFadden and McElhinny (1990) classification for this test is: 'B'"
+            print("The McFadden and McElhinny (1990) classification for this test is: 'B'")
         elif critical_angle<20:
-            print "The McFadden and McElhinny (1990) classification for this test is: 'C'"
+            print("The McFadden and McElhinny (1990) classification for this test is: 'C'")
         else:
-            print "The McFadden and McElhinny (1990) classification for this test is: 'INDETERMINATE;"
+            print("The McFadden and McElhinny (1990) classification for this test is: 'INDETERMINATE;")
     if plot==1:
         CDF={'cdf':1}
         pmagplotlib.plot_init(CDF['cdf'],5,5)
@@ -177,7 +177,7 @@ def main():
             CDF = pmagplotlib.addBorders(CDF,titles,black,purple)
             pmagplotlib.saveP(CDF,files)
         else:
-            ans=raw_input(" S[a]ve to save plot, [q]uit without saving:  ")
+            ans=input(" S[a]ve to save plot, [q]uit without saving:  ")
             if ans=="a": pmagplotlib.saveP(CDF,files)
 
 if __name__ == "__main__":

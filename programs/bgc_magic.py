@@ -69,7 +69,7 @@ def main(command_line=True, **kwargs):
             input_dir_path = dir_path
         output_dir_path = dir_path
         if "-h" in args:
-            print main.__doc__
+            print(main.__doc__)
             return False
         if '-F' in args:
             ind = args.index("-F")
@@ -132,7 +132,7 @@ def main(command_line=True, **kwargs):
     # parse data
 
     # Open up the BGC file and read the header information
-    print 'mag_file in bgc_magic', mag_file
+    print('mag_file in bgc_magic', mag_file)
     pre_data = open(mag_file, 'rU')
     line = pre_data.readline()
     line_items = line.split(' ')
@@ -220,7 +220,7 @@ def main(command_line=True, **kwargs):
             treat = float(row['DM Val'])
             MagRec["treatment_temp"] = '%8.3e' % (treat+273.) # temp in kelvin
         else:
-            print "measurement type unknown:", row['DM Type'], " in row ", rowNum
+            print("measurement type unknown:", row['DM Type'], " in row ", rowNum)
         MagRec["measurement_magn_moment"] = str(row['measurement_magn_moment'])
         MagRec["measurement_magn_volume"] = str(row['measurement_magn_volume'])
         MagRec["measurement_dec"] = str(row['measurement_dec'])
@@ -230,11 +230,11 @@ def main(command_line=True, **kwargs):
         MagRec['measurement_positions'] = '1' # added due to magic.write error
         MagRecs.append(MagRec.copy())
     pmag.magic_write(samp_file, SampOuts, 'er_samples')
-    print "sample orientations put in ", samp_file
+    print("sample orientations put in ", samp_file)
     MagOuts = pmag.measurements_methods(MagRecs, noave)
     pmag.magic_write(meas_file, MagOuts, 'magic_measurements')
-    print "results put in ", meas_file
-    print "exit!"
+    print("results put in ", meas_file)
+    print("exit!")
     return True, meas_file
 
 def do_help():

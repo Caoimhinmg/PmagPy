@@ -83,20 +83,20 @@ class MagicGrid(wx.grid.Grid, gridlabelrenderer.GridWithLabelRenderersMixin):
         if rows:
             rows = rows
         else:
-            rows = range(self.GetNumberRows())
-        cols = range(self.GetNumberCols())
+            rows = list(range(self.GetNumberRows()))
+        cols = list(range(self.GetNumberCols()))
         data = {}
         for row in rows:
             data[row] = {}
             for col in cols:
                 col_name = self.GetColLabelValue(col)
-                print col_name, ":", self.GetCellValue(row, col)
+                print(col_name, ":", self.GetCellValue(row, col))
                 data[row][col_name] = self.GetCellValue(row, col)
         return data
 
     def size_grid(self, event=None):
         self.AutoSizeColumns(True)
-        for col in xrange(len(self.col_labels)):
+        for col in range(len(self.col_labels)):
             # adjust column widths to be a little larger then auto for nicer editing
             orig_size = self.GetColSize(col)
             if orig_size > 110:
@@ -339,7 +339,7 @@ class MagicGrid(wx.grid.Grid, gridlabelrenderer.GridWithLabelRenderersMixin):
 
     def remove_starred_labels(self):#, grid):
         cols_with_stars = []
-        for col in xrange(self.GetNumberCols()):
+        for col in range(self.GetNumberCols()):
             label = self.GetColLabelValue(col)
             if '**' in label:
                 self.SetColLabelValue(col, label.strip('**'))

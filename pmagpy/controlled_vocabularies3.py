@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 import pandas as pd
 from pandas import Series, DataFrame
-import urllib2
-import httplib
+import urllib.request, urllib.error, urllib.parse
+import http.client
 import json
 import os
-import backup_vocabulary as backup
-import check_updates
-import data_model3
+from . import backup_vocabulary as backup
+from . import check_updates
+from . import data_model3
 pmag_dir = check_updates.get_pmag_dir()
 data_model_dir = os.path.join(pmag_dir, 'pmagpy', 'data_model')
 # if using with py2app, the directory structure is flat,
@@ -33,9 +33,9 @@ class Vocabulary(object):
         try:
             #old_raw_codes = pd.io.json.read_json('https://api.earthref.org/MagIC/method_codes.json')
             raw_codes = pd.io.json.read_json(os.path.join(pmag_dir, "3_0", "method_codes.json"))
-        except urllib2.URLError:
+        except urllib.error.URLError:
             return [], []
-        except httplib.BadStatusLine:
+        except http.client.BadStatusLine:
             return [], []
         code_types = raw_codes.ix['label']
         all_codes = []
@@ -45,9 +45,9 @@ class Vocabulary(object):
             try:
                 #raw_df = pd.io.json.read_json(raw_codes[code_name]['codes'])
                 df = pd.DataFrame(raw_codes[code_name]['codes'])
-            except urllib2.URLError:
+            except urllib.error.URLError:
                 return [], []
-            except httplib.BadStatusLine:
+            except http.client.BadStatusLine:
                 return [], []
             # remake the dataframe with the code (i.e., 'SM_VAR') as the index
             df.index = df['code']
@@ -112,7 +112,7 @@ class Vocabulary(object):
         connected = True
         try:
             controlled_vocabularies = []
-            print '-I- Importing controlled vocabularies from https://earthref.org'
+            print('-I- Importing controlled vocabularies from https://earthref.org')
             #url = 'https://api.earthref.org/MagIC/vocabularies.json'
             url = os.path.join(pmag_dir, "3_0", "controlled_vocabularies_July_15_2016.json")
             data = pd.io.json.read_json(url)
@@ -142,7 +142,7 @@ class Vocabulary(object):
             for dm_key in data_model.dm:
                 df = data_model.dm[dm_key]
                 df['vocab_name'] = df['validations'].apply(get_cv_from_list)
-                lst = zip(df[df['vocab_name'].notnull()]['vocab_name'], df[df['vocab_name'].notnull()].index)
+                lst = list(zip(df[df['vocab_name'].notnull()]['vocab_name'], df[df['vocab_name'].notnull()].index))
                 # in lst, first value is the name of the controlled vocabulary
                 # second value is the name of the dataframe column
                 vocab_col_names.extend(lst)
@@ -172,12 +172,12 @@ class Vocabulary(object):
             ind_values = [i[1] for i in vocab_col_names]
             vocabularies = pd.Series(controlled_vocabularies, index=ind_values)
             return vocabularies, vocabularies
-        except urllib2.URLError:
+        except urllib.error.URLError:
             connected = False
-        except httplib.BadStatusLine:
+        except http.client.BadStatusLine:
             connected = False
         if not connected:
-            print "-W- Could not connect to internet -- will not be able to provide all controlled vocabularies"
+            print("-W- Could not connect to internet -- will not be able to provide all controlled vocabularies")
             vocabularies = pd.Series([backup.site_lithology, backup.site_class, backup.site_type,
                                       backup.location_type, backup.age_unit, backup.site_definition], index=vocab_types)
             possible_vocabularies = []

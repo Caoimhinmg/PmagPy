@@ -35,7 +35,7 @@ def main():
     norm=1 # default is to normalize by maximum axis
     if len(sys.argv)>1:
         if '-h' in sys.argv:
-            print main.__doc__
+            print(main.__doc__)
             sys.exit()
         if '-N' in sys.argv: norm=0 # don't normalize
         if '-sav' in sys.argv: plot=1 # don't normalize
@@ -46,12 +46,12 @@ def main():
             ind=sys.argv.index("-f")
             in_file=sys.argv[ind+1]
         else:
-            print main.__doc__
-            print 'you must supply a file name'
+            print(main.__doc__)
+            print('you must supply a file name')
             sys.exit() 
     else:
-        print main.__doc__
-        print 'you must supply a file name'
+        print(main.__doc__)
+        print('you must supply a file name')
         sys.exit() 
     data=open(in_file).readlines() # open the SIO format file
     PmagRecs=[] # set up a list for the results
@@ -67,7 +67,7 @@ def main():
     for spec in specs:
         if spec not in sids:sids.append(spec) # get list of unique specimen names
     for spc in sids:  # step through the specimen names
-        print spc
+        print(spc)
         specdata=pmag.get_dictitem(PmagRecs,'specimen',spc,'T') # get all this one's data
         DIMs,Temps=[],[]
         for dat in specdata: # step through the data
@@ -93,7 +93,7 @@ def main():
         files={'lowrie':'lowrie:_'+spc+'_.'+fmt}
         if plot==0:
             pmagplotlib.drawFIGS(FIG)
-            ans=raw_input('S[a]ve figure? [q]uit, <return> to continue   ')
+            ans=input('S[a]ve figure? [q]uit, <return> to continue   ')
             if ans=='a':
                 pmagplotlib.saveP(FIG,files)
             elif ans=='q':

@@ -37,7 +37,7 @@ def main():
        ind=args.index('-WD')
        dir_path=args[ind+1]
     if "-h" in args:
-        print main.__doc__
+        print(main.__doc__)
         sys.exit()
     if '-f' in args:
         ind=args.index("-f")
@@ -72,13 +72,13 @@ def main():
     Ms,Bcr1,Bcr1Bc,S1=[],[],[],[]
     locations=''
     for rec in  hyst_data:
-        if 'er_location_name' in rec.keys() and rec['er_location_name'] not in locations: locations=locations+rec['er_location_name']+'_'
+        if 'er_location_name' in list(rec.keys()) and rec['er_location_name'] not in locations: locations=locations+rec['er_location_name']+'_'
         if rec['hysteresis_bcr'] !="" and rec['hysteresis_mr_moment']!="": 
             S.append(float(rec['hysteresis_mr_moment'])/float(rec['hysteresis_ms_moment']))
             Bcr.append(float(rec['hysteresis_bcr']))
             Bc.append(float(rec['hysteresis_bc']))
             BcrBc.append(Bcr[-1]/Bc[-1]) 
-            if 'er_synthetic_name' in rec.keys() and rec['er_synthetic_name']!="":
+            if 'er_synthetic_name' in list(rec.keys()) and rec['er_synthetic_name']!="":
                 rec['er_specimen_name']=rec['er_synthetic_name']
             hsids.append(rec['er_specimen_name'])
     if len(rem_data)>0:
@@ -91,7 +91,7 @@ def main():
                     S1.append(S[ind])
                     Bcr2.append(Bcr[ind])
                 except ValueError:
-                    if verbose:print 'hysteresis data for ',rec['er_specimen_name'],' not found'
+                    if verbose:print('hysteresis data for ',rec['er_specimen_name'],' not found')
     #
     # now plot the day and S-Bc, S-Bcr plots
     #
@@ -108,11 +108,11 @@ def main():
     pmagplotlib.plotSBc(DSC['S-Bc'],Bc,S,'bs') 
     files={}
     if len(locations)>0:locations=locations[:-1]
-    for key in DSC.keys():
+    for key in list(DSC.keys()):
         files[key]='LO:_'+locations+'_'+'SI:__SA:__SP:__TY:_'+key+'_.'+fmt
     if verbose:
         pmagplotlib.drawFIGS(DSC)
-        ans=raw_input(" S[a]ve to save plots, return to quit:  ")
+        ans=input(" S[a]ve to save plots, return to quit:  ")
         if ans=="a":
             pmagplotlib.saveP(DSC,files)
         else: sys.exit()

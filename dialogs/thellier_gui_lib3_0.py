@@ -29,7 +29,7 @@ def get_PI_parameters(Data,acceptance_criteria,preferences,s,tmin,tmax,GUI_log,T
     Pint_pars.reqd_stats() # calculate only statistics indicated in preferences
     #print 'LIB1: ',Pint_pars
     if not Pint_pars.pars:
-        print "Could not get any parameters for {}".format(Pint_pars)
+        print("Could not get any parameters for {}".format(Pint_pars))
         return 0
     #Pint_pars.calculate_all_statistics() # calculate every statistic available
     #print "-D- Debag"
@@ -110,29 +110,29 @@ def get_PI_parameters(Data,acceptance_criteria,preferences,s,tmin,tmax,GUI_log,T
     else:
         pars['method_codes']=LP_code
 
-    if 'ptrm_checks_temperatures' in Data[s].keys() and len(Data[s]['ptrm_checks_temperatures'])>0:
+    if 'ptrm_checks_temperatures' in list(Data[s].keys()) and len(Data[s]['ptrm_checks_temperatures'])>0:
         if MICROWAVE==True:
             pars['method_codes']+=":LP-PI-ALT-PMRM"
         else:
             pars['method_codes']+=":LP-PI-ALT-PTRM"
             
-    if 'tail_check_temperatures' in Data[s].keys() and len(Data[s]['tail_check_temperatures'])>0:
+    if 'tail_check_temperatures' in list(Data[s].keys()) and len(Data[s]['tail_check_temperatures'])>0:
         pars['method_codes']+=":LP-PI-BT-MD"
 
-    if 'additivity_check_temperatures' in Data[s].keys() and len(Data[s]['additivity_check_temperatures'])>0:
+    if 'additivity_check_temperatures' in list(Data[s].keys()) and len(Data[s]['additivity_check_temperatures'])>0:
         pars['method_codes']+=":LP-PI-BT"
                     
     #-------------------------------------------------            
     # Calculate anistropy correction factor
     #-------------------------------------------------            
 
-    if "AniSpec" in Data[s].keys():
+    if "AniSpec" in list(Data[s].keys()):
         pars["AC_WARNING"]=""
         # if both aarm and atrm tensor axist, try first the aarm. if it fails use the atrm.
-        if 'AARM' in Data[s]["AniSpec"].keys() and 'ATRM' in Data[s]["AniSpec"].keys():
+        if 'AARM' in list(Data[s]["AniSpec"].keys()) and 'ATRM' in list(Data[s]["AniSpec"].keys()):
             TYPES=['AARM','ATRM']
         else:
-            TYPES=Data[s]["AniSpec"].keys()
+            TYPES=list(Data[s]["AniSpec"].keys())
         for TYPE in TYPES:
             red_flag=False
             S_matrix=zeros((3,3),'f')
@@ -159,8 +159,8 @@ def get_PI_parameters(Data,acceptance_criteria,preferences,s,tmin,tmax,GUI_log,T
 
             # threshold value for Ftest:
             
-            if 'AniSpec' in Data[s].keys() and TYPE in Data[s]['AniSpec'].keys()\
-                and 'aniso_sigma' in  Data[s]['AniSpec'][TYPE].keys() \
+            if 'AniSpec' in list(Data[s].keys()) and TYPE in list(Data[s]['AniSpec'].keys())\
+                and 'aniso_sigma' in  list(Data[s]['AniSpec'][TYPE].keys()) \
                 and Data[s]['AniSpec'][TYPE]['aniso_sigma']!="":
                 # Calculate Ftest. If Ftest exceeds threshold value: set anistropy tensor to identity matrix
                 sigma=float(Data[s]['AniSpec'][TYPE]['aniso_sigma'])             
@@ -182,7 +182,7 @@ def get_PI_parameters(Data,acceptance_criteria,preferences,s,tmin,tmax,GUI_log,T
                 Data[s]['AniSpec'][TYPE]['aniso_ftest']=99999
     
             
-            if 'aniso_alt' in Data[s]['AniSpec'][TYPE].keys() and Data[s]['AniSpec'][TYPE]['aniso_alt']!="":
+            if 'aniso_alt' in list(Data[s]['AniSpec'][TYPE].keys()) and Data[s]['AniSpec'][TYPE]['aniso_alt']!="":
                 if acceptance_criteria['aniso_alt']['value'] != -999 and \
                 (float(Data[s]['AniSpec'][TYPE]['aniso_alt']) > float(acceptance_criteria['aniso_alt']['value'])):
                     S_matrix=identity(3,'f')
@@ -238,7 +238,7 @@ def get_PI_parameters(Data,acceptance_criteria,preferences,s,tmin,tmax,GUI_log,T
     # See Shaar et al (2010), Equation (3)
     #-------------------------------------------------
 
-    if 'NLT_parameters' in Data[s].keys():
+    if 'NLT_parameters' in list(Data[s].keys()):
 
         alpha=Data[s]['NLT_parameters']['tanh_parameters'][0][0]
         beta=Data[s]['NLT_parameters']['tanh_parameters'][0][1]
@@ -250,7 +250,7 @@ def get_PI_parameters(Data,acceptance_criteria,preferences,s,tmin,tmax,GUI_log,T
             pars["NLTC_specimen_int"]=Banc_NLT
             pars["specimen_int_uT"]=Banc_NLT*1e6
 
-            if "AC_specimen_int" in pars.keys():
+            if "AC_specimen_int" in list(pars.keys()):
                 pars["NLT_specimen_correction_factor"]=Banc_NLT/float(pars["AC_specimen_int"])
             else:                       
                 pars["NLT_specimen_correction_factor"]=Banc_NLT/float(pars["int_abs"])
@@ -269,20 +269,20 @@ def get_PI_parameters(Data,acceptance_criteria,preferences,s,tmin,tmax,GUI_log,T
     #-------------------------------------------------
 
     pars["specimen_int_corr_cooling_rate"]=-999
-    if 'cooling_rate_data' in Data[s].keys():
-        if 'CR_correction_factor' in Data[s]['cooling_rate_data'].keys():
+    if 'cooling_rate_data' in list(Data[s].keys()):
+        if 'CR_correction_factor' in list(Data[s]['cooling_rate_data'].keys()):
             if Data[s]['cooling_rate_data']['CR_correction_factor'] != -1 and Data[s]['cooling_rate_data']['CR_correction_factor'] !=-999:
                 pars["specimen_int_corr_cooling_rate"]=Data[s]['cooling_rate_data']['CR_correction_factor']
                 pars['specimen_correction']='c'
                 pars["specimen_int_uT"]=pars["specimen_int_uT"]*pars["specimen_int_corr_cooling_rate"]
                 if ":DA-CR" not in pars['method_codes']:
                     pars['method_codes']+=":DA-CR"
-                if   'CR_correction_factor_flag' in Data[s]['cooling_rate_data'].keys():
+                if   'CR_correction_factor_flag' in list(Data[s]['cooling_rate_data'].keys()):
                     if Data[s]['cooling_rate_data']['CR_correction_factor_flag']=="calculated":
                         pars['CR_flag']="calculated"
                     else:
                         pars['CR_flag']=""
-                if 'CR_correction_factor_flag' in Data[s]['cooling_rate_data'].keys() \
+                if 'CR_correction_factor_flag' in list(Data[s]['cooling_rate_data'].keys()) \
                     and Data[s]['cooling_rate_data']['CR_correction_factor_flag']!="calculated":
                     pars["CR_WARNING"]="inferred cooling rate correction"
                 
@@ -298,8 +298,8 @@ def get_PI_parameters(Data,acceptance_criteria,preferences,s,tmin,tmax,GUI_log,T
         combines dict1 and dict2 into a new dict.  
         if dict1 and dict2 share a key, the value from dict1 is used
         """
-        for key, value in d2.iteritems():
-            if key not in d1.keys():
+        for key, value in d2.items():
+            if key not in list(d1.keys()):
                 d1[key] = value
         return d1
 
@@ -324,8 +324,8 @@ def check_specimen_PI_criteria(pars,acceptance_criteria):
     #    return
         
     pars['specimen_fail_criteria']=[]
-    for crit in acceptance_criteria.keys():
-        if crit not in pars.keys():
+    for crit in list(acceptance_criteria.keys()):
+        if crit not in list(pars.keys()):
             continue
         if acceptance_criteria[crit]['value']==-999:
             continue
@@ -350,7 +350,7 @@ def check_specimen_PI_criteria(pars,acceptance_criteria):
 
 def get_site_from_hierarchy(sample,Data_hierarchy):
     site=""
-    sites=Data_hierarchy['sites'].keys()
+    sites=list(Data_hierarchy['sites'].keys())
     for S in sites:
         if sample in Data_hierarchy['sites'][S]:
             site=S
@@ -359,7 +359,7 @@ def get_site_from_hierarchy(sample,Data_hierarchy):
 
 def get_location_from_hierarchy(site,Data_hierarchy):
     location=""
-    locations=Data_hierarchy['locations'].keys()
+    locations=list(Data_hierarchy['locations'].keys())
     for L in locations:
         if site in Data_hierarchy['locations'][L]:
             location=L

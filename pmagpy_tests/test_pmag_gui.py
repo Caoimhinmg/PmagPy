@@ -40,7 +40,7 @@ class TestMainFrame(unittest.TestCase):
         """
         make sure import window is created when user clicks btn 1
         """
-        print 'about to do test_click_button_one'
+        print('about to do test_click_button_one')
         window = self.does_window_exist('step 1', 'import_magnetometer_data')
         self.assertTrue(window)
         self.assertTrue(window.IsEnabled())
@@ -127,7 +127,7 @@ class TestMainFrame(unittest.TestCase):
         """
         produces a click event on the button called btn_name, see if it produces the window called window_name
         """
-        print 'calling does_window_exist'
+        print('calling does_window_exist')
         btn, window = None, None
         pnl_children = self.pnl.GetChildren()
         for child in pnl_children:

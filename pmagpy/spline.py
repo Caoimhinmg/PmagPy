@@ -20,7 +20,7 @@ versions.
 
 """
 
-import func
+from . import func
 #from Numeric import *
 import numpy
 BadInput = "Bad xa input to routine splint."
@@ -81,7 +81,7 @@ class Spline(func.FuncOps):
       
 	y2_vals[n-1] = (un-qn*u[n-2])/(qn*y2_vals[n-1]+1.0)
 
-	rng = range(n-1)
+	rng = list(range(n-1))
 	rng.reverse()
 	for k in rng:         # backsubstitution step
 	    y2_vals[k] = y2_vals[k]*y2_vals[k+1]+u[k]

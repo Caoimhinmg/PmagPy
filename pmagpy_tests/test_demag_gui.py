@@ -256,7 +256,7 @@ class TestMainFrame(unittest.TestCase):
         self.frame.ProcessEvent(writeredo_menu_evt)
         old_frame = str(self.frame)
         old_interpretations = []
-        for speci in self.frame.pmag_results_data['specimens'].keys():
+        for speci in list(self.frame.pmag_results_data['specimens'].keys()):
             old_interpretations += self.frame.pmag_results_data['specimens'][speci]
 
         self.frame.clear_interpretations()
@@ -264,7 +264,7 @@ class TestMainFrame(unittest.TestCase):
         self.frame.ProcessEvent(importredo_menu_evt)
         imported_frame = str(self.frame)
         imported_interpretations = []
-        for speci in self.frame.pmag_results_data['specimens'].keys():
+        for speci in list(self.frame.pmag_results_data['specimens'].keys()):
             imported_interpretations += self.frame.pmag_results_data['specimens'][speci]
 
         for ofit,ifit in zip(old_interpretations,imported_interpretations):

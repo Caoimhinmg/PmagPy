@@ -50,7 +50,7 @@ class TestValidation(unittest.TestCase):
                               'validation', 'location1_30.Dec.2015.txt')
         ran, errors = validate_upload.read_upload(upfile)
         self.assertFalse(ran)
-        print errors
+        print(errors)
         self.assertIn('location', errors)
         self.assertIn('location1', errors['location'])
         self.assertIn('coordinates', errors['location']['location1'])

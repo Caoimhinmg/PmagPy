@@ -97,7 +97,7 @@ class Menus(object):
                 self.choices[col_number] = (sorted(item_names), False)
         if col_label in vocab.vocabularies:
             # if not already assigned above
-            if col_number not in self.choices.keys():
+            if col_number not in list(self.choices.keys()):
                 # mark it as using a controlled vocabulary
                 self.grid.SetColLabelValue(col_number, col_label + "**")
                 #url = 'https://api.earthref.org/MagIC/vocabularies/{}.json'.format(col_label)
@@ -116,7 +116,7 @@ class Menus(object):
                     dictionary = {}
                     for item in stripped_list:
                         letter = item[0].upper()
-                        if letter not in dictionary.keys():
+                        if letter not in list(dictionary.keys()):
                             dictionary[letter] = []
                         dictionary[letter].append(item)
                     stripped_list = dictionary
@@ -165,7 +165,7 @@ class Menus(object):
                     self.grid.SetCellBackgroundColour(row, col, 'light blue')
                 self.grid.ForceRefresh()
         has_dropdown = False
-        if col in self.choices.keys():
+        if col in list(self.choices.keys()):
             has_dropdown = True
 
         # if the column has no drop-down list, allow user to edit all cells in the column through text entry
@@ -254,9 +254,9 @@ class Menus(object):
                 return
             else:
                 if row > previous_row:
-                    row_range = range(previous_row, row+1)
+                    row_range = list(range(previous_row, row+1))
                 else:
-                    row_range = range(row, previous_row+1)
+                    row_range = list(range(row, previous_row+1))
             for r in row_range:
                 self.grid.SetCellBackgroundColour(r, col, 'light blue')
                 self.selection.append((r, col))
@@ -281,7 +281,7 @@ class Menus(object):
 
         self.grid.SetGridCursor(row, col)
 
-        if col in choices.keys(): # column should have a pop-up menu
+        if col in list(choices.keys()): # column should have a pop-up menu
             menu = wx.Menu()
             two_tiered = choices[col][1]
             choices = choices[col][0]

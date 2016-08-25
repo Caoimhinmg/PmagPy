@@ -1,18 +1,18 @@
-import ErMagicBuilder
-import demag_dialogs
-import demag_interpretation_editor
-import drop_down_menus
-import grid_frame
-import magic_grid
-import pmag_basic_dialogs
-import pmag_er_magic_dialogs
-import pmag_gui_menu
-import pmag_menu_dialogs
-import pmag_widgets
-import thellier_consistency_test
-import thellier_gui_dialogs
-import thellier_gui_lib
-import thellier_interpreter
+from . import ErMagicBuilder
+from . import demag_dialogs
+from . import demag_interpretation_editor
+from . import drop_down_menus
+from . import grid_frame
+from . import magic_grid
+from . import pmag_basic_dialogs
+from . import pmag_er_magic_dialogs
+from . import pmag_gui_menu
+from . import pmag_menu_dialogs
+from . import pmag_widgets
+from . import thellier_consistency_test
+from . import thellier_gui_dialogs
+from . import thellier_gui_lib
+from . import thellier_interpreter
 
 __all__ = [ErMagicBuilder, demag_dialogs, demag_interpretation_editor,
            drop_down_menus, grid_frame, magic_grid, pmag_basic_dialogs,

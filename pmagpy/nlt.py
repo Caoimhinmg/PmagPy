@@ -52,14 +52,14 @@ def TRMinv(m,a,b):
      TRMinv(m)=(1/b)*atanh(m/a)
     """
     if float(a)==0:
-        print  'ERROR: TRMinv: a==0.'
+        print('ERROR: TRMinv: a==0.')
         if not WARN : sys.exit()
     if float(b)==0:
-        print  'ERROR: TRMinv: b==0.'
+        print('ERROR: TRMinv: b==0.')
         if not WARN : sys.exit()
     x = (float(m) / float(a))
     if (1-x)<=0:
-         print 'ERROR:  TRMinv: (1-x)==0.'
+         print('ERROR:  TRMinv: (1-x)==0.')
          return -1
     if not WARN : sys.exit()
     f = (1./float(b)) * 0.5 * math.log ((1+x) / (1-x))
@@ -72,7 +72,7 @@ def NRM(f,a,b,best):
     NRM(blab,best)= (best/blab)*TRM(blab)
     """
     if float(f)==0:
-        print  'ERROR: NRM: f==0.'
+        print('ERROR: NRM: f==0.')
     if not WARN : sys.exit()
     m = (float(best)/float(f)) * TRM(f,a,b)
     return float(m)
@@ -98,8 +98,8 @@ def NLtrm(Bs,TRMs,best,blab,jackknife):
     xopt = optimize.fmin(funk, xi, args=(Bs, TRMs),xtol=FTOL,ftol=FTOL,maxiter=MAXITER)
     xopt2= optimize.fmin(funk, xopt, args=(Bs, TRMs),xtol=FTOL,ftol=FTOL,maxiter=MAXITER)
     if (compare(xopt, xopt2) > FTOL) :     # Second run of fmin produced different parameters
-        if WARN : print 'WARNING: Fmin did not converge second time'
-        print xopt,xopt2,FTOL
+        if WARN : print('WARNING: Fmin did not converge second time')
+        print(xopt,xopt2,FTOL)
     try:
         n=NRM(blab,xopt2[0],xopt2[1],best)
         banc=TRMinv(n,xopt2[0],xopt2[1])

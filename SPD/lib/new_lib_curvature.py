@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import numpy
-import lib_curvature as lib_k
+from . import lib_curvature as lib_k
 
 #old_x = [0.0107, 0.0332, 0.0662, 0.0528, 0.1053, 0.1069, 0.1609, 0.1805, 0.2539, 0.3199, 0.4802, 0.5701, 0.6840, 0.7544, 0.8833]
 #old_y = [0.9926, 0.9682, 0.8972, 0.7998, 0.7511,0.6740, 0.5238, 0.4447, 0.4142, 0.3229, 0.2457, 0.1625, 0.1178, 0.0772, 0.0508]
@@ -32,7 +32,7 @@ c IEEE Transactions on Instrumentation and Measurement."""
     #
     
     sx, sx2, sx3, sy, sy2, sy3, sxy, sxy2, syx2 = (0,) * 9
-    print type(sx), sx
+    print(type(sx), sx)
     for i in range(n):
         sx = sx + x[i]
         sx2 = sx2 + x[i]**2
@@ -53,8 +53,8 @@ c IEEE Transactions on Instrumentation and Measurement."""
 
     xo = (D * C - B * E) / (A * C - B**2)
     yo = (A * E - B * D) / (A * C - B**2)
-    print "xo", xo
-    print "yo", yo
+    print("xo", xo)
+    print("yo", yo)
 
     r = 0
     for z in range(n):
@@ -66,7 +66,7 @@ c IEEE Transactions on Instrumentation and Measurement."""
         k = 1./r
 
     SSE = lib_k.get_SSE(xo, yo, r, x, y)
-    print "r", r
+    print("r", r)
     return k, xo, yo, SSE
     #return r, xo, yo
 

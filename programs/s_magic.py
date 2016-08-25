@@ -71,7 +71,7 @@ def main():
         ind=sys.argv.index('-WD')
         dir_path=sys.argv[ind+1]
     if '-h' in sys.argv:
-        print main.__doc__
+        print(main.__doc__)
         sys.exit()
     if "-spc" in sys.argv:
         ind=sys.argv.index("-spc")
@@ -110,7 +110,7 @@ def main():
         samp_con=sys.argv[ind+1]
         if "4" in samp_con:
             if "-" not in samp_con:
-                print "option [4] must be in form 4-Z where Z is an integer"
+                print("option [4] must be in form 4-Z where Z is an integer")
                 sys.exit()
             else:
                 Z=samp_con.split("-")[1]
@@ -175,7 +175,7 @@ def main():
         AnisRec["magic_method_codes"]='LP-'+type
         AnisRecs.append(AnisRec)
     pmag.magic_write(anisfile,AnisRecs,'rmag_anisotropy')
-    print 'data saved in ',anisfile 
+    print('data saved in ',anisfile) 
     #
 if __name__ == "__main__":
     main()

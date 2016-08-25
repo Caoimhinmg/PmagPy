@@ -9,9 +9,9 @@ Y = [ 34., 10.,   6., -14.,  27., -10.]
 
 def AraiCurvature(x=X, y=Y):
     # ensure all values are floats, then norm them by largest value
-    x = numpy.array(map(float, x))
+    x = numpy.array(list(map(float, x)))
     x =x / max(x)
-    y = numpy.array(map(float, y))
+    y = numpy.array(list(map(float, y)))
     y =y / max(y)
     # if all x or all y values are identical, there is no curvature (it is a line)
     if len(set(x)) == 1 or len(set(y)) == 1:

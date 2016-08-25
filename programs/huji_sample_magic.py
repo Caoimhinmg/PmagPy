@@ -84,7 +84,7 @@ def main():
     #
     #
     if "-h" in args:
-        print main.__doc__
+        print(main.__doc__)
         sys.exit()
     if "-f" in args:
         ind=args.index("-f")
@@ -100,12 +100,12 @@ def main():
         samp_con=sys.argv[ind+1]
         if "4" in samp_con:
             if "-" not in samp_con:
-                print "option [4] must be in form 3-Z where Z is an integer"
+                print("option [4] must be in form 3-Z where Z is an integer")
                 sys.exit()
             else:
                 Z=samp_con.split("-")[1]
                 samp_con="4"
-            print samp_con, Z
+            print(samp_con, Z)
     if "-mcd" in args:
         ind=args.index("-mcd")
         meths=(sys.argv[ind+1])
@@ -166,9 +166,9 @@ def main():
         SampOut.append(SampRec)
         SiteOut.append(SiteRec)
     pmag.magic_write(samp_file,SampOut,"er_samples")
-    print "Sample info saved in ", samp_file
+    print("Sample info saved in ", samp_file)
     pmag.magic_write(site_file,SiteOut,"er_sites")
-    print "Site info saved in ", site_file
+    print("Site info saved in ", site_file)
 
 if __name__ == "__main__":
     main()

@@ -1,10 +1,11 @@
 import os
 from re import findall,split
 from pylab import arange,pi,cos,sin
-from pmag import dimap
+from .pmag import dimap
 import programs.cit_magic as cit_magic
-from ipmag import combine_magic
+from .ipmag import combine_magic
 from time import time
+from functools import reduce,cmp_to_key
 
 def specimens_comparator(s1,s2):
     if type(s1) != str and type(s2) != str: return 0
@@ -16,15 +17,17 @@ def specimens_comparator(s1,s2):
         for c1,c2 in zip(e1,e2): #sort by letters
             if c1 != c2 and c1.isalpha() and c2.isalpha():
                 return ord(c1)-ord(c2)
-        l1 = map(int, findall('\d+', e1)) #retrieves numbers from names
-        l2 = map(int, findall('\d+', e2))
+        l1 = list(map(int, findall('\d+', e1))) #retrieves numbers from names
+        l2 = list(map(int, findall('\d+', e2)))
         for i1,i2 in zip(l1,l2): #sort by numbers
             if i1-i2 != 0:
                 return i1-i2
     return 0
 
+specimens_key_comparator = cmp_to_key(specimens_comparator)
+
 def get_all_inp_files(WD=None):
-    if not os.path.isdir(WD): print("%s is does not exist, aborting"%WD)
+    if not os.path.isdir(WD): print(("%s is does not exist, aborting"%WD))
     try:
         all_inp_files = []
         for root, dirs, files in os.walk(WD):
@@ -42,10 +45,10 @@ def read_inp(WD,inp_file_name,magic_files):
     new_inp_file = ""
 
     if type(magic_files) != dict: magic_files = {}
-    if 'measurements' not in magic_files.keys(): magic_files['measurements']=[]
-    if 'specimens' not in magic_files.keys(): magic_files['specimens']=[]
-    if 'samples' not in magic_files.keys(): magic_files['samples']=[]
-    if 'sites' not in magic_files.keys(): magic_files['sites']=[]
+    if 'measurements' not in list(magic_files.keys()): magic_files['measurements']=[]
+    if 'specimens' not in list(magic_files.keys()): magic_files['specimens']=[]
+    if 'samples' not in list(magic_files.keys()): magic_files['samples']=[]
+    if 'sites' not in list(magic_files.keys()): magic_files['sites']=[]
 
     lines = inp_file.read().split("\n")
     if len(lines) < 3: print(".inp file improperly formated"); return
@@ -58,15 +61,15 @@ def read_inp(WD,inp_file_name,magic_files):
     for i,update_file in enumerate(update_files):
         update_lines = update_file.split('\t')
         if not os.path.isfile(update_lines[0]):
-            print("%s not found searching for location of file"%(update_lines[0]))
+            print(("%s not found searching for location of file"%(update_lines[0])))
             sam_file_name = os.path.split(update_lines[0])[-1]
             new_file_path = find_file(sam_file_name, WD)
             if new_file_path == None or not os.path.isfile(new_file_path):
-                print("%s does not exist in any subdirectory of %s and will be skipped"%(update_lines[0], WD))
+                print(("%s does not exist in any subdirectory of %s and will be skipped"%(update_lines[0], WD)))
                 new_inp_file += update_file+"\n"
                 continue
             else:
-                print("new location for file found at %s"%(new_file_path))
+                print(("new location for file found at %s"%(new_file_path)))
                 update_lines[0] = new_file_path
         d = os.path.dirname(update_lines[0])
         name = os.path.basename(os.path.splitext(update_lines[0])[0])
@@ -82,7 +85,7 @@ def read_inp(WD,inp_file_name,magic_files):
             #check specimen files for changes
             sam_file = open(update_lines[0])
             sam_file_lines = sam_file.readlines()
-            spec_file_paths = map(lambda x: os.path.join(d,x.strip('\r \n')), sam_file_lines[2:])
+            spec_file_paths = [os.path.join(d,x.strip('\r \n')) for x in sam_file_lines[2:]]
             for spec_file_path in spec_file_paths:
                 if float(update_lines[-1]) < os.path.getctime(spec_file_path):
                     no_changes=False; break
@@ -97,7 +100,7 @@ def read_inp(WD,inp_file_name,magic_files):
                 new_inp_file += update_file+"\n"
                 continue
         if len(header) != len(update_lines):
-            print("length of header and length of enteries for the file %s are different and will be skipped"%(update_lines[0]))
+            print(("length of header and length of enteries for the file %s are different and will be skipped"%(update_lines[0])))
             new_inp_file += update_file+"\n"
             continue
         update_dict = {}
@@ -155,13 +158,13 @@ def read_inp(WD,inp_file_name,magic_files):
 
 def combine_magic_files(WD,magic_files):
     if type(magic_files) != dict: return
-    if 'measurements' in magic_files.keys():
+    if 'measurements' in list(magic_files.keys()):
         combine_magic(magic_files['measurements'], WD+"/magic_measurements.txt")
-    if 'specimens' in magic_files.keys():
+    if 'specimens' in list(magic_files.keys()):
         combine_magic(magic_files['specimens'], WD+"/er_specimens.txt")
-    if 'samples' in magic_files.keys():
+    if 'samples' in list(magic_files.keys()):
         combine_magic(magic_files['samples'], WD+"/er_samples.txt")
-    if 'sites' in magic_files.keys():
+    if 'sites' in list(magic_files.keys()):
         combine_magic(magic_files['sites'], WD+"/er_sites.txt")
 
 def pick_inp(parent,WD):

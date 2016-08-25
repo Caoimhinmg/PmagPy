@@ -13,7 +13,7 @@ import SPD.lib.lib_arai_plot_statistics as lib_arai
 import SPD.spd as spd
 from SPD.test_instance import example, SCAT_spec, SCAT_spec2 # pre-made, ready to go PintPars object
 
-import known_values
+from . import known_values
 
 
 
@@ -78,7 +78,7 @@ class CheckInitialAttributeValues(unittest.TestCase):
         self.assertEqual(self.obj.s, '0238x6011044')
 
     def test_known_values(self):
-        for key, value in self.known_values.iteritems():  # goes through all values
+        for key, value in self.known_values.items():  # goes through all values
             if type(value) == int or type(value) == float: # can't iterate over int type or float
                # print type(value)
                 self.assertEqual(value, self.obj_attributes[key])
@@ -100,7 +100,7 @@ class CheckYorkRegression(unittest.TestCase):
     obj_pars = obj.pars
     
     def test_York_Regression(self):
-        for key, value in self.known_values.iteritems():  # goes through all values
+        for key, value in self.known_values.items():  # goes through all values
             if type(value) == int or type(value) == float: # can't iterate over int type or float
                # print type(value)
                 self.assertAlmostEqual(value, self.obj_pars[key])
@@ -144,7 +144,7 @@ class CheckVDSsequence(unittest.TestCase): # adequate
 
  
     def test_for_negative_values(self):
-        for k, v in self.result.items():
+        for k, v in list(self.result.items()):
             self.assertGreaterEqual(v, 0) # none of these stats can possibly be negative numbers
 
 

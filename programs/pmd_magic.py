@@ -81,7 +81,7 @@ def main(command_line=True, **kwargs):
             input_dir_path = dir_path
         output_dir_path = dir_path
         if "-h" in args:
-            print main.__doc__
+            print(main.__doc__)
             return False
         if '-F' in args:
             ind=args.index("-F")
@@ -126,7 +126,7 @@ def main(command_line=True, **kwargs):
         noave = kwargs.get('noave', 0) # default (0) means DO average
         meth_code = kwargs.get('meth_code', "LP-NO")
 
-    print samp_con
+    print(samp_con)
     # format variables
     mag_file = input_dir_path+"/" + mag_file
     meas_file = output_dir_path+"/" + meas_file
@@ -134,14 +134,14 @@ def main(command_line=True, **kwargs):
     if specnum!=0:specnum=-specnum
     if "4" in samp_con:
         if "-" not in samp_con:
-            print "naming convention option [4] must be in form 4-Z where Z is an integer"
+            print("naming convention option [4] must be in form 4-Z where Z is an integer")
             return False, "naming convention option [4] must be in form 4-Z where Z is an integer"
         else:
             Z=samp_con.split("-")[1]
             samp_con="4"
     if "7" in samp_con:
         if "-" not in samp_con:
-            print "option [7] must be in form 7-Z where Z is an integer"
+            print("option [7] must be in form 7-Z where Z is an integer")
             return False, "naming convention option [7] must be in form 7-Z where Z is an integer"
         else:
             Z=samp_con.split("-")[1]
@@ -168,8 +168,8 @@ def main(command_line=True, **kwargs):
     if int(samp_con)<6:
         er_site_name=pmag.parse_site(er_sample_name,samp_con,Z)
     else:
-        if 'er_site_name' in ErSampRec.keys():er_site_name=ErSampREc['er_site_name']
-        if 'er_location_name' in ErSampRec.keys():er_location_name=ErSampREc['er_location_name']
+        if 'er_site_name' in list(ErSampRec.keys()):er_site_name=ErSampREc['er_site_name']
+        if 'er_location_name' in list(ErSampRec.keys()):er_location_name=ErSampREc['er_location_name']
     az_ind=rec.index('a=')+1
     ErSampRec['er_sample_name']=er_sample_name
     ErSampRec['er_sample_description']=comment
@@ -186,10 +186,10 @@ def main(command_line=True, **kwargs):
     date=rec[-2]
     time=rec[-1]
     ErSampRec['magic_method_codes']=meth_code
-    if 'er_location_name' not in ErSampRec.keys():ErSampRec['er_location_name']=er_location_name
-    if 'er_site_name' not in ErSampRec.keys():ErSampRec['er_site_name']=er_site_name
-    if 'er_citation_names' not in ErSampRec.keys():ErSampRec['er_citation_names']='This study'
-    if 'magic_method_codes' not in ErSampRec.keys():ErSampRec['magic_method_codes']='SO-NO'
+    if 'er_location_name' not in list(ErSampRec.keys()):ErSampRec['er_location_name']=er_location_name
+    if 'er_site_name' not in list(ErSampRec.keys()):ErSampRec['er_site_name']=er_site_name
+    if 'er_citation_names' not in list(ErSampRec.keys()):ErSampRec['er_citation_names']='This study'
+    if 'magic_method_codes' not in list(ErSampRec.keys()):ErSampRec['magic_method_codes']='SO-NO'
     SampOuts.append(ErSampRec)
     for k in range(3,len(data)): # read in data
       line=data[k]
@@ -215,7 +215,7 @@ def main(command_line=True, **kwargs):
         elif rec[0][0]=='T': 
             meas_type="LT-T-Z"
         else:
-            print "measurement type unknown"
+            print("measurement type unknown")
             return False, "measurement type unknown"
         X=[float(rec[1]),float(rec[2]),float(rec[3])]
         Vec=pmag.cart2dir(X)
@@ -236,9 +236,9 @@ def main(command_line=True, **kwargs):
         MagRecs.append(MagRec) 
     MagOuts=pmag.measurements_methods(MagRecs,noave)
     pmag.magic_write(meas_file,MagOuts,'magic_measurements')
-    print "results put in ",meas_file
+    print("results put in ",meas_file)
     pmag.magic_write(samp_file,SampOuts,'er_samples')
-    print "sample orientations put in ",samp_file
+    print("sample orientations put in ",samp_file)
     return True, meas_file
 
 def do_help():

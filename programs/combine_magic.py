@@ -23,19 +23,19 @@ def main():
         -f specify input file names [ must come last]
     """
     if "-h" in sys.argv:
-        print main.__doc__
+        print(main.__doc__)
         sys.exit()
     if "-i" in sys.argv: # interactive
         dataset,datasets=[],[]
         while True:
-            infile=raw_input('\n\n Enter magic files for combining, <return>  when done: ')
+            infile=input('\n\n Enter magic files for combining, <return>  when done: ')
             if infile=='':
                 break
             if os.path.isfile(infile):
                 filenames.append(infile)
             else:
-                print "-W- You have not provided a valid filename.\nIf the file is not in your current working directory, you will need to provide the full path to the file"
-        outfile=raw_input('\n\n Enter name for new combined file')
+                print("-W- You have not provided a valid filename.\nIf the file is not in your current working directory, you will need to provide the full path to the file")
+        outfile=input('\n\n Enter name for new combined file')
         if not outfile:
             return False
             

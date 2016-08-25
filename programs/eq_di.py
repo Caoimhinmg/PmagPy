@@ -22,7 +22,7 @@ def main():
     out=""
     UP=0
     if '-h' in sys.argv:
-        print main.__doc__
+        print(main.__doc__)
         sys.exit()
     if '-f' in sys.argv:
         dat=[]
@@ -60,7 +60,7 @@ def main():
         outstring = '%7.1f %7.1f'%(d,i)
         if ofile == "":
            # print '%7.1f %7.1f'%(d,i)
-            print outstring
+            print(outstring)
         else:
             out.write(outstring+'\n')
         #end

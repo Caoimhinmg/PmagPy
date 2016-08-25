@@ -28,7 +28,7 @@ def main():
     outfile="er_samples.txt"
 # get command line stuff
     if "-h" in sys.argv:
-	print main.__doc__
+	print(main.__doc__)
         sys.exit()
     if '-fsp' in sys.argv:
 	ind=sys.argv.index("-fsp")

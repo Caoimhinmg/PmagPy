@@ -23,11 +23,11 @@ def AraiCurvature(x=x,y=y):
 
     """
     # makes sure all values are floats, then norms them by largest value
-    X = numpy.array(map(float, x))
+    X = numpy.array(list(map(float, x)))
     X = X / max(X)
-    Y = numpy.array(map(float, y))
+    Y = numpy.array(list(map(float, y)))
     Y = Y / max(Y)
-    XY = numpy.array(zip(X, Y))
+    XY = numpy.array(list(zip(X, Y)))
                   
     #Provide the intitial estimate
     E1=TaubinSVD(XY);

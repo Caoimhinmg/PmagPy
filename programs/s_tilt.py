@@ -27,11 +27,11 @@ def main():
         x11 x22 x33 x12 x23 x13
     """
     if '-h' in sys.argv:
-        print main.__doc__
+        print(main.__doc__)
         sys.exit()
 # read in the data
     elif '-i' in sys.argv:
-        file=raw_input("Enter filename for processing: ")
+        file=input("Enter filename for processing: ")
         f=open(file,'rU')
         data=f.readlines()
         f.close()
@@ -61,7 +61,7 @@ def main():
         outstring=""
         for s in s_rot:outstring+='%10.8f '%(s)
         if ofile == "":
-            print outstring
+            print(outstring)
         else:
             out.write(outstring+"\n")
 #

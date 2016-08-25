@@ -64,7 +64,7 @@ nd the number of bootstrap samples
     nb=1000 # number of bootstraps
     min,max=-10,150
     if '-h' in sys.argv: # check if help is needed
-        print main.__doc__
+        print(main.__doc__)
         sys.exit() # graceful quit
     if '-F' in sys.argv:
         ind=sys.argv.index('-F')
@@ -76,7 +76,7 @@ nd the number of bootstrap samples
         file=sys.argv[ind+1]
         DIDDs=numpy.loadtxt(file)
     else:
-        print main.__doc__
+        print(main.__doc__)
         sys.exit()
     if '-fmt' in sys.argv:
         ind=sys.argv.index('-fmt')
@@ -105,12 +105,12 @@ nd the number of bootstrap samples
     TCs=numpy.array([D,I]).transpose()
     pmagplotlib.plotEQ(PLTS['strat'],TCs,'Stratigraphic')
     if plot==0:pmagplotlib.drawFIGS(PLTS)
-    Percs=range(min,max)
+    Percs=list(range(min,max))
     Cdf,Untilt=[],[]
     pylab.figure(num=PLTS['taus'])
-    print 'doing ',nb,' iterations...please be patient.....'
+    print('doing ',nb,' iterations...please be patient.....')
     for n in range(nb): # do bootstrap data sets - plot first 25 as dashed red line
-            if n%50==0:print n
+            if n%50==0:print(n)
             Taus=[] # set up lists for taus
             PDs=pmag.pseudo(DIDDs)
             if kappa!=0:
@@ -138,19 +138,19 @@ nd the number of bootstrap samples
     pylab.axvline(x=Untilt[lower],ymin=0,ymax=1,linewidth=1,linestyle='--')
     pylab.axvline(x=Untilt[upper],ymin=0,ymax=1,linewidth=1,linestyle='--')
     tit= '%i - %i %s'%(Untilt[lower],Untilt[upper],'Percent Unfolding')
-    print tit
-    print 'range of all bootstrap samples: ', Untilt[0], ' - ', Untilt[-1]
+    print(tit)
+    print('range of all bootstrap samples: ', Untilt[0], ' - ', Untilt[-1])
     pylab.title(tit)
     outstring= '%i - %i; %i\n'%(Untilt[lower],Untilt[upper],nb)
     if outfile!="":outfile.write(outstring)
     files={}
-    for key in PLTS.keys():
+    for key in list(PLTS.keys()):
         files[key]=('foldtest_'+'%s'%(key.strip()[:2])+'.'+fmt)
     if plot==0:
         pmagplotlib.drawFIGS(PLTS)
-        ans= raw_input('S[a]ve all figures, <Return> to quit   ')
+        ans= input('S[a]ve all figures, <Return> to quit   ')
         if ans!='a':
-            print "Good bye"
+            print("Good bye")
             sys.exit()
     pmagplotlib.saveP(PLTS,files)
 main()

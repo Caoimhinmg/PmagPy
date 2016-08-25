@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 
 
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 import os
-import httplib
+import http.client
 import pandas as pd
-import pmag
-import check_updates
+from . import pmag
+from . import check_updates
 from pmagpy.controlled_vocabularies import vocab
 
 def get_data_offline():
@@ -20,7 +20,7 @@ def get_data_offline():
         data = open(the_file, 'rU')
         return data
     except IOError:
-        print "can't access MagIC-data-model at the moment\nif you are working offline, make sure MagIC-data-model.txt is in your PmagPy directory (or download it from https://github.com/ltauxe/PmagPy and put it in your PmagPy directory)\notherwise, check your internet connection"
+        print("can't access MagIC-data-model at the moment\nif you are working offline, make sure MagIC-data-model.txt is in your PmagPy directory (or download it from https://github.com/ltauxe/PmagPy and put it in your PmagPy directory)\notherwise, check your internet connection")
         return False
 
 
@@ -40,22 +40,22 @@ def get_data_model():
     the second level keys are the possible headers for that file type.
     the third level keys are data_type and data_status for that header.
     """
-    print "-I- getting data model, please be patient"
+    print("-I- getting data model, please be patient")
     url = 'http://earthref.org/services/MagIC-data-model.txt'
     offline = False
     try:
-        data = urllib2.urlopen(url)
-    except urllib2.URLError:
-        print '-W- Unable to fetch data model online\nTrying to use cached data model instead'
+        data = urllib.request.urlopen(url)
+    except urllib.error.URLError:
+        print('-W- Unable to fetch data model online\nTrying to use cached data model instead')
         offline = True
-    except httplib.BadStatusLine:
-        print '-W- Website: {} not responding\nTrying to use cached data model instead'.format(url)
+    except http.client.BadStatusLine:
+        print('-W- Website: {} not responding\nTrying to use cached data model instead'.format(url))
         offline = True
     if offline:
         data = get_data_offline()
     data_model, file_type = pmag.magic_read(None, data)
     if file_type in ('bad file', 'empty_file'):
-        print '-W- Unable to read online data model.\nTrying to use cached data model instead'
+        print('-W- Unable to read online data model.\nTrying to use cached data model instead')
         data = get_data_offline()
         data_model, file_type = pmag.magic_read(None, data)
     ref_dicts = [d for d in data_model if d['column_nmb'] != '>>>>>>>>>>']
@@ -83,7 +83,7 @@ def read_upload(up_file, data_model=None):
     print out warnings for any validation problems
     return True if there were no problems, otherwise return False
     """
-    print "-I- Running validation for your upload file"
+    print("-I- Running validation for your upload file")
 
     ## Read file
     f = open(up_file)
@@ -109,7 +109,7 @@ def read_upload(up_file, data_model=None):
     ## Iterate through data
     # each dictionary is one tab delimited line in a csv file
     for dictionary in data_dicts:
-        for k, v in dictionary.items():
+        for k, v in list(dictionary.items()):
             if k == "file_type": # meta data
                 provided_file_types.add(v)
                 continue
@@ -135,7 +135,7 @@ def read_upload(up_file, data_model=None):
             else:
                 item_name = None
 
-            if file_type not in data_model.keys():
+            if file_type not in list(data_model.keys()):
                 continue
             specific_data_model = data_model[file_type]
 
@@ -159,7 +159,7 @@ def read_upload(up_file, data_model=None):
             # check if column header is in the data model
             invalid_col_name = validate_for_recognized_column(k, v, specific_data_model)
             if invalid_col_name:
-                if item_type not in invalid_col_names.keys():
+                if item_type not in list(invalid_col_names.keys()):
                     invalid_col_names[item_type] = set()
                 invalid_col_names[item_type].add(invalid_col_name)
                 # skip to next item, as additional validations won't work
@@ -176,7 +176,7 @@ def read_upload(up_file, data_model=None):
             missing_item = validate_for_presence(k, v, specific_data_model)
             #print 'k, v', k, v
             if missing_item:
-                if item_type not in missing_data.keys():
+                if item_type not in list(missing_data.keys()):
                     missing_data[item_type] = set()
                 missing_data[item_type].add(missing_item)
                 if item_name:
@@ -193,7 +193,7 @@ def read_upload(up_file, data_model=None):
             # vocabulary problems
             vocab_problem = validate_for_controlled_vocab(k, v, specific_data_model)
             if vocab_problem:
-                if item_type not in bad_vocab.keys():
+                if item_type not in list(bad_vocab.keys()):
                     bad_vocab[item_type] = set()
                 bad_vocab[item_type].add(vocab_problem)
                 add_to_invalid_data(item_name, item_type, invalid_data,
@@ -202,7 +202,7 @@ def read_upload(up_file, data_model=None):
             # illegal coordinates
             coord_problem = validate_for_coordinates(k, v, specific_data_model)
             if coord_problem:
-                if item_type not in bad_coords.keys():
+                if item_type not in list(bad_coords.keys()):
                     bad_coords[item_type] = set()
                 bad_coords[item_type].add(coord_problem)
                 add_to_invalid_data(item_name, item_type, invalid_data,
@@ -211,7 +211,7 @@ def read_upload(up_file, data_model=None):
             # make a list of data that should be numeric, but aren't
             number_fail = validate_for_numericality(k, v, specific_data_model)
             if number_fail:
-                if item_type not in non_numeric.keys():
+                if item_type not in list(non_numeric.keys()):
                     non_numeric[item_type] = set()
                 non_numeric[item_type].add(number_fail)
                 add_to_invalid_data(item_name, item_type, invalid_data,
@@ -219,31 +219,31 @@ def read_upload(up_file, data_model=None):
 
     ## Print out all issues
                 
-    for file_type, invalid_names in invalid_col_names.items():
-        print "-W- In your {} file, you are using the following unrecognized columns: {}".format(file_type, ', '.join(invalid_names))
+    for file_type, invalid_names in list(invalid_col_names.items()):
+        print("-W- In your {} file, you are using the following unrecognized columns: {}".format(file_type, ', '.join(invalid_names)))
 
-    for file_type, wrong_cols in non_numeric.items():
-        print "-W- In your {} file, you must provide only valid numbers, in the following columns: {}".format(file_type, ', '.join(wrong_cols))
+    for file_type, wrong_cols in list(non_numeric.items()):
+        print("-W- In your {} file, you must provide only valid numbers, in the following columns: {}".format(file_type, ', '.join(wrong_cols)))
 
-    for file_type, empty_cols in missing_data.items():
-        print "-W- In your {} file, you are missing data in the following required columns: {}".format(file_type, ', '.join(empty_cols))
+    for file_type, empty_cols in list(missing_data.items()):
+        print("-W- In your {} file, you are missing data in the following required columns: {}".format(file_type, ', '.join(empty_cols)))
 
     for file_type in reqd_file_types:
         if file_type not in provided_file_types:
-            print "-W- You have not provided a(n) {} type file, which is required data".format(file_type)
+            print("-W- You have not provided a(n) {} type file, which is required data".format(file_type))
             missing_file_type = True
 
-    for file_type, vocab_types in bad_vocab.items():
-        print "-W- In your {} file, you are using an unrecognized value for these controlled vocabularies: {}".format(file_type, ', '.join(vocab_types))
+    for file_type, vocab_types in list(bad_vocab.items()):
+        print("-W- In your {} file, you are using an unrecognized value for these controlled vocabularies: {}".format(file_type, ', '.join(vocab_types)))
 
-    for file_type, coords in bad_coords.items():
-        print "-W- In your {} file, you are using an illegal value for these columns: {}.  (Latitude must be between -90 and +90)".format(file_type, ', '.join(coords))
+    for file_type, coords in list(bad_coords.items()):
+        print("-W- In your {} file, you are using an illegal value for these columns: {}.  (Latitude must be between -90 and +90)".format(file_type, ', '.join(coords)))
 
 
     if any((invalid_col_names, non_numeric, missing_data, missing_file_type, bad_vocab, bad_coords)):
         return False, invalid_data
     else:
-        print "-I- validation was successful"
+        print("-I- validation was successful")
         return True, None
     
 

@@ -11,9 +11,9 @@ c=numpy.cos(2*numpy.pi*t)
 ax.plot(t,s,color='blue',lw=2) #Line2D instance
 ax.plot(t,c,color='magenta',lw=2)
 pylab.draw()
-print ax.lines # prints all your plot instances
-print 'last line color: ',ax.lines[-1].get_color()
-raw_input("Any key to change last line to red ")
+print(ax.lines) # prints all your plot instances
+print('last line color: ',ax.lines[-1].get_color())
+input("Any key to change last line to red ")
 ax.lines[-1].set_color('red') # sets last line to red
 pylab.draw()
-raw_input()
+input()

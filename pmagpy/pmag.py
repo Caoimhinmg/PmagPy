@@ -5,7 +5,6 @@
 import numpy,string,sys
 from numpy import random
 import numpy.linalg
-import exceptions
 import os
 import time
 #import check_updates
@@ -18,7 +17,7 @@ from SPD.mapping import map_magic
 #check_updates.main() # check for updates
 
 def get_version():
-    import check_updates
+    from . import check_updates
     version=check_updates.get_version()
     return version
 
@@ -34,20 +33,20 @@ def get_dictitem(In,k,v,flag):
         requires that the value of k in the dictionaries contained in In be castable to string and requires that v be castable to a string if flag is T,F
         ,has or not and requires they be castable to float if flag is eval, min, or max.
     """
-    if flag=="T":return [dictionary for dictionary in In if k in dictionary.keys() and str(dictionary[k]).lower()==str(v).lower()] # return that which is
+    if flag=="T":return [dictionary for dictionary in In if k in list(dictionary.keys()) and str(dictionary[k]).lower()==str(v).lower()] # return that which is
     if flag=="F":
-        return [dictionary for dictionary in In if k in dictionary.keys() and str(dictionary[k]).lower()!=str(v).lower()] # return that which is not
-    if flag=="has":return [dictionary for dictionary in In if k in dictionary.keys() and str(v).lower() in str(dictionary[k]).lower()] # return that which is contained
-    if flag=="not":return [dictionary for dictionary in In if k in dictionary.keys() and str(v).lower() not in str(dictionary[k]).lower()] # return that which is not contained
+        return [dictionary for dictionary in In if k in list(dictionary.keys()) and str(dictionary[k]).lower()!=str(v).lower()] # return that which is not
+    if flag=="has":return [dictionary for dictionary in In if k in list(dictionary.keys()) and str(v).lower() in str(dictionary[k]).lower()] # return that which is contained
+    if flag=="not":return [dictionary for dictionary in In if k in list(dictionary.keys()) and str(v).lower() not in str(dictionary[k]).lower()] # return that which is not contained
     if flag=="eval":
-        A=[dictionary for dictionary in In if k in dictionary.keys() and dictionary[k]!=''] # find records with no blank values for key
-        return [dictionary for dictionary in A if k in dictionary.keys() and float(dictionary[k])==float(v)] # return that which is
+        A=[dictionary for dictionary in In if k in list(dictionary.keys()) and dictionary[k]!=''] # find records with no blank values for key
+        return [dictionary for dictionary in A if k in list(dictionary.keys()) and float(dictionary[k])==float(v)] # return that which is
     if flag=="min":
-        A=[dictionary for dictionary in In if k in dictionary.keys() and dictionary[k]!=''] # find records with no blank values for key
-        return [dictionary for dictionary in A if k in dictionary.keys() and float(dictionary[k])>=float(v)] # return that which is greater than
+        A=[dictionary for dictionary in In if k in list(dictionary.keys()) and dictionary[k]!=''] # find records with no blank values for key
+        return [dictionary for dictionary in A if k in list(dictionary.keys()) and float(dictionary[k])>=float(v)] # return that which is greater than
     if flag=="max":
-        A=[dictionary for dictionary in In if k in dictionary.keys() and  dictionary[k]!=''] # find records with no blank values for key
-        return [dictionary for dictionary in A if k in dictionary.keys() and float(dictionary[k])<=float(v)] # return that which is less than
+        A=[dictionary for dictionary in In if k in list(dictionary.keys()) and  dictionary[k]!=''] # find records with no blank values for key
+        return [dictionary for dictionary in A if k in list(dictionary.keys()) and float(dictionary[k])<=float(v)] # return that which is less than
 
 def get_dictkey(In,k,dtype):
     """
@@ -80,7 +79,7 @@ def get_orient(samp_data,er_sample_name):
     EX=["SO-ASC","SO-POM"]
     orient={'er_sample_name':er_sample_name,'sample_azimuth':"",'sample_dip':"",'sample_description':""}
     orients=get_dictitem(samp_data,'er_sample_name',er_sample_name,'T') # get all the orientation data for this sample
-    if 'sample_orientation_flag' in orients[0].keys(): orients=get_dictitem(orients,'sample_orientation_flag','b','F') # exclude all samples with bad orientation flag
+    if 'sample_orientation_flag' in list(orients[0].keys()): orients=get_dictitem(orients,'sample_orientation_flag','b','F') # exclude all samples with bad orientation flag
     if len(orients)>0:orient=orients[0] # re-initialize to first one
     methods=get_dictitem(orients,'magic_method_codes','SO-','has')
     methods=get_dictkey(methods,'magic_method_codes','') # get a list of all orientation methods for this sample
@@ -91,7 +90,7 @@ def get_orient(samp_data,er_sample_name):
            if meth.strip() not in EX:SO_methods.append(meth)
    # find top priority orientation method
     if len(SO_methods)==0:
-        print "no orientation data for ",er_sample_name
+        print("no orientation data for ",er_sample_name)
         az_type="SO-NO"
     else:
         SO_priorities=set_priorities(SO_methods,0)
@@ -145,7 +144,7 @@ def find_f(data):
 
 def cooling_rate(SpecRec,SampRecs,crfrac,crtype):
     CrSpecRec,frac,crmcd={},0,'DA-CR'
-    for key in SpecRec.keys():CrSpecRec[key]=SpecRec[key]
+    for key in list(SpecRec.keys()):CrSpecRec[key]=SpecRec[key]
     if len(SampRecs)>0:
         frac=.01*float(SampRecs[0]['cooling_rate_corr'])
         if 'DA-CR' in SampRecs[0]['cooling_rate_mcd']:
@@ -171,13 +170,13 @@ def convert_lat(Recs):
     """
     New=[]
     for rec in Recs:
-        if 'model_lat' in rec.keys() and rec['model_lat']!="":
+        if 'model_lat' in list(rec.keys()) and rec['model_lat']!="":
              New.append(rec)
-        elif 'average_age'  in rec.keys() and rec['average_age']!="" and  float(rec['average_age'])<=5.:
-            if 'site_lat' in rec.keys() and rec['site_lat']!="":
+        elif 'average_age'  in list(rec.keys()) and rec['average_age']!="" and  float(rec['average_age'])<=5.:
+            if 'site_lat' in list(rec.keys()) and rec['site_lat']!="":
                  rec['model_lat']=rec['site_lat']
                  New.append(rec)
-        elif 'average_inc' in rec.keys() and rec['average_inc']!="":
+        elif 'average_inc' in list(rec.keys()) and rec['average_inc']!="":
             rec['model_lat']='%7.1f'%(plat(float(rec['average_inc'])))
             New.append(rec)
     return New
@@ -189,7 +188,7 @@ def convert_ages(Recs):
     New=[]
     for rec in Recs:
         age=''
-        agekey=find('age',rec.keys())
+        agekey=find('age',list(rec.keys()))
         if agekey!="":
             keybase=agekey.split('_')[0]+'_'
             if rec[keybase+'age']!="":
@@ -209,14 +208,14 @@ def convert_ages(Recs):
                 rec[keybase+'age_unit']='Ma'
                 New.append(rec)
             else:
-                if 'er_site_names' in rec.keys():
-                    print 'problem in convert_ages:', rec['er_site_names']
-                elif 'er_site_name' in rec.keys():
-                    print 'problem in convert_ages:', rec['er_site_name']
+                if 'er_site_names' in list(rec.keys()):
+                    print('problem in convert_ages:', rec['er_site_names'])
+                elif 'er_site_name' in list(rec.keys()):
+                    print('problem in convert_ages:', rec['er_site_name'])
                 else:
-                    print 'problem in convert_ages:', rec
+                    print('problem in convert_ages:', rec)
         else:
-            print 'no age key:', rec
+            print('no age key:', rec)
     return New
 
 def convert_meas_2_to_3(meas_data_2):
@@ -229,7 +228,7 @@ def convert_meas_2_to_3(meas_data_2):
 def convert2_3(fname, input_dir=".", output_dir="."):
     full_name = os.path.join(input_dir, fname)
     if not os.path.exists(full_name):
-        print "-W- {} is not a file".format(full_name)
+        print("-W- {} is not a file".format(full_name))
         return
     # read in data model 2.5 measurements file
     data2, filetype = magic_read(full_name)
@@ -297,9 +296,9 @@ def convert2_3(fname, input_dir=".", output_dir="."):
     ofile = os.path.join(output_dir, 'measurements.txt')
     magic_write(ofile, NewMeas,'measurements')
     if os.path.exists(ofile):
-        print "-I- 3.0. format measurements file was successfully created: {}".format(ofile)
+        print("-I- 3.0. format measurements file was successfully created: {}".format(ofile))
     else:
-        print "-W- 3.0. format measurements file could not be created"
+        print("-W- 3.0. format measurements file could not be created")
     return NewMeas
 
 
@@ -375,13 +374,13 @@ def getsampVDM(SampRec,SampNFO):
         lat=float(samp['sample_lat'])
         int = float(SampRec['sample_int'])
         vdm=b_vdm(int,lat)
-        if 'sample_int_sigma' in SampRec.keys() and  SampRec['sample_int_sigma']!="":
+        if 'sample_int_sigma' in list(SampRec.keys()) and  SampRec['sample_int_sigma']!="":
             sig=b_vdm(float(SampRec['sample_int_sigma']),lat)
             sig='%8.3e'%(sig)
         else:
             sig=""
     else:
-        print 'could not find sample info for: ', SampRec['er_sample_name']
+        print('could not find sample info for: ', SampRec['er_sample_name'])
         return {}
     ResRec={}
     ResRec['pmag_result_name']='V[A]DM Sample: '+SampRec['er_sample_name']
@@ -389,11 +388,11 @@ def getsampVDM(SampRec,SampNFO):
     ResRec['er_citation_names']="This study"
     ResRec['er_site_names']=SampRec['er_site_name']
     ResRec['er_sample_names']=SampRec['er_sample_name']
-    if 'sample_dec' in SampRec.keys():
+    if 'sample_dec' in list(SampRec.keys()):
         ResRec['average_dec']=SampRec['sample_dec']
     else:
         ResRec['average_dec']=""
-    if 'sample_inc' in SampRec.keys():
+    if 'sample_inc' in list(SampRec.keys()):
         ResRec['average_inc']=SampRec['sample_inc']
     else:
         ResRec['average_inc']=""
@@ -461,13 +460,13 @@ def ParseMeasFile(measfile,sitefile,instout,specout): # fix up some stuff for up
     InstRecs=[]
     meas_data,file_type=magic_read(measfile)
     if file_type != 'magic_measurements':
-        print file_type,"This is not a valid magic_measurements file "
+        print(file_type,"This is not a valid magic_measurements file ")
         sys.exit()
     # read in site data
     if sitefile!="":
         SiteNFO,file_type=magic_read(sitefile)
         if file_type=="bad_file":
-            print "Bad  or no er_sites file - lithology, etc will not be imported"
+            print("Bad  or no er_sites file - lithology, etc will not be imported")
     else:
         SiteNFO=[]
     # define the Er_specimen records to create a new er_specimens.txt file
@@ -475,7 +474,7 @@ def ParseMeasFile(measfile,sitefile,instout,specout): # fix up some stuff for up
     suniq,ErSpecs=[],[]
     for rec in meas_data:
 # fill in some potentially missing fields
-        if "magic_instrument_codes" in rec.keys():
+        if "magic_instrument_codes" in list(rec.keys()):
             list=(rec["magic_instrument_codes"])
             list.strip()
             tmplist=list.split(":")
@@ -485,7 +484,7 @@ def ParseMeasFile(measfile,sitefile,instout,specout): # fix up some stuff for up
                     InstRec={}
                     InstRec["magic_instrument_code"]=inst
                     InstRecs.append(InstRec)
-        if "measurement_standard" not in rec.keys():rec['measurement_standard']='u' # make this an unknown if not specified
+        if "measurement_standard" not in list(rec.keys()):rec['measurement_standard']='u' # make this an unknown if not specified
         if rec["er_specimen_name"] not in suniq and rec["measurement_standard"]!='s': # exclude standards
             suniq.append(rec["er_specimen_name"])
             ErSpecRec={}
@@ -499,32 +498,32 @@ def ParseMeasFile(measfile,sitefile,instout,specout): # fix up some stuff for up
             sites=get_dictitem(SiteNFO,'er_site_name',rec['er_site_name'],'T')
             if len(sites)==0:
                 site={}
-                print 'site record in er_sites table not found for: ',rec['er_site_name']
+                print('site record in er_sites table not found for: ',rec['er_site_name'])
             else:
                 site=sites[0]
-            if 'site_class' not in site.keys() or 'site_lithology' not in site.keys() or 'site_type' not in site.keys():
+            if 'site_class' not in list(site.keys()) or 'site_lithology' not in list(site.keys()) or 'site_type' not in list(site.keys()):
                 site['site_class']='Not Specified'
                 site['site_lithology']='Not Specified'
                 site['site_type']='Not Specified'
-            if 'specimen_class' not in ErSpecRec.keys():ErSpecRec["specimen_class"]=site['site_class']
-            if 'specimen_lithology' not in ErSpecRec.keys():ErSpecRec["specimen_lithology"]=site['site_lithology']
-            if 'specimen_type' not in ErSpecRec.keys():ErSpecRec["specimen_type"]=site['site_type']
-            if 'specimen_volume' not in ErSpecRec.keys():ErSpecRec["specimen_volume"]=""
-            if 'specimen_weight' not in ErSpecRec.keys():ErSpecRec["specimen_weight"]=""
+            if 'specimen_class' not in list(ErSpecRec.keys()):ErSpecRec["specimen_class"]=site['site_class']
+            if 'specimen_lithology' not in list(ErSpecRec.keys()):ErSpecRec["specimen_lithology"]=site['site_lithology']
+            if 'specimen_type' not in list(ErSpecRec.keys()):ErSpecRec["specimen_type"]=site['site_type']
+            if 'specimen_volume' not in list(ErSpecRec.keys()):ErSpecRec["specimen_volume"]=""
+            if 'specimen_weight' not in list(ErSpecRec.keys()):ErSpecRec["specimen_weight"]=""
             ErSpecs.append(ErSpecRec)
     #
     #
     # save the data
     #
     magic_write(specout,ErSpecs,"er_specimens")
-    print " Er_Specimen data (with updated info from site if necessary)  saved in ",specout
+    print(" Er_Specimen data (with updated info from site if necessary)  saved in ",specout)
     #
     # write out the instrument list
     if len(InstRecs) >0:
         magic_write(instout,InstRecs,"magic_instruments")
-        print " Instruments data saved in ",instout
+        print(" Instruments data saved in ",instout)
     else:
-        print "No instruments found"
+        print("No instruments found")
 
 def ReorderSamples(specfile,sampfile,outfile): # take care of re-ordering sample table, putting used orientations first
     UsedSamps,RestSamps=[],[]
@@ -541,7 +540,7 @@ def ReorderSamples(specfile,sampfile,outfile): # take care of re-ordering sample
         if len(used)>0:
             UsedSamps.append(used[0])
         else:
-            print 'orientation not found for: ',rec['er_specimen_name']
+            print('orientation not found for: ',rec['er_specimen_name'])
         rest=get_dictitem(samprecs,'magic_method_codes',SO_meth,'not')
         for rec in rest:
             RestSamps.append(rec)
@@ -570,7 +569,7 @@ def orient(mag_azimuth,field_dip,or_con):
         return mag_azimuth-90., 90.-field_dip
     if or_con=="7": # lab_mag_az=mag_az;  sample_dip = 90.-dip
         return mag_azimuth-90., 90.-field_dip
-    print "Error in orientation convention"
+    print("Error in orientation convention")
 
 def get_Sb(data):
     """
@@ -657,7 +656,7 @@ def grade(PmagRec,ACCEPT,type,data_model=2.5):
         if data_model==3.0:
             USEKEYS=[map_magic.site_magic2_2_magic3_map[k] for k in USEKEYS]
 
-    for key in ACCEPT.keys():
+    for key in list(ACCEPT.keys()):
         if ACCEPT[key]!="" and key in USEKEYS:
             if key in ISTRUE and ACCEPT[key]=='TRUE' or ACCEPT[key]=='True':
                 ACCEPT[key]='1' # this is because Excel always capitalizes True to TRUE and python doesn't recognize that as a boolean.  never mind
@@ -667,7 +666,7 @@ def grade(PmagRec,ACCEPT,type,data_model=2.5):
                 ACCEPT[key]=""
             accept[key]=ACCEPT[key]
     for key in sigma_types:
-        if key in USEKEYS and key in accept.keys() and key in PmagRec.keys(): sigmas.append(key)
+        if key in USEKEYS and key in list(accept.keys()) and key in list(PmagRec.keys()): sigmas.append(key)
     if len(sigmas)>1:
         if PmagRec[sigmas[0]]=="" or PmagRec[sigmas[1]]=="":
            kill.append(sigmas[0])
@@ -675,12 +674,12 @@ def grade(PmagRec,ACCEPT,type,data_model=2.5):
         elif eval(PmagRec[sigmas[0]])>eval(accept[sigmas[0]]) and eval(PmagRec[sigmas[1]])>eval(accept[sigmas[1]]):
            kill.append(sigmas[0])
            kill.append(sigmas[1])
-    elif len(sigmas)==1 and sigmas[0] in accept.keys():
+    elif len(sigmas)==1 and sigmas[0] in list(accept.keys()):
         if PmagRec[sigmas[0]]>accept[sigmas[0]]:
            kill.append(sigmas[0])
-    for key in accept.keys():
+    for key in list(accept.keys()):
      if accept[key]!="":
-        if key not in PmagRec.keys() or PmagRec[key]=='':
+        if key not in list(PmagRec.keys()) or PmagRec[key]=='':
             kill.append(key)
         elif key not in sigma_types:
             if key in ISTRUE: # boolean must be true
@@ -724,7 +723,7 @@ def dia_vgp(*args): # new function interface by J.Holmes, SIO, 6/1/2011
     # test whether arguments are one 2-D list or 5 floats
     if len(args) == 1: # args comes in as a tuple of multi-dim lists.
         largs=list(args).pop() # scrap the tuple.
-        (decs, dips, a95s, slats, slongs) = zip(*largs) # reorganize the lists so that we get columns of data in each var.
+        (decs, dips, a95s, slats, slongs) = list(zip(*largs)) # reorganize the lists so that we get columns of data in each var.
     else:
         # When args > 1, we are receiving five floats. This usually happens when the invoking script is
         # executed in interactive mode.
@@ -795,7 +794,7 @@ def int_pars(x,y,vds,**kwargs):
      calculates York regression and Coe parameters (with Tauxe Fvds)
     """
     # first do linear regression a la York
-    if 'version' in kwargs.keys() and kwargs['version']==3: # do Data Model 3 way:
+    if 'version' in list(kwargs.keys()) and kwargs['version']==3: # do Data Model 3 way:
         n_key='int_n_measurements'
         b_key='int_b'
         sigma_key='int_b_sigma'
@@ -822,7 +821,7 @@ def int_pars(x,y,vds,**kwargs):
     pars[n_key]=len(x)
     n=float(len(x))
     if n<=2:
-        print "shouldn't be here at all!"
+        print("shouldn't be here at all!")
         return pars,1
     for i in range(len(x)):
         xx+=x[i]**2.
@@ -895,7 +894,7 @@ def vspec_magic(data):
 # find keys that are used
 #
     for key in treat_init:
-        if key in data[0].keys():treats.append(key)  # get a list of keys
+        if key in list(data[0].keys()):treats.append(key)  # get a list of keys
     stop={}
     stop["er_specimen_name"]="stop"
     for key in treats:
@@ -932,7 +931,7 @@ def vspec_magic(data):
                 vrec['measurement_csd']='%7.1f'%(Fpars['csd'])
                 vrec['measurement_positions']='%7.1f'%(Fpars['n'])
                 vrec['measurement_description']='average of multiple measurements'
-                if "magic_method_codes" in vrec.keys():
+                if "magic_method_codes" in list(vrec.keys()):
                     meths=vrec["magic_method_codes"].strip().split(":")
                     if "DE-VM" not in meths:meths.append("DE-VM")
                     methods=""
@@ -1017,7 +1016,7 @@ def find_dmag_rec(s,data,**kwargs):
     """
     returns demagnetization data for specimen s from the data - excludes other kinds of experiments and "bad" measurements
     """
-    if 'version' in kwargs.keys() and kwargs['version']==3:
+    if 'version' in list(kwargs.keys()) and kwargs['version']==3:
         data=data.to_dict('records')  # convert dataframe to list of dictionaries
         spec_key,dec_key,inc_key='specimen','dir_dec','dir_inc'
         flag_key,temp_key,ac_key='flag','treat_temp','treat_ac_field'
@@ -1042,7 +1041,7 @@ def find_dmag_rec(s,data,**kwargs):
     units=[]
     spec_meas=get_dictitem(data,spec_key,s,'T')
     for rec in spec_meas:
-           if flag_key not in rec.keys():rec[flag_key]='g'
+           if flag_key not in list(rec.keys()):rec[flag_key]='g'
            skip=1
            tr=""
            meths=rec[meth_key].split(":")
@@ -1074,13 +1073,13 @@ def find_dmag_rec(s,data,**kwargs):
                    ZI=1
                if tr !="":
                    dec,inc,int = "","",""
-                   if dec_key in rec.keys() and rec[dec_key] != "":
+                   if dec_key in list(rec.keys()) and rec[dec_key] != "":
                        dec=float(rec[dec_key])
-                   if inc_key in rec.keys() and rec[inc_key] != "":
+                   if inc_key in list(rec.keys()) and rec[inc_key] != "":
                        inc=float(rec[inc_key])
                    for key in Mkeys:
-                       if key in rec.keys() and rec[key]!="":int=float(rec[key])
-                   if inst_key not in rec.keys():rec[inst_key]=''
+                       if key in list(rec.keys()) and rec[key]!="":int=float(rec[key])
+                   if inst_key not in list(rec.keys()):rec[inst_key]=''
                    datablock.append([tr,dec,inc,int,ZI,rec[flag_key],rec[inst_key]])
     if therm_flag==1:
         for k in range(len(datablock)):
@@ -1120,7 +1119,7 @@ def magic_read(infile, data=None, return_keys=False):
     elif d[0]=="t" or d[1]=="t":
         delim='tab'
     else:
-        print 'error reading ', infile
+        print('error reading ', infile)
         #sys.exit()
         if return_keys:
             return [], 'bad_file', []
@@ -1158,9 +1157,9 @@ def magic_read(infile, data=None, return_keys=False):
         magic_record={}
         if len(magic_keys) != len(rec):
             if rec != ['>>>>>>>>>>'] and 'delimited' not in rec[0]: # ignores this warning when reading the dividers in an upload.txt composite file
-                print "Warning: Uneven record lengths detected: "
-                print magic_keys
-                print rec
+                print("Warning: Uneven record lengths detected: ")
+                print(magic_keys)
+                print(rec)
         # modified by Ron Shaar:
         # add a health check:
         # if len(magic_keys) > len(rec): take rec
@@ -1198,7 +1197,7 @@ def magic_read_dict(path, data=None, sort_by_this_name=None, return_keys=False):
     elif first_line[0] == "t" or first_line[1] == "t":
         delim = '\t'
     else:
-        print '-W- error reading ', path
+        print('-W- error reading ', path)
         if return_keys:
             return False, 'bad_file', None
         else:
@@ -1221,7 +1220,7 @@ def magic_read_dict(path, data=None, sort_by_this_name=None, return_keys=False):
     for line in fin.readlines():
         tmp_data = {}
         tmp_line = line.strip('\n').split(delim)
-        for i in xrange(len(header)):
+        for i in range(len(header)):
             if i < len(tmp_line):
                 tmp_data[header[i]] = tmp_line[i]
             else:
@@ -1246,7 +1245,7 @@ def sort_magic_data(magic_data,sort_name):
     magic_data_sorted={}
     for rec in magic_data:
        name=rec[sort_name]
-       if name not in magic_data_sorted.keys():
+       if name not in list(magic_data_sorted.keys()):
            magic_data_sorted[name]=[]
        magic_data_sorted[name].append(rec)
     return  magic_data_sorted
@@ -1268,7 +1267,7 @@ def upload_read(infile,table):
     if delim=='tab':
         line =f.readline()[:-1].split('\t')
     else:
-        print "only tab delimitted files are supported now"
+        print("only tab delimitted files are supported now")
         sys.exit()
     while file_type!=table:
         while line[0][0:5] in f.readlines() !=">>>>>":
@@ -1286,8 +1285,8 @@ def upload_read(infile,table):
         for rec in hold:
             magic_record={}
             if len(magic_keys) != len(rec):
-                print "Uneven record lengths detected: ",rec
-                raw_input("Return to continue.... ")
+                print("Uneven record lengths detected: ",rec)
+                input("Return to continue.... ")
             for k in range(len(magic_keys)):
                 magic_record[magic_keys[k]]=rec[k]
             magic_data.append(magic_record)
@@ -1303,7 +1302,7 @@ def putout(ofile,keylist,Rec):
         try:
            outstring=outstring + '\t' + str(Rec[key]).strip()
         except:
-           print key,Rec[key]
+           print(key,Rec[key])
            #raw_input()
     outstring=outstring+'\n'
     pmag_out.write(outstring[1:])
@@ -1326,7 +1325,7 @@ def first_rec(ofile,Rec,file_type):
     outstring="tab \t"+file_type+"\n"
     pmag_out.write(outstring)
     keystring=""
-    for key in Rec.keys():
+    for key in list(Rec.keys()):
         keystring=keystring+'\t'+key.strip()
         keylist.append(key)
     keystring=keystring + '\n'
@@ -1346,7 +1345,7 @@ def magic_write_old(ofile,Recs,file_type):
     pmag_out.write(outstring)
     keystring=""
     keylist=[]
-    for key in Recs[0].keys():
+    for key in list(Recs[0].keys()):
         keylist.append(key)
     keylist.sort()
     for key in keylist:
@@ -1359,11 +1358,11 @@ def magic_write_old(ofile,Recs,file_type):
            try:
               outstring=outstring+'\t'+str(Rec[key].strip())
            except:
-              if 'er_specimen_name' in Rec.keys():
-                  print Rec['er_specimen_name']
-              elif 'er_specimen_names' in Rec.keys():
-                  print Rec['er_specimen_names']
-              print key,Rec[key]
+              if 'er_specimen_name' in list(Rec.keys()):
+                  print(Rec['er_specimen_name'])
+              elif 'er_specimen_names' in list(Rec.keys()):
+                  print(Rec['er_specimen_names'])
+              print(key,Rec[key])
               #raw_input()
         outstring=outstring+'\n'
         pmag_out.write(outstring[1:])
@@ -1378,13 +1377,13 @@ def magic_write(ofile,Recs,file_type):
     if len(Recs)<1:
         return False, 'No records to write to file {}'.format(ofile)
     else:
-        print len(Recs),' records written to file ',ofile
+        print(len(Recs),' records written to file ',ofile)
     pmag_out=open(ofile,'w')
     outstring="tab \t"+file_type+"\n"
     pmag_out.write(outstring)
     keystring=""
     keylist=[]
-    for key in Recs[0].keys():
+    for key in list(Recs[0].keys()):
         keylist.append(key)
     keylist.sort()
     for key in keylist:
@@ -1397,11 +1396,11 @@ def magic_write(ofile,Recs,file_type):
            try:
               outstring=outstring+'\t'+str(Rec[key]).strip()
            except KeyError:
-              if 'er_specimen_name' in Rec.keys():
-                  print Rec['er_specimen_name']
-              elif 'er_specimen_names' in Rec.keys():
-                  print Rec['er_specimen_names']
-              print("No data for %s"%key)
+              if 'er_specimen_name' in list(Rec.keys()):
+                  print(Rec['er_specimen_name'])
+              elif 'er_specimen_names' in list(Rec.keys()):
+                  print(Rec['er_specimen_names'])
+              print(("No data for %s"%key))
               #raw_input()
         outstring=outstring+'\n'
         pmag_out.write(outstring[1:])
@@ -1522,21 +1521,21 @@ def find_samp_rec(s,data,az_type):
     orient['sample_description']=""
     for rec in data:
         if rec["er_sample_name"].lower()==s.lower():
-           if 'sample_orientation_flag' in  rec.keys() and rec['sample_orientation_flag']=='b':
+           if 'sample_orientation_flag' in  list(rec.keys()) and rec['sample_orientation_flag']=='b':
                orient['sample_orientation_flag']='b'
                return orient
-           if "magic_method_codes" in rec.keys() and az_type != "0":
+           if "magic_method_codes" in list(rec.keys()) and az_type != "0":
                methods=rec["magic_method_codes"].replace(" ","").split(":")
-               if az_type in methods and "sample_azimuth" in rec.keys() and rec["sample_azimuth"]!="": orient["sample_azimuth"]= float(rec["sample_azimuth"])
-               if "sample_dip" in rec.keys() and rec["sample_dip"]!="": orient["sample_dip"]=float(rec["sample_dip"])
-               if "sample_bed_dip_direction" in rec.keys() and rec["sample_bed_dip_direction"]!="":orient["sample_bed_dip_direction"]=float(rec["sample_bed_dip_direction"])
-               if "sample_bed_dip" in rec.keys() and rec["sample_bed_dip"]!="":orient["sample_bed_dip"]=float(rec["sample_bed_dip"])
+               if az_type in methods and "sample_azimuth" in list(rec.keys()) and rec["sample_azimuth"]!="": orient["sample_azimuth"]= float(rec["sample_azimuth"])
+               if "sample_dip" in list(rec.keys()) and rec["sample_dip"]!="": orient["sample_dip"]=float(rec["sample_dip"])
+               if "sample_bed_dip_direction" in list(rec.keys()) and rec["sample_bed_dip_direction"]!="":orient["sample_bed_dip_direction"]=float(rec["sample_bed_dip_direction"])
+               if "sample_bed_dip" in list(rec.keys()) and rec["sample_bed_dip"]!="":orient["sample_bed_dip"]=float(rec["sample_bed_dip"])
            else:
-               if "sample_azimuth" in rec.keys():orient["sample_azimuth"]=float(rec["sample_azimuth"])
-               if "sample_dip" in rec.keys(): orient["sample_dip"]=float(rec["sample_dip"])
-               if "sample_bed_dip_direction" in rec.keys(): orient["sample_bed_dip_direction"]=float(rec["sample_bed_dip_direction"])
-               if "sample_bed_dip" in rec.keys(): orient["sample_bed_dip"]=float(rec["sample_bed_dip"])
-               if 'sample_description' in rec.keys(): orient['sample_description']=rec['sample_description']
+               if "sample_azimuth" in list(rec.keys()):orient["sample_azimuth"]=float(rec["sample_azimuth"])
+               if "sample_dip" in list(rec.keys()): orient["sample_dip"]=float(rec["sample_dip"])
+               if "sample_bed_dip_direction" in list(rec.keys()): orient["sample_bed_dip_direction"]=float(rec["sample_bed_dip_direction"])
+               if "sample_bed_dip" in list(rec.keys()): orient["sample_bed_dip"]=float(rec["sample_bed_dip"])
+               if 'sample_description' in list(rec.keys()): orient['sample_description']=rec['sample_description']
         if orient["sample_azimuth"]!="": break
     return orient
 
@@ -1616,7 +1615,7 @@ def cart2dir(cart):
     try:
         Incs=numpy.arcsin(Zs/Rs)/rad # calculate inclination (converting to degrees) #
     except:
-        print 'trouble in cart2dir' # most likely division by zero somewhere
+        print('trouble in cart2dir') # most likely division by zero somewhere
         return numpy.zeros(3)
 
     return numpy.array([Decs,Incs,Rs]).transpose() # return the directions list
@@ -1707,10 +1706,10 @@ def dms2dd(d):
     d=numpy.array(d)
     if len(d.shape)>1: # array of angles
         degs,mins,secs=d[:,0],d[:,1],d[:,2]
-        print degs,mins,secs
+        print(degs,mins,secs)
     else: # single vector
         degs,mins,secs=numpy.array(d[0]),numpy.array(d[1]),numpy.array(d[2])
-        print degs,mins,secs
+        print(degs,mins,secs)
     dd= numpy.array(degs+mins/60.+secs/3600.).transpose()
     return dd
 
@@ -1737,16 +1736,16 @@ def domean(data,start,end,calculation_type):
         if len(rec)<6:rec.append('g')
         indata.append(rec)
     if indata[start0][5] == 'b': print("Can't select 'bad' point as start for PCA")
-    flags = map(lambda x: x[5], indata)
+    flags = [x[5] for x in indata]
     bad_before_start = flags[:start0].count('b')
     bad_in_mean = flags[start0:end0+1].count('b')
     start = start0 - bad_before_start
     end = end0 - bad_before_start - bad_in_mean
-    datablock = filter(lambda x: x[5]=='g', indata)
+    datablock = [x for x in indata if x[5]=='g']
     if indata[start0] != datablock[start]:
-        print('problem removing bad data in pmag.domean start of datablock shifted:\norigional: %d\nafter removal: %d'%(start0,indata.index(datablock[start])))
+        print(('problem removing bad data in pmag.domean start of datablock shifted:\norigional: %d\nafter removal: %d'%(start0,indata.index(datablock[start]))))
     if indata[end0] != datablock[end]:
-        print('problem removing bad data in pmag.domean end of datablock shifted:\norigional: %d\nafter removal: %d'%(end0,indata.index(datablock[end])))
+        print(('problem removing bad data in pmag.domean end of datablock shifted:\norigional: %d\nafter removal: %d'%(end0,indata.index(datablock[end]))))
     mpars["calculation_type"]=calculation_type
     rad=numpy.pi/180.
     if end>len(datablock)-1 or end<start: end=len(datablock)-1
@@ -1809,7 +1808,7 @@ def domean(data,start,end,calculation_type):
     t,V=tauV(T)
     if t==[]:
         mpars["specimen_direction_type"]="Error"
-        print "Error in calculation"
+        print("Error in calculation")
         return mpars
     v1,v3=V[0],V[2]
     if t[2]<0:t[2]=0 # make positive
@@ -1919,7 +1918,7 @@ def PintPars(datablock,araiblock,zijdblock,start,end,accept,**kwargs):
     """
      calculate the paleointensity magic parameters  make some definitions
     """
-    if 'version' in kwargs.keys() and kwargs['version']==3:
+    if 'version' in list(kwargs.keys()) and kwargs['version']==3:
         meth_key='method_codes'
         beta_key='int_b_beta'
         temp_key,min_key,max_key='treat_temp','meas_step_min','meas_step_max'
@@ -2336,7 +2335,7 @@ def PintPars(datablock,araiblock,zijdblock,start,end,accept,**kwargs):
 
     # if threshold value for beta is not defined, then scat cannot be calculated (pass)
     # in this case, scat pass
-    if beta_key in accept.keys() and accept[beta_key]!="":
+    if beta_key in list(accept.keys()) and accept[beta_key]!="":
         b_beta_threshold=float(accept[beta_key])
         b=pars[b_key]             # best fit line
         cm_x=mean(array(x_Arai_segment)) # x center of mass
@@ -2600,7 +2599,7 @@ def getnames():
     namestring=""
     addmore=1
     while addmore:
-        scientist=raw_input("Enter  name  - <Return> when done ")
+        scientist=input("Enter  name  - <Return> when done ")
         if scientist != "":
             namestring=namestring+":"+scientist
         else:
@@ -3002,7 +3001,7 @@ def julian(mon,day,year):
     """
     ig=15+31*(10+12*1582)
     if year == 0:
-        print "Julian no can do"
+        print("Julian no can do")
         return
     if year < 0: year=year+1
     if mon > 2:
@@ -3026,11 +3025,11 @@ def fillkeys(Recs):
     """
     keylist,OutRecs=[],[]
     for rec in Recs:
-        for key in rec.keys():
+        for key in list(rec.keys()):
             if key not in keylist:keylist.append(key)
     for rec in  Recs:
         for key in keylist:
-            if key not in rec.keys(): rec[key]=""
+            if key not in list(rec.keys()): rec[key]=""
         OutRecs.append(rec)
     return OutRecs,keylist
 
@@ -3150,15 +3149,15 @@ def fisher_by_pol(data):
     FisherByPoles={}
     DIblock,nameblock,locblock=[],[],[]
     for rec in data:
-        if 'dec' in rec.keys() and 'inc' in rec.keys():
+        if 'dec' in list(rec.keys()) and 'inc' in list(rec.keys()):
             DIblock.append([float(rec["dec"]),float(rec["inc"])]) # collect data for fisher calculation
         else:
             continue
-        if 'name' in rec.keys():
+        if 'name' in list(rec.keys()):
             nameblock.append(rec['name'])
         else:
             nameblock.append("")
-        if 'loc' in rec.keys():
+        if 'loc' in list(rec.keys()):
             locblock.append(rec['loc'])
         else:
             locblock.append("")
@@ -3239,7 +3238,7 @@ def dolnp3_0(Data):
             LnpData[n]['dec'] = d['dir_dec']
             LnpData[n]['inc'] = d['dir_inc']
             LnpData[n]['tilt_correction'] = d['dir_tilt_correction']
-            if 'method_codes' in d.keys():
+            if 'method_codes' in list(d.keys()):
                 if "DE-BFP" in d['method_codes']: LnpData[n]['dir_type'] = 'p'
                 else: LnpData[n]['dir_type'] = 'l'
         ReturnData=dolnp(LnpData,'dir_type') # get a sample average from all specimens
@@ -3251,7 +3250,7 @@ def dolnp(data,direction_type_key):
     returns fisher mean, a95 for data  using method of mcfadden and mcelhinny '88 for lines and planes
     """
 
-    if "tilt_correction" in data[0].keys():
+    if "tilt_correction" in list(data[0].keys()):
         tc=data[0]["tilt_correction"]
     else:
         tc='-1'
@@ -3263,7 +3262,7 @@ def dolnp(data,direction_type_key):
     # sort data  into lines and planes and collect cartesian coordinates
     for rec in data:
         cart=dir2cart([float(rec["dec"]),float(rec["inc"])])[0]
-        if direction_type_key in rec.keys():
+        if direction_type_key in list(rec.keys()):
             if rec[direction_type_key]=='p': # this is a pole to a plane
                 n_planes+=1
                 L.append(cart) # this is the "EL, EM, EN" array of MM88
@@ -3274,7 +3273,7 @@ def dolnp(data,direction_type_key):
                 E[0]+=cart[0]
                 E[1]+=cart[1]
                 E[2]+=cart[2]
-        elif 'method_codes' in rec.keys():
+        elif 'method_codes' in list(rec.keys()):
             if "DE-BFP" in rec['method_codes']: # this is a pole to a plane
                 n_planes+=1
                 L.append(cart) # this is the "EL, EM, EN" array of MM88
@@ -3285,7 +3284,7 @@ def dolnp(data,direction_type_key):
                 E[0]+=cart[0]
                 E[1]+=cart[1]
                 E[2]+=cart[2]
-        elif 'magic_method_codes' in rec.keys():
+        elif 'magic_method_codes' in list(rec.keys()):
             if "DE-BFP" in rec['magic_method_codes']: # this is a pole to a plane
                 n_planes+=1
                 L.append(cart) # this is the "EL, EM, EN" array of MM88
@@ -3415,9 +3414,9 @@ def scoreit(pars,PmagSpecRec,accept,text,verbose):
     PmagSpecRec["specimen_rsc"]='%6.4f '%(pars["specimen_rsc"])
     PmagSpecRec["specimen_md"]='%i '%(int(pars["specimen_md"]))
     PmagSpecRec["specimen_b_sigma"]='%5.3f '%(pars["specimen_b_sigma"])
-    if 'specimen_scat' in pars.keys():PmagSpecRec['specimen_scat']=pars['specimen_scat']
-    if 'specimen_gmax' in pars.keys():PmagSpecRec['specimen_gmax']='%5.3f'%(pars['specimen_gmax'])
-    if 'specimen_frac' in pars.keys():PmagSpecRec['specimen_frac']='%5.3f'%(pars['specimen_frac'])
+    if 'specimen_scat' in list(pars.keys()):PmagSpecRec['specimen_scat']=pars['specimen_scat']
+    if 'specimen_gmax' in list(pars.keys()):PmagSpecRec['specimen_gmax']='%5.3f'%(pars['specimen_gmax'])
+    if 'specimen_frac' in list(pars.keys()):PmagSpecRec['specimen_frac']='%5.3f'%(pars['specimen_frac'])
     #PmagSpecRec["specimen_Z"]='%7.1f'%(pars["specimen_Z"])
   # check score
    #
@@ -3440,12 +3439,12 @@ def scoreit(pars,PmagSpecRec,accept,text,verbose):
         pars_out= (s,(pars["measurement_step_min"]),(pars["measurement_step_max"]),(pars["specimen_int_n"]),1e6*(pars["specimen_lab_field_dc"]),1e6*(pars["specimen_int"]),pars["specimen_b"],pars["specimen_q"],pars["specimen_f"],pars["specimen_fvds"],pars["specimen_b_beta"],pars["specimen_int_mad"],pars["specimen_int_dang"],pars["specimen_drats"],pars["specimen_int_ptrm_n"],pars["specimen_grade"],numpy.sqrt(pars["specimen_rsc"]),int(pars["specimen_md"]), pars["specimen_b_sigma"],pars["specimen_theta"],pars["specimen_delta"],pars["specimen_gamma"])
         outstring= '%s %4.0f %4.0f %i %4.1f %4.1f %5.3f %5.1f %5.3f %5.3f %5.3f  %7.1f %7.1f %7.1f %s %s %6.3f %i %5.3f %7.1f %7.1f %7.1f' % pars_out +'\n'
     if pars["specimen_grade"]!="A":
-        print '\n killed by:'
+        print('\n killed by:')
         for k in kill:
-            print k,':, criterion set to: ',accept[k],', specimen value: ',pars[k]
-        print '\n'
-    print outstr
-    print outstring
+            print(k,':, criterion set to: ',accept[k],', specimen value: ',pars[k])
+        print('\n')
+    print(outstr)
+    print(outstring)
     return pars,kill
 
 def b_vdm(B,lat):
@@ -3566,7 +3565,7 @@ def doincfish(inc):
         fpars['alpha95']=0
         fpars['csd']=0
         fpars['r']=0
-        print 'WARNING: mean inc < 30, returning gaussian mean'
+        print('WARNING: mean inc < 30, returning gaussian mean')
         return fpars
     for i in inc:  # sum over all incs (but take only positive inc)
         coinc=(90.-abs(i))*rad
@@ -3814,7 +3813,7 @@ def lowes(data):
     """
     gets Lowe's power spectrum from infile - writes to ofile
     """
-    Ls=range(1,9)
+    Ls=list(range(1,9))
     Rs=[]
     recno=0
     for l in Ls:
@@ -3845,7 +3844,7 @@ def check_F(AniSpec):
     tau,Vdir=doseigs(s)
     t2sum=0
     for i in range(3): t2sum+=tau[i]**2
-    if 'anisotropy_sigma' in AniSpec.keys() and 'anisotropy_n' in AniSpec.keys():
+    if 'anisotropy_sigma' in list(AniSpec.keys()) and 'anisotropy_n' in list(AniSpec.keys()):
         if AniSpec['anisotropy_type']=='AMS':
             nf=int(AniSpec["anisotropy_n"])-6
         else:
@@ -3862,7 +3861,7 @@ def check_F(AniSpec):
             chi_inv=numpy.array([[1.,0,0],[0,1.,0],[0,0,1.]]) # make anisotropy tensor identity tensor
             chi=chi_inv
     else: # no sigma key available - just do the correction
-        print 'WARNING: NO FTEST ON ANISOTROPY PERFORMED BECAUSE OF MISSING SIGMA - DOING CORRECTION ANYWAY'
+        print('WARNING: NO FTEST ON ANISOTROPY PERFORMED BECAUSE OF MISSING SIGMA - DOING CORRECTION ANYWAY')
         chi=numpy.array([[s[0],s[3],s[5]],[s[3],s[1],s[4]],[s[5],s[4],s[2]]])
         chi_inv=numpy.linalg.inv(chi)
     return chi,chi_inv
@@ -3889,7 +3888,7 @@ def doaniscorr(PmagSpecRec,AniSpec):
     performs simple anisotropy correction. returns corrected Dec, Inc, Int
     """
     AniSpecRec={}
-    for key in PmagSpecRec.keys():
+    for key in list(PmagSpecRec.keys()):
         AniSpecRec[key]=PmagSpecRec[key]
     Dir=numpy.zeros((3),'f')
     Dir[0]=float(PmagSpecRec["specimen_dec"])
@@ -3919,7 +3918,7 @@ def doaniscorr(PmagSpecRec,AniSpec):
     AniSpecRec["specimen_inc"]='%7.1f'%(cDir[1])
     AniSpecRec["specimen_int"]='%9.4e'%(newint)
     AniSpecRec["specimen_correction"]='c'
-    if 'magic_method_codes' in AniSpecRec.keys():
+    if 'magic_method_codes' in list(AniSpecRec.keys()):
         methcodes=AniSpecRec["magic_method_codes"]
     else:
         methcodes=""
@@ -3986,11 +3985,11 @@ def watsonsV(Dir1,Dir2):
 # do monte carlo simulation of datasets with same kappas, but common mean
 #
     Vp=[] # set of Vs from simulations
-    print "Doing ",NumSims," simulations"
+    print("Doing ",NumSims," simulations")
     for k in range(NumSims):
         counter+=1
         if counter==50:
-            print k+1
+            print(k+1)
             counter=0
         Dirp=[]
 # get a set of N1 fisher distributed vectors with k1, calculate fisher stats
@@ -4107,7 +4106,7 @@ def first_up(ofile,Rec,file_type):
     outstring="tab \t"+file_type+"\n"
     pmag_out.write(outstring)
     keystring=""
-    for key in Rec.keys():
+    for key in list(Rec.keys()):
         keystring=keystring+'\t'+key
         keylist.append(key)
     keystring=keystring + '\n'
@@ -4140,11 +4139,11 @@ def get_age(Rec,sitekey,keybase,Ages,DefaultAge):
     if len(Ages)>0:
         for agerec in Ages:
             if agerec["er_site_name"]==site:
-                if "age" in agerec.keys() and agerec["age"]!="":
+                if "age" in list(agerec.keys()) and agerec["age"]!="":
                     Rec[keybase+"age"]=agerec["age"]
                     gotone=1
-                if "age_unit" in agerec.keys(): Rec[keybase+"age_unit"]=agerec["age_unit"]
-                if "age_sigma" in agerec.keys(): Rec[keybase+"age_sigma"]=agerec["age_sigma"]
+                if "age_unit" in list(agerec.keys()): Rec[keybase+"age_unit"]=agerec["age_unit"]
+                if "age_sigma" in list(agerec.keys()): Rec[keybase+"age_sigma"]=agerec["age_sigma"]
     if gotone==0 and len(DefaultAge)>1:
         sigma=0.5*(float(DefaultAge[1])-float(DefaultAge[0]))
         age=float(DefaultAge[0])+sigma
@@ -4804,7 +4803,7 @@ def design(npos):
         A=numpy.array([[1.,0,0,0,0,0],[0,1.,0,0,0,0],[0,0,1.,0,0,0],[.5,.5,0,1.,0,0],[0,.5,.5,0,1.,0],[.5,0,.5,0,0,1.]]) #  design matrix for 6 measurment positions
 
     else:
-        print "measurement protocol not supported yet "
+        print("measurement protocol not supported yet ")
         sys.exit()
     B=numpy.dot(numpy.transpose(A),A)
     B=numpy.linalg.inv(B)
@@ -4972,7 +4971,7 @@ def designAARM(npos):
     calculates B matrix for AARM calculations.
     """
     if npos!=9:
-        print 'Sorry - only 9 positions available'
+        print('Sorry - only 9 positions available')
         sys.exit()
     Dec=[315.,225.,180.,135.,45.,90.,270.,270.,270.,90.,180.,180.,0.,0.,0.]
     Dip=[0.,0.,0.,0.,0.,-45.,-45.,0.,45.,45.,45.,-45.,-90.,-45.,45.]
@@ -5008,7 +5007,7 @@ def designAARM(npos):
         ATAI=numpy.linalg.inv(ATA)
         B=numpy.dot(ATAI,At)
     else:
-        print "B matrix not yet supported"
+        print("B matrix not yet supported")
         sys.exit()
     return B,H,tmpH
 #
@@ -5091,12 +5090,12 @@ def cleanup(first_I,first_Z):
     if len(first_Z)<Nmin:Nmin=len(first_Z)
     for kk in range(Nmin):
         if first_I[kk][0]!=first_Z[kk][0]:
-            print "\n WARNING: "
+            print("\n WARNING: ")
             if first_I[kk]<first_Z[kk]:
                 del first_I[kk]
             else:
                 del first_Z[kk]
-            print "Unmatched step number: ",kk+1,'  ignored'
+            print("Unmatched step number: ",kk+1,'  ignored')
             cont=1
         if cont==1: return first_I,first_Z,cont
     return first_I,first_Z,cont
@@ -5106,7 +5105,7 @@ def sortarai(datablock,s,Zdiff,**kwargs):
     """
      sorts data block in to first_Z, first_I, etc.
     """
-    if 'version' in kwargs.keys() and kwargs['version']==3:
+    if 'version' in list(kwargs.keys()) and kwargs['version']==3:
         dec_key,inc_key='dir_dec','dir_inc'
         Mkeys=['magn_moment','magn_volume','magn_mass','magnitude']
         meth_key='method_codes'
@@ -5127,7 +5126,7 @@ def sortarai(datablock,s,Zdiff,**kwargs):
     GammaChecks=[] # comparison of pTRM direction acquired and lab field
     rec=datablock[0]
     for key in Mkeys:
-        if key in rec.keys() and rec[key]!="":
+        if key in list(rec.keys()) and rec[key]!="":
             momkey=key
             break
 # first find all the steps
@@ -5260,14 +5259,14 @@ def sortarai(datablock,s,Zdiff,**kwargs):
 #        ptrm_tail.append([temp,d[0],d[1],d[2]])
             ptrm_tail.append([temp,0,0,str-pint])  # difference - if negative, negative tail!
         else:
-            print s, '  has a tail check with no first zero field step - check input file! for step',temp-273.
+            print(s, '  has a tail check with no first zero field step - check input file! for step',temp-273.)
 #
 # final check
 #
     if len(first_Z)!=len(first_I):
-               print len(first_Z),len(first_I)
-               print " Something wrong with this specimen! Better fix it or delete it "
-               raw_input(" press return to acknowledge message")
+               print(len(first_Z),len(first_I))
+               print(" Something wrong with this specimen! Better fix it or delete it ")
+               input(" press return to acknowledge message")
     araiblock=(first_Z,first_I,ptrm_check,ptrm_tail,zptrm_check,GammaChecks)
     return araiblock,field
 
@@ -5438,10 +5437,10 @@ def sortmwarai(datablock,exp_type):
     #  check
     #
         if len(first_Z)!=len(first_I):
-                   print len(first_Z),len(first_I)
-                   print " Something wrong with this specimen! Better fix it or delete it "
-                   raw_input(" press return to acknowledge message")
-                   print MaxRec
+                   print(len(first_Z),len(first_I))
+                   print(" Something wrong with this specimen! Better fix it or delete it ")
+                   input(" press return to acknowledge message")
+                   print(MaxRec)
     araiblock=(first_Z,first_I,ptrm_check,ptrm_tail,zptrm_check,GammaChecks,ThetaChecks,DeltaChecks)
     return araiblock,field
 
@@ -5478,11 +5477,11 @@ def doigrf(long,lat,alt,date,**kwargs):
     gh,sv=[],[]
     colat = 90.-lat
 #! convert to colatitude for MB routine
-    if long>0: long=long+360.
+    if int>0: long=int+360.
 # ensure all positive east longitudes
     itype = 1
     models,igrf12coeffs=get_igrf12()
-    if 'mod' in kwargs.keys():
+    if 'mod' in list(kwargs.keys()):
         if kwargs['mod']=='arch3k':
             psvmodels,psvcoeffs=get_arch3k() # use ARCH3k coefficients
         elif kwargs['mod']=='cals3k':
@@ -5493,12 +5492,12 @@ def doigrf(long,lat,alt,date,**kwargs):
             psvmodels,psvcoeffs=get_cals10k() # use prior to -1000, back to -8000
 # use geodetic coordinates
     if 'models' in kwargs:
-        if 'mod' in kwargs.keys():
+        if 'mod' in list(kwargs.keys()):
             return psvmodels,psvcoeffs
         else:
             return models,igrf12coeffs
     if date<-8000:
-        print 'too old'
+        print('too old')
         sys.exit()
     if date<-1000:
         if kwargs['mod']=='pfm9k':
@@ -5508,7 +5507,7 @@ def doigrf(long,lat,alt,date,**kwargs):
         model=date-date%incr
         gh=psvcoeffs[psvmodels.index(int(model))]
         sv=(psvcoeffs[psvmodels.index(int(model+incr))]-gh)/float(incr)
-        x,y,z,f=magsyn(gh,sv,model,date,itype,alt,colat,long)
+        x,y,z,f=magsyn(gh,sv,model,date,itype,alt,colat,int)
     elif date<1900:
         if kwargs['mod']=='cals10k':
             incr=50
@@ -5521,18 +5520,18 @@ def doigrf(long,lat,alt,date,**kwargs):
         else:
             field2=igrf12coeffs[models.index(1940)][0:120]
             sv=(field2-gh)/float(1940-model)
-        x,y,z,f=magsyn(gh,sv,model,date,itype,alt,colat,long)
+        x,y,z,f=magsyn(gh,sv,model,date,itype,alt,colat,int)
     else:
         model=date-date%5
         if date<2015:
             gh=igrf12coeffs[models.index(model)]
             sv=(igrf12coeffs[models.index(model+5)]-gh)/5.
-            x,y,z,f=magsyn(gh,sv,model,date,itype,alt,colat,long)
+            x,y,z,f=magsyn(gh,sv,model,date,itype,alt,colat,int)
         else:
             gh=igrf12coeffs[models.index(2015)]
             sv=igrf12coeffs[models.index(2015.20)]
-            x,y,z,f=magsyn(gh,sv,model,date,itype,alt,colat,long)
-    if 'coeffs' in kwargs.keys():
+            x,y,z,f=magsyn(gh,sv,model,date,itype,alt,colat,int)
+    if 'coeffs' in list(kwargs.keys()):
         return gh
     else:
         return x,y,z,f
@@ -5736,7 +5735,7 @@ def measurements_methods(meas_data,noave):
 # first collect all data for this specimen and do lab treatments
         SpecRecs=get_dictitem(meas_data,'er_specimen_name',spec,'T') # list  of measurement records for this specimen
         for rec in SpecRecs:
-            if 'measurement_flag' not in rec.keys():rec['measurement_flag']='g'
+            if 'measurement_flag' not in list(rec.keys()):rec['measurement_flag']='g'
             tmpmeths=rec['magic_method_codes'].split(":")
             meths=[]
             if "LP-TRM" in tmpmeths:TRM=1 # catch these suckers here!
@@ -5753,20 +5752,20 @@ def measurements_methods(meas_data,noave):
 #
             elif float(rec["measurement_temp"])>=273. and float(rec["measurement_temp"]) < 323.:
 # between 0 and 50C is room T measurement
-                if ("measurement_dc_field" not in rec.keys() or float(rec["measurement_dc_field"])==0 or rec["measurement_dc_field"]=="") and ("measurement_ac_field" not in rec.keys() or float(rec["measurement_ac_field"])==0 or rec["measurement_ac_field"]==""):
+                if ("measurement_dc_field" not in list(rec.keys()) or float(rec["measurement_dc_field"])==0 or rec["measurement_dc_field"]=="") and ("measurement_ac_field" not in list(rec.keys()) or float(rec["measurement_ac_field"])==0 or rec["measurement_ac_field"]==""):
 # measurement done in zero field!
-                    if  "treatment_temp" not in rec.keys() or rec["treatment_temp"].strip()=="" or (float(rec["treatment_temp"])>=273. and float(rec["treatment_temp"]) < 298.):
+                    if  "treatment_temp" not in list(rec.keys()) or rec["treatment_temp"].strip()=="" or (float(rec["treatment_temp"])>=273. and float(rec["treatment_temp"]) < 298.):
 # between 0 and 50C is room T treatment
-                        if "treatment_ac_field" not in rec.keys() or rec["treatment_ac_field"] =="" or float(rec["treatment_ac_field"])==0:
+                        if "treatment_ac_field" not in list(rec.keys()) or rec["treatment_ac_field"] =="" or float(rec["treatment_ac_field"])==0:
 # no AF
-                            if "treatment_dc_field" not in rec.keys() or rec["treatment_dc_field"]=="" or float(rec["treatment_dc_field"])==0:# no IRM!
+                            if "treatment_dc_field" not in list(rec.keys()) or rec["treatment_dc_field"]=="" or float(rec["treatment_dc_field"])==0:# no IRM!
                                 if "LT-NO" not in meths:meths.append("LT-NO")
                             elif "LT-IRM" not in meths:
                                 meths.append("LT-IRM") # it's an IRM
 #
 # find AF/infield/zerofield
 #
-                        elif "treatment_dc_field" not in rec.keys() or rec["treatment_dc_field"]=="" or float(rec["treatment_dc_field"])==0: # no ARM
+                        elif "treatment_dc_field" not in list(rec.keys()) or rec["treatment_dc_field"]=="" or float(rec["treatment_dc_field"])==0: # no ARM
                             if "LT-AF-Z" not in meths:meths.append("LT-AF-Z")
                         else: # yes ARM
                             if "LT-AF-I" not in meths: meths.append("LT-AF-I")
@@ -5776,7 +5775,7 @@ def measurements_methods(meas_data,noave):
                     elif float(rec["treatment_temp"])>=323:  # treatment done at  high T
                         if TRM==1:
                             if "LT-T-I" not in meths: meths.append("LT-T-I") # TRM - even if zero applied field!
-                        elif "treatment_dc_field" not in rec.keys() or rec["treatment_dc_field"]=="" or float(rec["treatment_dc_field"])==0.: # no TRM
+                        elif "treatment_dc_field" not in list(rec.keys()) or rec["treatment_dc_field"]=="" or float(rec["treatment_dc_field"])==0.: # no TRM
                             if  "LT-T-Z" not in meths: meths.append("LT-T-Z") # don't overwrite if part of a TRM experiment!
                         else: # yes TRM
                             if "LT-T-I" not in meths: meths.append("LT-T-I")
@@ -5784,19 +5783,19 @@ def measurements_methods(meas_data,noave):
 # find low-T infield,zero field
 #
                     else:  # treatment done at low T
-                        if "treatment_dc_field" not in rec.keys() or rec["treatment_dc_field"]=="" or float(rec["treatment_dc_field"])==0: # no field
+                        if "treatment_dc_field" not in list(rec.keys()) or rec["treatment_dc_field"]=="" or float(rec["treatment_dc_field"])==0: # no field
                             if "LT-LT-Z" not in meths:meths.append("LT-LT-Z")
                         else: # yes field
                             if "LT-LT-I" not in meths:meths.append("LT-LT-I")
-                if "measurement_chi_volume" in rec.keys() or "measurement_chi_mass" in rec.keys():
+                if "measurement_chi_volume" in list(rec.keys()) or "measurement_chi_mass" in list(rec.keys()):
                     if  "LP-X" not in meths:meths.append("LP-X")
-                elif "measurement_lab_dc_field" in rec.keys() and rec["measurement_lab_dc_field"]!=0: # measurement in presence of dc field and not susceptibility; hysteresis!
+                elif "measurement_lab_dc_field" in list(rec.keys()) and rec["measurement_lab_dc_field"]!=0: # measurement in presence of dc field and not susceptibility; hysteresis!
                     if  "LP-HYS" not in meths:
-                        hysq=raw_input("Is this a hysteresis experiment? [1]/0")
+                        hysq=input("Is this a hysteresis experiment? [1]/0")
                         if hysq=="" or hysq=="1":
                             meths.append("LP-HYS")
                         else:
-                            metha=raw_input("Enter the lab protocol code that best describes this experiment ")
+                            metha=input("Enter the lab protocol code that best describes this experiment ")
                             meths.append(metha)
                 methcode=""
                 for meth in meths:
@@ -5804,7 +5803,7 @@ def measurements_methods(meas_data,noave):
                 rec["magic_method_codes"]=methcode[:-1] # assign them back
 #
 # done with first pass, collect and assign provisional method codes
-            if "measurement_description" not in rec.keys():rec["measurement_description"]=""
+            if "measurement_description" not in list(rec.keys()):rec["measurement_description"]=""
             rec["er_citation_names"]="This study"
             SpecTmps.append(rec)
 # ready for second pass through, step through specimens, check whether ptrm, ptrm tail checks, or AARM, etc.
@@ -5842,7 +5841,7 @@ def measurements_methods(meas_data,noave):
                     methods=get_list(NewSpecs,'magic_method_codes').split(":")
                     if "LT-T-I" in methods:Steps.append(rec)  # get all infield steps together
                 rec_bak=Steps[0]
-                if "treatment_dc_field_phi" in rec_bak.keys() and "treatment_dc_field_theta" in rec_bak.keys():
+                if "treatment_dc_field_phi" in list(rec_bak.keys()) and "treatment_dc_field_theta" in list(rec_bak.keys()):
                     if rec_bak["treatment_dc_field_phi"] !="" and rec_bak["treatment_dc_field_theta"]!="":   # at least there is field orientation info
                         phi0,theta0=rec_bak["treatment_dc_field_phi"],rec_bak["treatment_dc_field_theta"]
                         for k in range(1,len(Steps)):
@@ -5876,7 +5875,7 @@ def measurements_methods(meas_data,noave):
                         methods.append(meth.strip())
                     if "LT-AF-I" in methods:Steps.append(rec)  # get all infield steps together
                 rec_bak=Steps[0]
-                if "treatment_dc_field_phi" in rec_bak.keys() and "treatment_dc_field_theta" in rec_bak.keys():
+                if "treatment_dc_field_phi" in list(rec_bak.keys()) and "treatment_dc_field_theta" in list(rec_bak.keys()):
                     if rec_bak["treatment_dc_field_phi"] !="" and rec_bak["treatment_dc_field_theta"]!="":   # at least there is field orientation info
                         phi0,theta0=rec_bak["treatment_dc_field_phi"],rec_bak["treatment_dc_field_theta"]
                         ANIS=0
@@ -5913,7 +5912,7 @@ def measurements_methods(meas_data,noave):
                         methods.append(meth.strip())
                     if "LT-IRM" in methods:Steps.append(rec)  # get all infield steps together
                 rec_bak=Steps[0]
-                if "treatment_dc_field_phi" in rec_bak.keys() and "treatment_dc_field_theta" in rec_bak.keys():
+                if "treatment_dc_field_phi" in list(rec_bak.keys()) and "treatment_dc_field_theta" in list(rec_bak.keys()):
                     if rec_bak["treatment_dc_field_phi"] !="" and rec_bak["treatment_dc_field_theta"]!="":   # at least there is field orientation info
                         phi0,theta0=rec_bak["treatment_dc_field_phi"],rec_bak["treatment_dc_field_theta"]
                         ANIS=0
@@ -5936,7 +5935,7 @@ def measurements_methods(meas_data,noave):
                 Steps=get_dictitem(NewSpecs,'magic_method_codes','LT-X','has')
                 if len(Steps)>0:
                     rec_bak=Steps[0]
-                    if "treatment_dc_field_phi" in rec_bak.keys() and "treatment_dc_field_theta" in rec_bak.keys():
+                    if "treatment_dc_field_phi" in list(rec_bak.keys()) and "treatment_dc_field_theta" in list(rec_bak.keys()):
                         if rec_bak["treatment_dc_field_phi"] !="" and rec_bak["treatment_dc_field_theta"]!="":   # at least there is field orientation info
                             phi0,theta0=rec_bak["treatment_dc_field_phi"],rec_bak["treatment_dc_field_theta"]
                             ANIS=0
@@ -6187,7 +6186,7 @@ def mw_measurements_methods(MagRecs):
             if  "LP-NRM-PERP" in meths: # this is a single  heating experiment
                 experiment_name=experiment_name+":LP-PI-M-S"
             else:
-                print "Trouble interpreting file - missing zerofield steps? "
+                print("Trouble interpreting file - missing zerofield steps? ")
                 sys.exit()
         else: # this is a double heating experiment
             experiment_name=experiment_name+":LP-PI-M-D"
@@ -6213,13 +6212,13 @@ def mw_measurements_methods(MagRecs):
                 if IZorZI!="":
                     MagRecs[istep]['magic_method_codes']= MagRecs[istep]['magic_method_codes']+':'+IZorZI
                     MagRecs[zstep]['magic_method_codes']= MagRecs[zstep]['magic_method_codes']+':'+IZorZI
-            print POWT_Z
-            print POWT_I
+            print(POWT_Z)
+            print(POWT_I)
             for  istep in ISteps: # now look for MD checks (zero field)
               if istep+2<len(MagRecs):  # only if there is another step to consider
                 irec=MagRecs[istep]
                 powt_i=int(float(irec["treatment_mw_energy"]))
-                print istep,powt_i,ZSteps[POWT_Z.index(powt_i)]
+                print(istep,powt_i,ZSteps[POWT_Z.index(powt_i)])
                 if powt_i in POWT_Z and ZSteps[POWT_Z.index(powt_i)] < istep:  # if there is a previous zero field step at same  power
                     nrec=MagRecs[istep+1] # next step
                     nmeths=nrec['magic_method_codes'].split(":")
@@ -6241,10 +6240,10 @@ def mw_measurements_methods(MagRecs):
                 if ZI==1:
                     experiment_name=experiment_name+":LP-PI-M-ZI"
                 else:
-                    print "problem in measurements_methods - no ZI or IZ in double heating experiment"
+                    print("problem in measurements_methods - no ZI or IZ in double heating experiment")
                     sys.exit()
     for rec in MagRecs:
-        if 'er_synthetic_name' in rec.keys() and rec['er_synthetic_name']!="":
+        if 'er_synthetic_name' in list(rec.keys()) and rec['er_synthetic_name']!="":
             rec['magic_experiment_name']=rec['er_synthetic_name']+":"+experiment_name
         else:
             rec['magic_experiment_name']=rec['er_specimen_name']+":"+experiment_name
@@ -6284,7 +6283,7 @@ def parse_site(sample,convention,Z):
         return sample
 
     if convention=="6": # should be names in orient.txt
-        print "-W- Finding names in orient.txt is not currently supported"
+        print("-W- Finding names in orient.txt is not currently supported")
 
     if convention=="7": # peel off Z characters for site
        k=int(Z)
@@ -6296,7 +6295,7 @@ def parse_site(sample,convention,Z):
     if convention=="9": # peel off Z characters for site
        return sample
 
-    print "Error in site parsing routine"
+    print("Error in site parsing routine")
     sys.exit()
 
 def get_samp_con():
@@ -6306,7 +6305,7 @@ def get_samp_con():
 #
     samp_con,Z="",""
     while samp_con=="":
-        samp_con=raw_input("""
+        samp_con=input("""
         Sample naming convention:
             [1] XXXXY: where XXXX is an arbitrary length site designation and Y
                 is the single character sample designation.  e.g., TG001a is the
@@ -6326,20 +6325,20 @@ def get_samp_con():
             samp_con,Z="1",1
         if "4" in samp_con:
             if "-" not in samp_con:
-                print "option [4] must be in form 4-Z where Z is an integer"
+                print("option [4] must be in form 4-Z where Z is an integer")
                 samp_con=""
             else:
                 Z=samp_con.split("-")[1]
                 samp_con="4"
         if "7" in samp_con:
             if "-" not in samp_con:
-                print "option [7] must be in form 7-Z where Z is an integer"
+                print("option [7] must be in form 7-Z where Z is an integer")
                 samp_con=""
             else:
                 Z=samp_con.split("-")[1]
                 samp_con="7"
         if samp_con.isdigit()==False or int(samp_con)>7:
-            print "Try again\n "
+            print("Try again\n ")
             samp_con=""
     return samp_con,Z
 
@@ -6403,8 +6402,8 @@ def set_priorities(SO_methods,ask):
                 SO_priorities.append(SO_defaults[l])
     pri,change=0,"1"
     if ask==1:
-        print  """These methods of sample orientation were found:
-      They have been assigned a provisional priority (top = zero, last = highest number) """
+        print("""These methods of sample orientation were found:
+      They have been assigned a provisional priority (top = zero, last = highest number) """)
         for m in range(len(SO_defaults)):
             if SO_defaults[m] in SO_methods:
                 SO_priorities[SO_methods.index(SO_defaults[m])]=pri
@@ -6412,14 +6411,14 @@ def set_priorities(SO_methods,ask):
         while change=="1":
             prior_list=SO_priorities
             for m in range(len(SO_methods)):
-                print SO_methods[m],SO_priorities[m]
-            change=raw_input("Change these?  1/[0] ")
+                print(SO_methods[m],SO_priorities[m])
+            change=input("Change these?  1/[0] ")
             if change!="1":break
         SO_priorities=[]
         for l in range(len(SO_methods)):
-             print SO_methods[l]
-             print " Priority?   ",prior_list
-             pri=int(raw_input())
+             print(SO_methods[l])
+             print(" Priority?   ",prior_list)
+             pri=int(input())
              SO_priorities.append(pri)
              del prior_list[prior_list.index(pri)]
     return SO_priorities
@@ -6434,16 +6433,16 @@ def get_EOL(file):
     EOL=""
     for k in range(350):
         if firstline[k:k+2] == "\r\n":
-            print file, ' appears to be a dos file'
+            print(file, ' appears to be a dos file')
             EOL='\r\n'
             break
     if EOL=="":
         for k in range(350):
             if firstline[k] == "\r":
-                print file, ' appears to be a mac file'
+                print(file, ' appears to be a mac file')
                 EOL='\r'
     if EOL=="":
-        print file, " appears to be a  unix file"
+        print(file, " appears to be a  unix file")
         EOL='\n'
     f.close()
     return EOL
@@ -6478,22 +6477,22 @@ def sortshaw(s,datablock):
     cont=1
     while cont==1:
         if len(NRM)!=len(TRM):
-            print "Uneven NRM/TRM steps: "
+            print("Uneven NRM/TRM steps: ")
             NRM,TRM,cont=cleanup(TRM,NRM)
         else:cont=0
     cont=1
     while cont==1:
         if len(ARM1)!=len(ARM2):
-            print "Uneven ARM1/ARM2 steps: "
+            print("Uneven ARM1/ARM2 steps: ")
             ARM1,ARM2,cont=cleanup(ARM2,ARM1)
         else:cont=0
 #
 # final check
 #
     if len(NRM)!=len(TRM) or len(ARM1)!=len(ARM2):
-               print len(NRM),len(TRM),len(ARM1),len(ARM2)
-               print " Something wrong with this specimen! Better fix it or delete it "
-               raw_input(" press return to acknowledge message")
+               print(len(NRM),len(TRM),len(ARM1),len(ARM2))
+               print(" Something wrong with this specimen! Better fix it or delete it ")
+               input(" press return to acknowledge message")
 # now do the ratio to "fix" NRM/TRM data
 # a
     TRM_ADJ=[]
@@ -6533,7 +6532,7 @@ def getvec(gh,lat,long):
     itype = 1
     colat = 90.-lat
     date,alt=2000.,0. # use a dummy date and altitude
-    x,y,z,f=magsyn(gh,sv,date,date,itype,alt,colat,long)
+    x,y,z,f=magsyn(gh,sv,date,date,itype,alt,colat,int)
     vec=cart2dir([x,y,z])
     vec[2]=f
     return vec
@@ -6562,13 +6561,13 @@ def mktk03(terms,seed,G2,G3):
     s1=s_l(1,alpha)
     s10=sfact*s1
     gnew=random.normal(g10,s10)
-    if p==1:print 1,0,gnew,0
+    if p==1:print(1,0,gnew,0)
     gh.append(gnew)
     gh.append(random.normal(0,s1))
     gnew=gh[-1]
     gh.append(random.normal(0,s1))
     hnew=gh[-1]
-    if p==1:print 1,1,gnew,hnew
+    if p==1:print(1,1,gnew,hnew)
     for l in range(2,terms+1):
         for m in range(l+1):
             OFF=0.0
@@ -6585,7 +6584,7 @@ def mktk03(terms,seed,G2,G3):
             else:
                 gh.append(random.normal(0,s))
                 hnew=gh[-1]
-            if p==1:print l,m,gnew,hnew
+            if p==1:print(l,m,gnew,hnew)
     return gh
 #
 #
@@ -8305,7 +8304,7 @@ def linreg(x,y):
     does a linear regression
     """
     if len(x)!=len(y):
-        print 'x and y must be same length'
+        print('x and y must be same length')
         sys.exit()
     xx,yy,xsum,ysum,xy,n,sum=0,0,0,0,0,len(x),0
     linpars={}
@@ -8350,7 +8349,7 @@ def get_TS(ts):
         TS=[0, 0.781, 0.988, 1.072, 1.173, 1.185, 1.778, 1.945, 2.128, 2.148, 2.581, 3.032, 3.116, 3.207, 3.330, 3.596, 4.187, 4.300, 4.493, 4.631, 4.799, 4.896, 4.997, 5.235, 6.033, 6.252, 6.436, 6.733, 7.140, 7.212, 7.251, 7.285, 7.454, 7.489, 7.528, 7.642, 7.695, 8.108, 8.254, 8.300, 8.771, 9.105, 9.311, 9.426, 9.647, 9.721, 9.786, 9.937, 9.984, 11.056, 11.146, 11.188, 11.592, 11.657, 12.049, 12.174, 12.272, 12.474, 12.735, 12.770, 12.829, 12.887, 13.032, 13.183, 13.363, 13.608, 13.739, 14.070, 14.163, 14.609, 14.775, 14.870, 15.032, 15.160, 15.974, 16.268, 16.303, 16.472, 16.543, 16.721, 17.235, 17.533, 17.717, 17.740, 18.056, 18.524, 18.748, 19.722, 20.040, 20.213, 20.439, 20.709, 21.083, 21.159, 21.403, 21.483, 21.659, 21.688, 21.767, 21.936, 21.992, 22.268, 22.564, 22.754, 22.902, 23.030, 23.233, 23.295, 23.962, 24.000, 24.109, 24.474, 24.761, 24.984, 25.099, 25.264, 25.304, 25.987, 26.420, 27.439, 27.859, 28.087, 28.141, 28.278, 29.183, 29.477, 29.527, 29.970, 30.591, 31.034, 33.157, 33.705, 34.999, 35.294, 35.706, 35.892, 36.051, 36.700, 36.969, 37.753, 37.872, 38.093, 38.159, 38.333, 38.615, 39.627, 39.698, 40.145, 41.154, 41.390, 42.301, 43.432, 45.724, 47.349, 48.566, 49.344, 50.628, 50.835, 50.961, 51.833, 52.620, 53.074, 53.199, 53.274, 53.416, 53.983, 57.101, 57.656, 58.959, 59.237, 62.221, 62.517, 63.494, 64.667, 64.958, 65.688, 66.398, 68.196, 68.369, 69.269, 71.449, 71.689, 71.939, 73.649, 73.949, 74.049, 74.309, 79.900, 83.64]
         Labels=[['C1n',0.000],['C1r',0.781],['C2',1.778],['C2An',2.581],['C2Ar',3.596],['C3n',4.187],['C3r',5.235],['C3An',6.033],['C3Ar',6.733],['C3Bn',7.140],['C3Br',7.212],['C4n',7.528],['C4r',8.108],['C4An',8.771],['C4Ar',9.105],['C5n',9.786],['C5r',11.056],['C5An',12.049],['C5Ar',12.474],['C5AAn',13.032],['C5AAr',13.183],['C5ABn',13.363],['C5ABr',13.608],['C5ACn',13.739],['C5ACr',14.070],['C5ADn',14.163],['C5ADr',14.609],['C5Bn',14.775],['C5Br',15.160],['C5Cn',15.974],['C5Cr',16.721],['C5Dn',17.235],['C5Dr',17.533],['C5En',18.056],['C5Er',18.524],['C6n',18.748],['C6r',19.722],['C6An',20.040],['C6Ar',20.709],['C6AAn',21.083],['C6AAr',21.159],['C6Bn',21.767],['C6Br',22.268],['C6Cn',22.564],['C6Cr',23.295],['C7n',23.962],['C7r',24.474],['C7An',24.761],['C7Ar',24.984],['C8n',25.099],['C8r',25.987],['C9n',26.420],['C9r',27.439],['C10n',27.859],['C10r',28.278],['C11n',29.183],['C11r',29.970],['C12n',30.591],['C12r',31.034],['C13n',33.157],['C13r',33.705],['C15n',34.999],['C15r',35.294],['C16n',35.706],['C16r',36.700],['C17n',36.969],['C17r',38.333],['C18n',38.615],['C18r',40.145],['C19n',41.154],['C19r',41.390],['C20n',42.301],['C20r',43.432],['C21n',45.724],['C21r',47.349],['C22n',48.566],['C22r',49.344],['C23n',50.628],['C23r',51.833],['C24n',52.620],['C24r',53.983],['C25n',57.101],['C25r',57.656],['C26n',58.959],['C26r',59.237],['C27n',62.221],['C27r',62.517],['C28n',63.494],['C28r',64.667],['C29n',64.958],['C29r',65.688],['C30n',66.398],['C30r',68.196],['C31n',68.369],['C31r',69.269],['C32n',71.449],['C32r',73.649],['C33n',74.309],['C33r',79.900],['C34n',83.64]]
         return TS,Labels
-    print "Time Scale Option Not Available"
+    print("Time Scale Option Not Available")
     sys.exit()
 
 
@@ -8869,24 +8868,24 @@ def read_criteria_from_file(path,acceptance_criteria,**kwargs):
             (this is used in displaying criteria in the dialog box)
 
     '''
-    acceptance_criteria_list=acceptance_criteria.keys()
-    if 'data_model' in kwargs.keys() and kwargs['data_model']==3:
+    acceptance_criteria_list=list(acceptance_criteria.keys())
+    if 'data_model' in list(kwargs.keys()) and kwargs['data_model']==3:
         crit_data=acceptance_criteria # data already read in
     else:
         crit_data,file_type=magic_read(path)
     for rec in crit_data:
-        for crit in rec.keys():
+        for crit in list(rec.keys()):
             rec[crit]=rec[crit].strip('\n')
             if crit in ['pmag_criteria_code','criteria_definition','magic_experiment_names','er_citation_names']:
                 continue
             elif rec[crit]=="":
                 continue
-            if crit=="specimen_dang" and "pmag_criteria_code" in rec.keys() and "IE-SPEC" in rec["pmag_criteria_code"]:
+            if crit=="specimen_dang" and "pmag_criteria_code" in list(rec.keys()) and "IE-SPEC" in rec["pmag_criteria_code"]:
                 crit="specimen_int_dang"
-                print "-W- Found backward compatibility problem with selection criteria specimen_dang. Cannot be associated with IE-SPEC. Program assumes that the statistic is specimen_int_dang"
+                print("-W- Found backward compatibility problem with selection criteria specimen_dang. Cannot be associated with IE-SPEC. Program assumes that the statistic is specimen_int_dang")
                 acceptance_criteria["specimen_int_dang"]['value']=float(rec["specimen_dang"])
             elif crit not in acceptance_criteria_list:
-                print "-W- WARNING: criteria code %s is not supported by PmagPy GUI. please check"%crit
+                print("-W- WARNING: criteria code %s is not supported by PmagPy GUI. please check"%crit)
                 acceptance_criteria[crit]={}
                 acceptance_criteria[crit]['value']=rec[crit]
                 acceptance_criteria[crit]['threshold_type']="inherited"
@@ -8906,7 +8905,7 @@ def read_criteria_from_file(path,acceptance_criteria,**kwargs):
                 if str(rec[crit]) in acceptance_criteria[crit]['threshold_type']:
                     acceptance_criteria[crit]['value']=str(rec[crit])
                 else:
-                    print "-W- WARNING: data %s from criteria code  %s and is not supported by PmagPy GUI. please check"%(crit,rec[crit])
+                    print("-W- WARNING: data %s from criteria code  %s and is not supported by PmagPy GUI. please check"%(crit,rec[crit]))
             elif float(rec[crit]) == -999:
                 continue
             else:
@@ -8917,9 +8916,9 @@ def read_criteria_from_file(path,acceptance_criteria,**kwargs):
 
 
 def write_criteria_to_file(path,acceptance_criteria,**kwargs):
-    crit_list=acceptance_criteria.keys()
+    crit_list=list(acceptance_criteria.keys())
     crit_list.sort()
-    if 'data_model' in kwargs.keys() and kwargs['data_model']==3:
+    if 'data_model' in list(kwargs.keys()) and kwargs['data_model']==3:
         code_key='criterion'
         definition_key='definition'
         citation_key='citations'
@@ -8933,10 +8932,10 @@ def write_criteria_to_file(path,acceptance_criteria,**kwargs):
     rec[definition_key]="acceptance criteria for study"
     rec[citation_key]="This study"
     for crit in crit_list:
-        if 'category' in acceptance_criteria[crit].keys():
+        if 'category' in list(acceptance_criteria[crit].keys()):
         # ignore criteria that are not in MagIc model 2.5 or 3.0
           if acceptance_criteria[crit]['category']!='thellier_gui':
-            if 'data_model' in kwargs.keys() and kwargs['data_model']==3: # need to make a list of these dictionaries
+            if 'data_model' in list(kwargs.keys()) and kwargs['data_model']==3: # need to make a list of these dictionaries
                 rec={}
                 rec[definition_key]="acceptance criteria for study"
                 rec[citation_key]="This study"
@@ -8977,24 +8976,24 @@ def write_criteria_to_file(path,acceptance_criteria,**kwargs):
                 elif type(acceptance_criteria[crit]["value"])==float:
                     if float(acceptance_criteria[crit]["value"])==-999:
                         continue
-            if 'decimal_points' in acceptance_criteria[crit] in acceptance_criteria[crit].keys():
+            if 'decimal_points' in acceptance_criteria[crit] in list(acceptance_criteria[crit].keys()):
                 decimal_points=acceptance_criteria[crit]['decimal_points']
                 if decimal_points != -999:
                     command="rec[value_key]='%%.%sf'%%(acceptance_criteria[crit]['value'])"%(decimal_points)
-                    exec command
+                    exec(command)
             else:
                 rec[value_key]=str(acceptance_criteria[crit]["value"])
             if type(acceptance_criteria[crit]["value"])==bool:
                 rec[value_key]=str(acceptance_criteria[crit]["value"])
-            if 'data_model' in kwargs.keys() and kwargs['data_model']==3: # need to make a list of these dictionaries
+            if 'data_model' in list(kwargs.keys()) and kwargs['data_model']==3: # need to make a list of these dictionaries
                 if eval(rec[value_key])!=-999: recs.append(rec)
           else:
-              print "-W- WARNING: statistic %s not written to file:",crit
-    if 'data_model' in kwargs.keys() and kwargs['data_model']==3: # need to make a list of these dictionaries
-        if 'prior_crits' in kwargs.keys():
+              print("-W- WARNING: statistic %s not written to file:",crit)
+    if 'data_model' in list(kwargs.keys()) and kwargs['data_model']==3: # need to make a list of these dictionaries
+        if 'prior_crits' in list(kwargs.keys()):
              prior_crits=kwargs['prior_crits']
              for rec in prior_crits:
-                 if 'criterion' in rec.keys() and 'IE-' not in rec['criterion']:recs.append(rec) # preserve non-intensity related criteria
+                 if 'criterion' in list(rec.keys()) and 'IE-' not in rec['criterion']:recs.append(rec) # preserve non-intensity related criteria
         magic_write(path,recs,'criteria')
     else:
         magic_write(path,[rec],'pmag_criteria')
@@ -9041,13 +9040,13 @@ def merge_recs_headers(recs):
     '''
     headers=[]
     for rec in recs:
-        keys=rec.keys()
+        keys=list(rec.keys())
         for key in keys:
             if key not in headers:
                     headers.append(key)
     for rec in recs:
         for header in headers:
-            if header not in rec.keys():
+            if header not in list(rec.keys()):
                 rec[header]=""
     return recs
 
@@ -9099,7 +9098,7 @@ def adjust_to_360(val, key):
     elif adjust:
         new_val = float(val) % 360
         if new_val != float(val):
-            print '-I- adjusted {} {} to 0=>360.: {}'.format(key, val, new_val)
+            print('-I- adjusted {} {} to 0=>360.: {}'.format(key, val, new_val))
         return new_val
 
 
@@ -9123,4 +9122,4 @@ class MissingCommandLineArgException(Exception):
 
 
 def main():
-    print "Full PmagPy documentation is available at: https://earthref.org/PmagPy/cookbook/"
+    print("Full PmagPy documentation is available at: https://earthref.org/PmagPy/cookbook/")

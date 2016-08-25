@@ -28,10 +28,10 @@ def main():
    """
    file=""
    if '-h' in sys.argv:
-       print main.__doc__
+       print(main.__doc__)
        sys.exit()
    elif '-i' in sys.argv:
-       file=raw_input("Enter eigenparameters data file name: ")
+       file=input("Enter eigenparameters data file name: ")
        
    elif '-f' in sys.argv:
        ind=sys.argv.index('-f')
@@ -58,7 +58,7 @@ def main():
        outstring=""
        for s in srot:outstring+='%10.8f '%(s)
        if ofile=="":
-           print outstring
+           print(outstring)
        else:
            out.write(outstring+'\n')
 #

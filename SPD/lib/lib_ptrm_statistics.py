@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import numpy
-import lib_directional_statistics as lib_direct
+from . import lib_directional_statistics as lib_direct
 
 numpy.set_printoptions(precision=15)
 

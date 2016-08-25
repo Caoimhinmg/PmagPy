@@ -42,11 +42,11 @@ class TestProgramsHelp(unittest.TestCase):
             shutil.rmtree('./new-test-output')
         
     def test_cmd_line(self):
-        print 'programs_WD', programs_WD
+        print('programs_WD', programs_WD)
         programs = os.listdir(programs_WD)
         not_checked = []
         for prog in programs:
-            print "Testing help message for:", prog
+            print("Testing help message for:", prog)
             if prog in ['__init__.py', 'program_envs.py']:
                 continue
             if 'gui' in prog:
@@ -63,7 +63,7 @@ class TestProgramsHelp(unittest.TestCase):
             #    not_checked.append(prog)
             #    print 'ex', type(ex)
             #    print res
-        print 'not_checked', not_checked
+        print('not_checked', not_checked)
 
     def test_guis(self):
         tests = ['pmag_gui.py', 'magic_gui.py', 'demag_gui.py',

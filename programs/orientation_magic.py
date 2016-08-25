@@ -84,7 +84,7 @@ def main():
     """
     args = sys.argv
     if "-h" in args:
-        print main.__doc__
+        print(main.__doc__)
         sys.exit()
     else:
         info = [['WD', False, '.'], ['ID', False, '.'], ['f', False, 'orient.txt'],

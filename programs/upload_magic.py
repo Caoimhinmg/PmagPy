@@ -27,7 +27,7 @@ def main():
         upload.txt:  file for uploading to MagIC database
     """    
     if '-h' in sys.argv:
-        print main.__doc__
+        print(main.__doc__)
         sys.exit()
     else:
         dataframe = extractor.command_line_dataframe([['cat', False, 0], ['F', False, ''], ['f', False, '']])

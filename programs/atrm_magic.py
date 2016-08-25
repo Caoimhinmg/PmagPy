@@ -48,7 +48,7 @@ def main():
         ind=args.index('-WD')
         dir_path=args[ind+1]
     if "-h" in args:
-        print main.__doc__
+        print(main.__doc__)
         sys.exit()
     if "-usr" in args:
         ind=args.index("-usr")
@@ -69,8 +69,8 @@ def main():
     meas_data,file_type=pmag.magic_read(meas_file)
     meas_data=pmag.get_dictitem(meas_data,'magic_method_codes','LP-AN-TRM','has')
     if file_type != 'magic_measurements':
-        print file_type
-        print file_type,"This is not a valid magic_measurements file " 
+        print(file_type)
+        print(file_type,"This is not a valid magic_measurements file ") 
         sys.exit()
     #
     #
@@ -115,7 +115,7 @@ def main():
             RmagResRec["magic_experiment_names"]=RmagSpecRec["rmag_anisotropy_name"]+":ATRM"
             RmagResRec["er_citation_names"]="This study"
             RmagSpecRec["anisotropy_type"]="ATRM"
-            if "magic_instrument_codes" in data[0].keys():
+            if "magic_instrument_codes" in list(data[0].keys()):
                 RmagSpecRec["magic_instrument_codes"]=data[0]["magic_instrument_codes"]
             else:  
                 RmagSpecRec["magic_instrument_codes"]=""
@@ -137,10 +137,10 @@ def main():
         elif len(BX)== 0: # assume baseline is zero
             for i in range(len(X)):BX.append([0.,0.,0.]) # assume baseline of 0
         elif len(BX)!= len(X): # if BX isn't just one measurement or one in between every infield step, just assume it is zero
-            print 'something odd about the baselines - just assuming zero'
+            print('something odd about the baselines - just assuming zero')
             for i in range(len(X)):BX.append([0.,0.,0.]) # assume baseline of 0
         if nmeas<6: # must have at least 6 measurements right now - 
-            print 'skipping specimen ',s,' too few measurements'
+            print('skipping specimen ',s,' too few measurements')
             specimen+=1
         else:
             B,H,tmpH=pmag.designATRM(npos)  # B matrix made from design matrix for positions
@@ -282,9 +282,9 @@ def main():
             RmagResRecs.append(RmagResRec)
             specimen+=1
     pmag.magic_write(rmag_anis,RmagSpecRecs,'rmag_anisotropy')
-    print "specimen tensor elements stored in ",rmag_anis
+    print("specimen tensor elements stored in ",rmag_anis)
     pmag.magic_write(rmag_res,RmagResRecs,'rmag_results')
-    print "specimen statistics and eigenparameters stored in ",rmag_res
+    print("specimen statistics and eigenparameters stored in ",rmag_res)
 
 if __name__ == "__main__":
     main()

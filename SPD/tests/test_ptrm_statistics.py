@@ -55,7 +55,7 @@ class CheckpTRMparams(unittest.TestCase):
 #def get_max_ptrm_check(ptrm_checks_segment, ptrm_checks, ptrm_x, t_Arai, x_Arai):
         result = lib_ptrm.get_max_ptrm_check(self.ref_steps, self.ptrm_temps, self.x_ptrm, self.t_Arai, self.x_Arai)
         diffs, max_ptrm_diff, sum_ptrm_diffs, check_percent, sum_abs_ptrm_diffs = result[0], result[1], result[2], result[3], result[4]
-        print self.ref_max_ptrm_check, max_ptrm_diff
+        print(self.ref_max_ptrm_check, max_ptrm_diff)
         self.assertAlmostEqual(self.ref_max_ptrm_check, max_ptrm_diff)
         self.assertAlmostEqual(self.ref_sum_ptrm_check, sum_ptrm_diffs)
         self.assertAlmostEqual(self.ref_check_percent, check_percent)

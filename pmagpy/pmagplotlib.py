@@ -13,7 +13,8 @@ isServer = set_env.isServer
 verbose = set_env.verbose
 
 #wmpl_version=matplotlib.__version__
-import pmag, pylab
+import pmagpy.pmag as pmag
+import pylab
 globals = 0
 graphmenu = 0
 global version_num
@@ -35,7 +36,7 @@ def drawFIGS(FIGS):
     Does not play well with wxPython
     """
     pylab.ion()
-    for fig in FIGS.keys():
+    for fig in list(FIGS.keys()):
             pylab.figure(FIGS[fig])
             pylab.draw()
     pylab.ioff()
@@ -52,12 +53,12 @@ def clearFIG(fignum):
 ##	graphmenu = interface
 #
 def click(event):
-    print 'you clicked', event.xdata,event.ydata
+    print('you clicked', event.xdata,event.ydata)
 #
 #
 def delticks(fig): # deletes half the x-axis tick marks
     locs= fig.xaxis.get_ticklocs()
-    nlocs=numpy.delete(locs,range(0,len(locs),2))
+    nlocs=numpy.delete(locs,list(range(0,len(locs),2)))
     fig.set_xticks(nlocs)
 
 fig_x_pos=25
@@ -136,7 +137,7 @@ def qsnorm(p):
     """
     d=p
     if d<0. or d> 1.:
-        print 'd not in (1,1) '
+        print('d not in (1,1) ')
         sys.exit()
     x=0.
     if (d-0.5)>0: d=1.-d
@@ -192,18 +193,18 @@ def plotXY(fignum,X,Y,**kwargs):
 #          pylab.plot(xs,ys)
 #          print coefs
 #          print polynomial
-    if 'sym' in kwargs.keys():
+    if 'sym' in list(kwargs.keys()):
         sym=kwargs['sym']
     else: sym='ro'
-    if 'lw' in kwargs.keys():
+    if 'lw' in list(kwargs.keys()):
         lw=kwargs['lw']
     else:
         lw=1
-    if 'xerr' in kwargs.keys():
+    if 'xerr' in list(kwargs.keys()):
        pylab.errorbar(X,Y,fmt=sym,xerr=kwargs['xerr'])
-    if 'yerr' in kwargs.keys():
+    if 'yerr' in list(kwargs.keys()):
        pylab.errorbar(X,Y,fmt=sym,yerr=kwargs['yerr'])
-    if 'axis' in kwargs.keys():
+    if 'axis' in list(kwargs.keys()):
        if kwargs['axis']=='semilogx':
            pylab.semilogx(X,Y,marker=sym[1],markerfacecolor=sym[0])
        if kwargs['axis']=='semilogy':
@@ -212,30 +213,30 @@ def plotXY(fignum,X,Y,**kwargs):
            pylab.loglog(X,Y,marker=sym[1],markerfacecolor=sym[0])
     else:
         pylab.plot(X,Y,sym,linewidth=lw)
-    if 'xlab' in kwargs.keys():pylab.xlabel(kwargs['xlab'])
-    if 'ylab' in kwargs.keys():pylab.ylabel(kwargs['ylab'])
-    if 'title' in kwargs.keys():pylab.title(kwargs['title'])
-    if 'xmin' in kwargs.keys(): pylab.axis([kwargs['xmin'],kwargs['xmax'],kwargs['ymin'],kwargs['ymax']])
-    if 'notes' in kwargs.keys():
+    if 'xlab' in list(kwargs.keys()):pylab.xlabel(kwargs['xlab'])
+    if 'ylab' in list(kwargs.keys()):pylab.ylabel(kwargs['ylab'])
+    if 'title' in list(kwargs.keys()):pylab.title(kwargs['title'])
+    if 'xmin' in list(kwargs.keys()): pylab.axis([kwargs['xmin'],kwargs['xmax'],kwargs['ymin'],kwargs['ymax']])
+    if 'notes' in list(kwargs.keys()):
        for note in kwargs['notes']:
            pylab.text(note[0],note[1],note[2])
 
 
 def plotSITE(fignum,SiteRec,data,key):
-    print 'Site mean data: '
-    print '   dec    inc n_lines n_planes kappa R alpha_95 comp coord'
-    print SiteRec['site_dec'],SiteRec['site_inc'],SiteRec['site_n_lines'],SiteRec['site_n_planes'],SiteRec['site_k'],SiteRec['site_r'],SiteRec['site_alpha95'],SiteRec['site_comp_name'],SiteRec['site_tilt_correction']
-    print 'sample/specimen, dec, inc, n_specs/a95,| method codes '
+    print('Site mean data: ')
+    print('   dec    inc n_lines n_planes kappa R alpha_95 comp coord')
+    print(SiteRec['site_dec'],SiteRec['site_inc'],SiteRec['site_n_lines'],SiteRec['site_n_planes'],SiteRec['site_k'],SiteRec['site_r'],SiteRec['site_alpha95'],SiteRec['site_comp_name'],SiteRec['site_tilt_correction'])
+    print('sample/specimen, dec, inc, n_specs/a95,| method codes ')
     for i  in range(len(data)):
-        print '%s: %s %s %s / %s | %s' % (data[i]['er_'+key+'_name'], data[i][key+'_dec'], data[i][key+'_inc'], data[i][key+'_n'], data[i][key+'_alpha95'], data[i]['magic_method_codes'])
+        print('%s: %s %s %s / %s | %s' % (data[i]['er_'+key+'_name'], data[i][key+'_dec'], data[i][key+'_inc'], data[i][key+'_n'], data[i][key+'_alpha95'], data[i]['magic_method_codes']))
     plotSLNP(fignum,SiteRec,data,key)
-    plot=raw_input("s[a]ve plot, [q]uit or <return> to continue:   ")
+    plot=input("s[a]ve plot, [q]uit or <return> to continue:   ")
     if plot=='q':
-         print "CUL8R"
+         print("CUL8R")
          sys.exit()
     if plot=='a':
         files={}
-        for key in EQ.keys():
+        for key in list(EQ.keys()):
             files[key]=site+'_'+key+'.'+fmt
         saveP(EQ,files)
 
@@ -245,8 +246,8 @@ def plotQQnorm(fignum,Y,title):
     n=len(Y)
     d,mean,sigma=k_s(Y)
     dc=0.886/numpy.sqrt(float(n))
-    print 'mean,sigma, d, Dc'
-    print mean,sigma, d, dc
+    print('mean,sigma, d, Dc')
+    print(mean,sigma, d, dc)
     X=[] # list for normal quantile
     for i in range(1,n+1):
         p=float(i)/float(n+1)
@@ -465,11 +466,11 @@ def plotDIsym(fignum,DIblock,sym):
              X_up.append(XY[0])
              Y_up.append(XY[1])
 #
-    if 'size' not in sym.keys():
+    if 'size' not in list(sym.keys()):
         size=50
     else:
         size=sym['size']
-    if 'edgecolor' not in sym.keys():
+    if 'edgecolor' not in list(sym.keys()):
         sym['edgecolor']='k'
     if len(X_down)>0:
         pylab.scatter(X_down,Y_down,marker=sym['lower'][0],c=sym['lower'][1],s=size,edgecolor=sym['edgecolor'])
@@ -629,7 +630,7 @@ def plotMT(fignum,datablock,s,num,units,norm):
         if recnum>0 and len(rec)>0 and len(recbak)>0:
             v=[]
             if recbak[0]!=rec[0]:
-	        V0=pmag.dir2cart([recbak[1],recbak[2],recbak[3]])
+                V0=pmag.dir2cart([recbak[1],recbak[2],recbak[3]])
                 V1=pmag.dir2cart([rec[1],rec[2],rec[3]])
                 for el in range(3):v.append(abs(V1[el]-V0[el]))
                 vdir=pmag.cart2dir(v)
@@ -680,7 +681,7 @@ def plotZED(ZED,datablock,angle,s,units):
     """
     function to make equal area plot and zijderveld plot
     """
-    for fignum in ZED.keys():
+    for fignum in list(ZED.keys()):
         fig=pylab.figure(num=ZED[fignum])
         pylab.clf()
         if not isServer:
@@ -900,7 +901,7 @@ def plotA(fignum,indata,s,units):
            yptrmt.append((trec[3]/first_Z[0][3]))
 # now plot stuff
     if len(x) ==0:
-        print "Can't do nuttin for ya"
+        print("Can't do nuttin for ya")
         return
     try:
         if len(x_zi)>0:pylab.scatter(x_zi,y_zi,marker='o',c='r',edgecolors="none" ) # zero field-infield
@@ -967,8 +968,8 @@ def plotNP(fignum,indata,s,units):
         if units=="J":X.append(rec[0])
         Y.append(rec[3]/first_Z[0][3])
     if globals !=0:
-		globals.DIlist = X
-		globals.DIlisty= Y
+        globals.DIlist = X
+        globals.DIlisty= Y
     pylab.plot(X,Y)
     pylab.scatter(X,Y,marker='s',color='r')
     pylab.ylabel("Circles: NRM; Squares: pTRM")
@@ -1051,8 +1052,8 @@ def plotSHAW(SHAW,shawblock,zijdblock,field,s):
     pylab.ylabel("NRM")
     spars=pylab.polyfit(X,Y,1)
     Banc=spars[0]*field
-    print spars[0],field
-    print 'Banc= ',Banc*1e6,' uT'
+    print(spars[0],field)
+    print('Banc= ',Banc*1e6,' uT')
     notestr='Banc = '+ '%5.1f'%(Banc*1e6)+' uT'
     pylab.text(.5*TRM[-1][1]+.2,.9,notestr)
 
@@ -1281,15 +1282,15 @@ def plotTEQ(fignum,araiblock,s,pars):
 
 
 def saveP(Figs,filenames):
-    for key in Figs.keys():
+    for key in list(Figs.keys()):
         try:
             pylab.figure(num=Figs[key])
             pylab.savefig(filenames[key].replace('/','-'))
             if verbose:
-                print Figs[key]," saved in ",filenames[key].replace('/','-')
+                print(Figs[key]," saved in ",filenames[key].replace('/','-'))
         except:
-            print 'could not save: ',Figs[key],filenames[key]
-            print "output file format not supported "
+            print('could not save: ',Figs[key],filenames[key])
+            print("output file format not supported ")
     return
 #
 def plotEVEC(fignum,Vs,symsize,title):
@@ -1431,9 +1432,9 @@ this function returns x and y"""
     for j in range(len(sdata)):
         Y.append(float(j)/float(len(sdata)))
         X.append(sdata[j])
-    if 'color' in kwargs.keys():
+    if 'color' in list(kwargs.keys()):
         color=kwargs['color']
-    if 'linewidth' in kwargs.keys():
+    if 'linewidth' in list(kwargs.keys()):
         lw=kwargs['linewidth']
     else:
         lw=1
@@ -1497,7 +1498,7 @@ def plotHYS(fignum,B,M,s):
     """
    function to plot hysteresis data
     """
-    import spline
+    from . import spline
     if fignum!=0:
         pylab.figure(num=fignum)
         pylab.clf()
@@ -1662,7 +1663,7 @@ def plotHDD(HDD,B,M,s):
             pylab.axvline(0,color='k')
             plotDDM(HDD['DdeltaM'],Bdm,DdeltaM,s)
     except:
-	hpars['hysteresis_bcr']='0'
+        hpars['hysteresis_bcr']='0'
         hpars['magic_method_codes']=""
     return hpars
 #
@@ -1756,12 +1757,12 @@ def plotHPARS(HDD,hpars,sym):
     pylab.text(bounds[1]-.9*bounds[1],-.7,n1)
     n2='Bc: '+'%8.2e'%(float(hpars['hysteresis_bc']))+' T'
     pylab.text(bounds[1]-.9*bounds[1],-.5,n2)
-    if 'hysteresis_xhf' in hpars.keys():
+    if 'hysteresis_xhf' in list(hpars.keys()):
         n3=r'Xhf: '+'%8.2e'%(float(hpars['hysteresis_xhf']))+' m^3'
         pylab.text(bounds[1]-.9*bounds[1],-.3,n3)
     pylab.figure(num=HDD['deltaM'])
     X,Y,Bcr=[],[],""
-    if 'hysteresis_bcr' in hpars.keys():
+    if 'hysteresis_bcr' in list(hpars.keys()):
         X.append(float(hpars['hysteresis_bcr']))
         Y.append(0)
         Bcr=float(hpars['hysteresis_bcr'])
@@ -1830,7 +1831,7 @@ def plotIRM(fignum,B,M,title):
         #pylab.clf()
         if not isServer:
             pylab.figtext(.02,.01,version_num)
-        print 'M[0]=0,  skipping specimen'
+        print('M[0]=0,  skipping specimen')
     return rpars
 
 def plotXTF(fignum,XTF,Fs,e,b):
@@ -1975,7 +1976,7 @@ def plotANIS(ANIS,Ss,iboot,ihext,ivec,ipar,title,plt,comp,vec,Dir,nb):
         Vs.append(V)
     nf,sigma,avs=pmag.sbar(Ss)
     if plt==1:
-        for key in ANIS.keys():
+        for key in list(ANIS.keys()):
             pylab.figure(num=ANIS[key])
             pylab.clf()
             if not isServer:
@@ -2001,7 +2002,7 @@ def plotANIS(ANIS,Ss,iboot,ihext,ivec,ipar,title,plt,comp,vec,Dir,nb):
 # plot mean confidence
 #
     if iboot==1:
-        print 'Doing bootstrap - be patient'
+        print('Doing bootstrap - be patient')
         Tmean,Vmean,Taus,BVs=pmag.s_boot(Ss,ipar,nb) # get eigenvectors of mean tensor
         bpars=pmag.sbootpars(Taus,BVs)
         bpars['t1']=hpars['t1']
@@ -2324,7 +2325,7 @@ def addBorders(Figs,titles,border_color,text_color):
     import datetime
     now = datetime.datetime.now()
 
-    for key in Figs.keys():
+    for key in list(Figs.keys()):
 
         fig = pylab.figure(Figs[key])
         plot_title = titles[key]
@@ -2386,7 +2387,7 @@ def plotMAP(fignum,lats,lons,Opts):
         plabels=[0,0,0,0]
     else:
         m=Basemap(llcrnrlon=Opts['lonmin'],llcrnrlat=Opts['latmin'],urcrnrlat=Opts['latmax'],urcrnrlon=Opts['lonmax'],projection=Opts['proj'],lat_0=Opts['lat_0'],lon_0=Opts['lon_0'],lat_ts=0.,resolution=Opts['res'],boundinglat=Opts['boundinglat'])
-    if 'details' in Opts.keys():
+    if 'details' in list(Opts.keys()):
         if Opts['details']['fancy']==1:
            from pylab import meshgrid
            from mpl_toolkits.basemap import basemap_datadir
@@ -2423,13 +2424,13 @@ def plotMAP(fignum,lats,lons,Opts):
         m.drawmeridians(meridians,color='black') # skip the labels - they are ugly
         m.drawmapboundary()
     prn_name,symsize=0,5
-    if 'names' in Opts.keys()>0:
+    if 'names' in list(Opts.keys())>0:
         names=Opts['names']
         if len(names)>0:
             prn_name=1
 #
     X,Y,T,k=[],[],[],0
-    if 'symsize' in Opts.keys():symsize=Opts['symsize']
+    if 'symsize' in list(Opts.keys()):symsize=Opts['symsize']
     if Opts['sym'][-1]!='-': # just plot points
         X,Y=m(lons,lats)
        	if prn_name==1:

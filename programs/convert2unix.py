@@ -17,7 +17,7 @@ def main():
     
     """
     if '-h' in sys.argv:
-        print main.__doc__
+        print(main.__doc__)
         sys.exit()
     file=sys.argv[1]
     f=open(file,'rU')

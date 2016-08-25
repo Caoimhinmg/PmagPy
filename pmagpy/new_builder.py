@@ -15,7 +15,7 @@ import pandas as pd
 from pandas import DataFrame
 from pmagpy import pmag
 #from pmagpy import data_model3 as data_model
-import data_model3 as data_model
+from . import data_model3 as data_model
 import pmagpy.controlled_vocabularies3 as cv
 
 
@@ -82,8 +82,8 @@ class Contribution(object):
         If provided, col_names takes precedence.
         """
         if dtype not in self.table_names:
-            print "-W- {} is not a valid MagIC table name".format(dtype)
-            print "-I- Valid table names are: {}".format(", ".join(self.table_names))
+            print("-W- {} is not a valid MagIC table name".format(dtype))
+            print("-I- Valid table names are: {}".format(", ".join(self.table_names)))
             return
         data_container = MagicDataFrame(dtype=dtype, columns=col_names, groups=groups)
         self.tables[dtype] = data_container
@@ -105,8 +105,8 @@ class Contribution(object):
                 return data_container
         # if providing a data type, use the canonical filename
         elif dtype not in self.filenames:
-            print '-W- "{}" is not a valid MagIC table type'.format(dtype)
-            print "-I- Available table types are: {}".format(", ".join(self.table_names))
+            print('-W- "{}" is not a valid MagIC table type'.format(dtype))
+            print("-I- Available table types are: {}".format(", ".join(self.table_names)))
             return False
         filename = os.path.join(self.directory, self.filenames[dtype])
         if os.path.exists(filename):
@@ -114,7 +114,7 @@ class Contribution(object):
             self.tables[dtype] = data_container
             return data_container
         else:
-            print "-W- No such file: {}".format(filename)
+            print("-W- No such file: {}".format(filename))
             return False
 
 
@@ -133,7 +133,7 @@ class Contribution(object):
             if (name + "s") in self.tables:
                 continue
             elif name in meas_df.columns:
-                print "making new {} file".format(name)
+                print("making new {} file".format(name))
                 items = meas_df[name].unique()
                 df = pd.DataFrame(columns=[name], index=items)
                 df[name] = df.index
@@ -176,7 +176,7 @@ class Contribution(object):
                 res = ":".join(item)
                 return ":".join(item)
             except TypeError as ex:
-                print ex
+                print(ex)
                 return item
 
         def replace_colon_delimited_value(df, col_name, old_value, new_value):
@@ -245,7 +245,7 @@ class Contribution(object):
             self.add_magic_table(df_name)
         df = self.tables[df_name].df
         if col_name in df.columns:
-            print '{} already in {}'.format(col_name, df_name)
+            print('{} already in {}'.format(col_name, df_name))
             return df
 
         # otherwise, do necessary merges to get col_name into df
@@ -264,8 +264,8 @@ class Contribution(object):
             if bottom_table_name not in self.tables:
                 result = self.add_magic_table(bottom_table_name)
                 if not isinstance(result, MagicDataFrame):
-                    print "-W- Couldn't read in {} data".format(bottom_table_name)
-                    print "-I- Make sure you've provided the correct file name"
+                    print("-W- Couldn't read in {} data".format(bottom_table_name))
+                    print("-I- Make sure you've provided the correct file name")
                     return df
             # add child_name to df
             add_df = self.tables[bottom_table_name].df
@@ -282,8 +282,8 @@ class Contribution(object):
             if child_table_name not in self.tables:
                 result = self.add_magic_table(child_table_name)
                 if not isinstance(result, MagicDataFrame):
-                    print "-W- Couldn't read in {} data".format(child_table_name)
-                    print "-I- Make sure you've provided the correct file name"
+                    print("-W- Couldn't read in {} data".format(child_table_name))
+                    print("-I- Make sure you've provided the correct file name")
                     return df
             # add parent_name to df
             add_df = self.tables[child_table_name].df
@@ -300,8 +300,8 @@ class Contribution(object):
             if parent_table_name not in self.tables:
                 result = self.add_magic_table(parent_table_name)
                 if not isinstance(result, MagicDataFrame):
-                    print "-W- Couldn't read in {} data".format(parent_table_name)
-                    print "-I- Make sure you've provided the correct file name"
+                    print("-W- Couldn't read in {} data".format(parent_table_name))
+                    print("-I- Make sure you've provided the correct file name")
                     return df
             # add grandparent name to df
             add_df = self.tables[parent_table_name].df
@@ -328,22 +328,22 @@ class Contribution(object):
         if target_df_name not in self.tables:
             self.add_magic_table(target_df_name)
         if target_df_name not in self.tables:
-            print "-W- Couldn't read in {} table".format(target_df_name)
+            print("-W- Couldn't read in {} table".format(target_df_name))
             return
         # make sure source table is read in
         if source_df_name not in self.tables:
             self.add_magic_table(source_df_name)
-            print "-W- Couldn't read in {} table".format(source_df_name)
+            print("-W- Couldn't read in {} table".format(source_df_name))
             return
         # make sure col_names are all available in source table
         source_df = self.tables[source_df_name].df
         if not set(col_names).issubset(source_df.columns):
             for col in col_names[:]:
                 if col not in source_df.columns:
-                    print "-W- Column '{}' isn't in {} table, skipping it".format(col, source_df_name)
+                    print("-W- Column '{}' isn't in {} table, skipping it".format(col, source_df_name))
                     col_names.remove(col)
         if not col_names:
-            print "-W- Invalid or missing column names, could not propagate down"
+            print("-W- Invalid or missing column names, could not propagate down")
             return
 
         ###add_name = source_df_name[:-1] + "_name"
@@ -382,10 +382,10 @@ class MagicDataFrame(object):
             if dtype:
                 self.dtype = dtype
             else:
-                print '-W- Please provide data type...'
+                print('-W- Please provide data type...')
         # make sure all required arguments are present
         if not magic_file and not dtype and not isinstance(df, pd.DataFrame):
-            print "-W- To make a MagicDataFrame, you must provide either a filename or a datatype"
+            print("-W- To make a MagicDataFrame, you must provide either a filename or a datatype")
             return
         # fetch data model if not provided
         if not isinstance(dmodel, type(None)):
@@ -409,7 +409,7 @@ class MagicDataFrame(object):
             # create dataframe, maintaining column order:
             self.df = DataFrame(data, columns=keys)
             if dtype == 'bad_file':
-                print "-W- Bad file {}".format(magic_file)
+                print("-W- Bad file {}".format(magic_file))
                 self.dtype = 'empty'
                 return
 
@@ -487,7 +487,7 @@ class MagicDataFrame(object):
                     self.df[key] = None
             # add missing column names into row_data
             for col_label in self.df.columns:
-                if col_label not in row_data.keys():
+                if col_label not in list(row_data.keys()):
                     row_data[col_label] = None
         try:
             self.df.iloc[ind] = pd.Series(row_data)
@@ -522,7 +522,7 @@ class MagicDataFrame(object):
                     self.df[key] = None
             # add missing column names into row_data
             for col_label in self.df.columns:
-                if col_label not in row_data.keys():
+                if col_label not in list(row_data.keys()):
                     row_data[col_label] = None
 
         # create a new row with suffix "new"
@@ -561,18 +561,18 @@ class MagicDataFrame(object):
         delete all rows with  condition==True 
         inplace
         """
-        self.df['num'] = range(len(self.df))
+        self.df['num'] = list(range(len(self.df)))
         df_data = self.df
         # delete all records that meet condition
         if len(df_data[condition]) > 0:  #we have one or more records to delete
             inds = df_data[condition]['num'] # list of all rows where condition is true
             for ind in inds:
                 df_data = self.delete_row(ind)
-                print 'deleting row where: ',condition
+                print('deleting row where: ',condition)
         # sort so that all rows for an item are together
         df_data.sort_index(inplace=True)
         # redo temporary index
-        df_data['num'] = range(len(df_data))
+        df_data['num'] = list(range(len(df_data)))
         self.df = df_data
         return df_data
 
@@ -592,7 +592,7 @@ class MagicDataFrame(object):
         Change is inplace
         """
         # add numeric index column temporarily
-        self.df['num'] = range(len(self.df))
+        self.df['num'] = list(range(len(self.df)))
         df_data = self.df
         # edit first of existing data that meets condition
         if len(df_data[condition]) > 0:  #we have one or more records to update or delete
@@ -605,19 +605,19 @@ class MagicDataFrame(object):
             # now remove all the remaining records of same condition
             if len(inds) > 1:
                 for ind in inds[1:]:
-                    print "deleting redundant records for:", name
+                    print("deleting redundant records for:", name)
                     df_data = self.delete_row(ind)
         else:
             if update_only:
-                print "no record found for that condition, not updating ", name
+                print("no record found for that condition, not updating ", name)
             else:
-                print 'no record found - creating new one for ', name
+                print('no record found - creating new one for ', name)
                 # add new row
                 df_data = self.add_row(name, new_data)
         # sort so that all rows for an item are together
         df_data.sort_index(inplace=True)
         # redo temporary index
-        df_data['num'] = range(len(df_data))
+        df_data['num'] = list(range(len(df_data)))
         self.df = df_data
         return df_data
 
@@ -836,15 +836,15 @@ class MagicDataFrame(object):
             fname = os.path.join(dir_path, self.dtype + ".txt")
         # add to existing file
         if append:
-            print '-I- appending {} data to {}'.format(self.dtype, fname)
+            print('-I- appending {} data to {}'.format(self.dtype, fname))
             mode = "a"
         # overwrite existing file
         elif os.path.exists(fname):
-            print '-I- overwriting {}'.format(fname)
+            print('-I- overwriting {}'.format(fname))
             mode = "w"
         # or create new file
         else:
-            print '-I- writing {} data to {}'.format(self.dtype, fname)
+            print('-I- writing {} data to {}'.format(self.dtype, fname))
             mode = "w"
         f = open(fname, mode)
         f.write('tab\t{}\n'.format(self.dtype))

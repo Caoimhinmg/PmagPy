@@ -34,17 +34,17 @@ def main():
     out=""
     data,k15=[],[]
     if '-h' in sys.argv:
-        print main.__doc__
+        print(main.__doc__)
         sys.exit()
     if '-i' in sys.argv:
-        file=raw_input("Input file name [.k15 format]: ")
+        file=input("Input file name [.k15 format]: ")
         f=open(file,'rU')
         data=f.readlines()
         f.close()
-        file=raw_input("Output file name [.s format]: ")
+        file=input("Output file name [.s format]: ")
         out=open(file,'w')
         print (" [g]eographic, [t]ilt corrected, ")
-        tg=raw_input(" [return for specimen coordinates]: ")  
+        tg=input(" [return for specimen coordinates]: ")  
         if tg=='g': 
             igeo=1
         elif tg=='t':
@@ -58,7 +58,7 @@ def main():
     else:
         data= sys.stdin.readlines()
     if len(data)==0:
-        print main.__doc__
+        print(main.__doc__)
         sys.exit()
     if '-F' in sys.argv:
         ind=sys.argv.index('-F')
@@ -88,7 +88,7 @@ def main():
                 for s in sbar:outstring+='%10.8f '%(s)
                 outstring+='%10.8f'%(sigma)
                 if out=="":
-                    print outstring
+                    print(outstring)
                 else:
                     out.write(outstring+'\n')
                 linecnt,firstline,k15=0,1,[]

@@ -6,4 +6,4 @@ for line  in StationNFO:
     Lats.append(float(nfo[0]))
     Lons.append(float(nfo[1]))
     StaIDs.append(int(nfo[2]))
-    print Lats[-1],Lons[-1],StaIDs[-1]
+    print(Lats[-1],Lons[-1],StaIDs[-1])

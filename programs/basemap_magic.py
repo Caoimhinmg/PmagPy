@@ -54,7 +54,7 @@ def main():
     padlon,padlat,gridspace,details=.5,.5,.5,1
     fmt='pdf'
     if '-h' in sys.argv:
-        print main.__doc__
+        print(main.__doc__)
         sys.exit()
     if '-f' in sys.argv:
         ind = sys.argv.index('-f')
@@ -131,7 +131,7 @@ def main():
     pmagplotlib.plotMAP(FIG['map'],lats,lons,Opts)
     if verbose:pmagplotlib.drawFIGS(FIG)
     files={}
-    for key in FIG.keys():
+    for key in list(FIG.keys()):
         files[key]='Site_map'+'.'+fmt
     if pmagplotlib.isServer:
         black     = '#000000'
@@ -141,7 +141,7 @@ def main():
         FIG = pmagplotlib.addBorders(FIG,titles,black,purple)
         pmagplotlib.saveP(FIG,files)
     elif verbose:
-        ans=raw_input(" S[a]ve to save plot, Return to quit:  ")
+        ans=input(" S[a]ve to save plot, Return to quit:  ")
         if ans=="a":
             pmagplotlib.saveP(FIG,files)
     else:

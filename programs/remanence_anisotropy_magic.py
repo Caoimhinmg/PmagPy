@@ -83,7 +83,7 @@ def main():
         ind=args.index('-WD')
         dir_path=args[ind+1]
     if "-h" in args:
-        print main.__doc__
+        print(main.__doc__)
         sys.exit()
     if "-f" in args:
         ind=args.index("-f")
@@ -106,7 +106,7 @@ def main():
         try:
             meas_data,file_type=pmag.magic_read(magic_file)
         except:
-            print "-E- ERROR: Cant read magic_measurement.txt file. File is corrupted."
+            print("-E- ERROR: Cant read magic_measurement.txt file. File is corrupted.")
             return Data
             
         # get list of unique specimen names
@@ -119,17 +119,17 @@ def main():
             method_codes.replace(" ","")
             methods=method_codes.split(":")
             if "LP-AN-TRM" in methods:
-                if s not in Data.keys():
+                if s not in list(Data.keys()):
                     Data[s]={}
-                if 'atrmblock' not in Data[s].keys():
+                if 'atrmblock' not in list(Data[s].keys()):
                     Data[s]['atrmblock']=[]
                 Data[s]['atrmblock'].append(rec)
             
             
             if "LP-AN-ARM" in methods:
-                if s not in Data.keys():
+                if s not in list(Data.keys()):
                     Data[s]={}
-                if 'aarmblock' not in Data[s].keys():
+                if 'aarmblock' not in list(Data[s].keys()):
                     Data[s]['aarmblock']=[]
                 Data[s]['aarmblock'].append(rec)
         return (Data)        
@@ -243,7 +243,7 @@ def main():
     
         
     Data_anisotropy={}                
-    specimens=Data.keys()
+    specimens=list(Data.keys())
     specimens.sort()
     
     
@@ -353,7 +353,7 @@ def main():
     
     for specimen in specimens:
     
-        if 'atrmblock' in Data[specimen].keys():
+        if 'atrmblock' in list(Data[specimen].keys()):
             
             #-----------------------------------
             # aTRM 6 positions
@@ -506,7 +506,7 @@ def main():
                 K[12],K[13],K[14]=M[4][0],M[4][1],M[4][2]
                 K[15],K[16],K[17]=M[5][0],M[5][1],M[5][2]
     
-                if specimen not in Data_anisotropy.keys():
+                if specimen not in list(Data_anisotropy.keys()):
                     Data_anisotropy[specimen]={}
                 aniso_parameters=calculate_aniso_parameters(B,K)
                 Data_anisotropy[specimen]['ATRM']=aniso_parameters
@@ -521,7 +521,7 @@ def main():
                 #Data_anisotropy[specimen]['ATRM']['rmag_anisotropy_name']=specimen
     
     
-        if 'aarmblock' in Data[specimen].keys():    
+        if 'aarmblock' in list(Data[specimen].keys()):    
     
             #-----------------------------------
             # AARM - 6, 9 or 15 positions
@@ -574,7 +574,7 @@ def main():
                 K[i*3+1]=M[i][1]
                 K[i*3+2]=M[i][2]            
     
-            if specimen not in Data_anisotropy.keys():
+            if specimen not in list(Data_anisotropy.keys()):
                 Data_anisotropy[specimen]={}
             aniso_parameters=calculate_aniso_parameters(B,K)
             Data_anisotropy[specimen]['AARM']=aniso_parameters
@@ -591,21 +591,21 @@ def main():
     
     #-----------------------------------   
     
-    specimens=Data_anisotropy.keys()
+    specimens=list(Data_anisotropy.keys())
     specimens.sort
     
     # remove previous anistropy data, and replace with the new one:
-    s_list=Data.keys()
+    s_list=list(Data.keys())
     for sp in s_list:
-        if 'AniSpec' in Data[sp].keys():
+        if 'AniSpec' in list(Data[sp].keys()):
             del  Data[sp]['AniSpec']
     for specimen in specimens:
         # if both AARM and ATRM axist prefer the AARM !!
-        if 'AARM' in Data_anisotropy[specimen].keys():
+        if 'AARM' in list(Data_anisotropy[specimen].keys()):
             TYPES=['AARM']
-        if 'ATRM' in Data_anisotropy[specimen].keys():
+        if 'ATRM' in list(Data_anisotropy[specimen].keys()):
             TYPES=['ATRM']
-        if  'AARM' in Data_anisotropy[specimen].keys() and 'ATRM' in Data_anisotropy[specimen].keys():
+        if  'AARM' in list(Data_anisotropy[specimen].keys()) and 'ATRM' in list(Data_anisotropy[specimen].keys()):
             TYPES=['ATRM','AARM']
             aniso_logfile.write( "-W- WARNING: both aarm and atrm data exist for specimen %s. using AARM by default. If you prefer using one of them, delete the other!\n"%specimen)
         for TYPE in TYPES:
@@ -637,9 +637,9 @@ def main():
     aniso_logfile.write( "------------------------\n")
     
     rmag_anisotropy_file.close()
-    print "Anisotropy tensors elements are saved in rmag_anistropy.txt"
-    print "Other anisotropy statistics are saved in rmag_results.txt"
-    print "log file is  in rmag_anisotropy.log"
+    print("Anisotropy tensors elements are saved in rmag_anistropy.txt")
+    print("Other anisotropy statistics are saved in rmag_results.txt")
+    print("log file is  in rmag_anisotropy.log")
 
 
 if __name__ == "__main__":    
